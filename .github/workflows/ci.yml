@@ -50,6 +50,34 @@ jobs:
         with:
           context: ./
           file: ./Dockerfile
-          platforms: linux/amd64,linux/arm64
+          platforms: linux/amd64
           push: true
           tags: kidokool/sfu:latest
+
+  deploy:
+    runs-on: ubuntu-latest
+    needs: build
+    steps:
+      - name: Checkout
+        uses: actions/checkout@v3
+
+      - name: Deploy to AWS
+        uses: appleboy/ssh-action@master
+        with:
+          host: ${{ secrets.AWS_IP }}
+          username: ubuntu
+          key: ${{ secrets.AWS_SSH_KEY }}
+          script: |
+            mkdir -p ~/Kidokool
+            cd ~/Kidokool
+            # Create/Update .env file from secrets
+            echo "${{ secrets.ENV_FILE }}" > .env
+            # Copy docker-compose.yml (using scp-action would be better, but we can cat it here for simplicity)
+            # Or just pull it from the repo if we clone it
+            if [ ! -d ".git" ]; then
+              git clone https://github.com/SanketsMane/Online-Meet-Platform.git .
+            else
+              git pull origin main
+            fi
+            docker compose pull
+            docker compose up -d
