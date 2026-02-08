@@ -52,7 +52,7 @@ jobs:
           file: ./Dockerfile
           platforms: linux/amd64
           push: true
-          tags: kidokool/sfu:latest
+          tags: sanketsmane/kidokool:latest
 
   deploy:
     runs-on: ubuntu-latest
