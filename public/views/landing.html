@@ -1,0 +1,362 @@
+<!doctype html>
+<html lang="en" class="no-js">
+    <head>
+        <!-- Title and Icon -->
+
+        <title id="title">Kidokool, Free Video Calls, Messaging and Screen Sharing</title>
+        <link id="icon" rel="shortcut icon" href="../images/logo.svg" />
+        <link id="appleTouchIcon" rel="apple-touch-icon" href="../images/logo.svg" />
+
+        <!-- Meta Information -->
+
+        <meta charset="utf-8" />
+        <meta http-equiv="X-UA-Compatible" content="IE=edge" />
+        <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+
+        <meta
+            id="description"
+            name="description"
+            content="Kidokool powered by WebRTC and mediasoup, Real-time Simple Secure Fast video calls, messaging and screen sharing capabilities in the browser."
+        />
+        <meta
+            id="keywords"
+            name="keywords"
+            content="webrtc, miro, mediasoup, mediasoup-client, self hosted, voip, sip, real-time communications, chat, messaging, meet, webrtc stun, webrtc turn, webrtc p2p, webrtc sfu, video meeting, video chat, video conference, multi video chat, multi video conference, peer to peer, p2p, sfu, rtc, alternative to, zoom, microsoft teams, google meet, jitsi, meeting"
+        />
+
+        <!-- https://ogp.me -->
+
+        <meta property="og:type" content="{{OG_TYPE}}" />
+        <meta property="og:site_name" content="{{OG_SITE_NAME}}" />
+        <meta property="og:title" content="{{OG_TITLE}}" />
+        <meta property="og:description" content="{{OG_DESCRIPTION}}" />
+        <meta property="og:image" content="{{OG_IMAGE}}" />
+        <meta property="og:url" content="{{OG_URL}}" />
+
+        <!-- StyleSheet -->
+
+        <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/animate.css/4.1.1/animate.min.css" />
+        <link rel="stylesheet" href="https://fonts.googleapis.com/css?family=IBM+Plex+Sans:400,600" />
+        <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.1.1/css/all.min.css" />
+        <link rel="stylesheet" type="text/css" href="../css/landing.css" />
+
+        <!-- Snow effects -->
+
+        <link rel="stylesheet" href="../css/Snow.css" />
+        <script async src="../js/Snow.js"></script>
+
+        <!-- Js scripts -->
+        <script defer src="../js/Widget.js"></script>
+        <script defer src="../js/Brand.js"></script>
+        <script defer src="../js/Theme.js"></script>
+        <script async src="../js/Stats.js"></script>
+
+        <script defer src="https://cdn.jsdelivr.net/npm/sweetalert2@11.4.8"></script>
+        <script src="https://unpkg.com/animejs@3.0.1/lib/anime.min.js"></script>
+        <script src="https://unpkg.com/scrollreveal@4.0.0/dist/scrollreveal.min.js"></script>
+        <script src="https://cdn.jsdelivr.net/npm/xss/dist/xss.min.js"></script>
+
+        <!-- Author: Sanket - Professional navigation styles matching landing page design -->
+        <style>
+            /* Professional Navigation Styles */
+            .site-header {
+                position: sticky;
+                top: 0;
+                z-index: 1000;
+                background: var(--bg-color);
+                border-bottom: 1px solid var(--divider-color);
+                backdrop-filter: blur(10px);
+                -webkit-backdrop-filter: blur(10px);
+            }
+
+            .site-header-inner {
+                display: flex;
+                align-items: center;
+                justify-content: space-between;
+                padding: 16px 0;
+            }
+
+            .header-nav {
+                display: flex;
+                align-items: center;
+                gap: 24px;
+            }
+
+            .header-nav-list {
+                display: flex;
+                align-items: center;
+                gap: 8px;
+                margin: 0;
+            }
+
+            .header-nav-link {
+                padding: 8px 16px;
+                color: var(--text-color);
+                text-decoration: none;
+                font-weight: 500;
+                font-size: 16px;
+                border-radius: 6px;
+                transition: all 0.2s ease;
+                display: flex;
+                align-items: center;
+                gap: 6px;
+            }
+
+            .header-nav-link:hover {
+                background: var(--divider-color);
+                color: var(--heading-color);
+            }
+
+            .theme-toggle {
+                background: transparent !important;
+                border: 1px solid var(--divider-color) !important;
+                color: var(--heading-color) !important;
+                min-width: auto !important;
+                padding: 8px 12px !important;
+            }
+
+            .theme-toggle:hover {
+                background: var(--divider-color) !important;
+            }
+
+            /* Mobile Menu */
+            .mobile-menu-toggle {
+                display: none;
+                flex-direction: column;
+                gap: 4px;
+                background: none;
+                border: none;
+                cursor: pointer;
+                padding: 8px;
+            }
+
+            .mobile-menu-toggle span {
+                width: 24px;
+                height: 2px;
+                background: var(--heading-color);
+                transition: all 0.3s ease;
+                border-radius: 2px;
+            }
+
+            .mobile-menu-toggle.active span:nth-child(1) {
+                transform: rotate(45deg) translate(5px, 5px);
+            }
+
+            .mobile-menu-toggle.active span:nth-child(2) {
+                opacity: 0;
+            }
+
+            .mobile-menu-toggle.active span:nth-child(3) {
+                transform: rotate(-45deg) translate(7px, -6px);
+            }
+
+            @media (max-width: 768px) {
+                .header-nav {
+                    position: fixed;
+                    top: 70px;
+                    left: 0;
+                    right: 0;
+                    background: var(--bg-color);
+                    border-bottom: 1px solid var(--divider-color);
+                    padding: 16px;
+                    flex-direction: column;
+                    transform: translateY(-150%);
+                    opacity: 0;
+                    transition: all 0.3s ease;
+                    box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1);
+                }
+                
+                .header-nav.active {
+                    transform: translateY(0);
+                    opacity: 1;
+                }
+                
+                .header-nav-list {
+                    flex-direction: column;
+                    width: 100%;
+                    gap: 4px;
+                }
+                
+                .header-nav-link {
+                    width: 100%;
+                    text-align: left;
+                    padding: 12px 16px;
+                }
+                
+                .mobile-menu-toggle {
+                    display: flex;
+                }
+
+                .theme-toggle {
+                    width: 100%;
+                }
+            }
+        </style>
+    </head>
+    <body class="is-boxed has-animations">
+        <div id="snow-container"></div>
+        <div class="body-wrap">
+            <!-- Author: Sanket - Professional navigation bar redesign matching landing page aesthetics -->
+            <header class="site-header">
+                <div class="container">
+                    <div class="site-header-inner">
+                        <div class="brand header-brand">
+                            <a href="/">
+                                <img class="header-logo-image" src="../images/logo.svg" alt="kidokool-logo" />
+                            </a>
+                        </div>
+                        <nav class="header-nav" id="headerNav">
+                            <ul class="header-nav-list list-reset">
+                                <li><a href="/" class="header-nav-link"><i class="fas fa-home"></i> Home</a></li>
+                                <li><a href="/login" class="header-nav-link"><i class="fas fa-user"></i> Host Login</a></li>
+                                <li><a href="/developer" class="header-nav-link"><i class="fas fa-code"></i> Developer</a></li>
+                                <li><a href="/admin" class="header-nav-link"><i class="fas fa-shield-alt"></i> Admin</a></li>
+                            </ul>
+                            <button id="themeToggle" class="button button-sm theme-toggle">
+                                <i class="fas fa-sun"></i>
+                            </button>
+                        </nav>
+                        <button class="mobile-menu-toggle" id="mobileMenuToggle" aria-label="Menu">
+                            <span></span>
+                            <span></span>
+                            <span></span>
+                        </button>
+                    </div>
+                </div>
+            </header>
+
+            <main>
+                <section class="hero reveal-from-bottom">
+                    <div class="container">
+                        <div class="hero-inner">
+                            <div class="hero-copy">
+                                <h1 id="appTitle" class="hero-title mt-0">
+                                    Kidokool<br />Free browser based Real-time video calls.<br />
+                                    Simple, Secure, Fast.
+                                </h1>
+                                <p id="appDescription" class="hero-paragraph">
+                                    Start your next video call with a single click. No download, plug-in, or login is
+                                    required. Just get straight to talking, messaging, and sharing your screen.
+                                </p>
+                            </div>
+                            <div class="hero-figure anime-element">
+                                <svg class="placeholder" width="528" height="396" viewBox="0 0 528 396">
+                                    <rect width="528" height="396" style="fill: transparent" />
+                                </svg>
+                                <div class="hero-figure-box hero-figure-box-01" data-rotation="45deg"></div>
+                                <div class="hero-figure-box hero-figure-box-02" data-rotation="-45deg"></div>
+                                <div class="hero-figure-box hero-figure-box-03" data-rotation="0deg"></div>
+                                <div class="hero-figure-box hero-figure-box-04" data-rotation="-135deg"></div>
+                                <div class="hero-figure-box hero-figure-box-05"></div>
+                                <div class="hero-figure-box hero-figure-box-06"></div>
+                                <div class="hero-figure-box hero-figure-box-07"></div>
+                                <div class="hero-figure-box hero-figure-box-08" data-rotation="-22deg"></div>
+                                <div class="hero-figure-box hero-figure-box-09" data-rotation="-52deg"></div>
+                                <div class="hero-figure-box hero-figure-box-10" data-rotation="-50deg"></div>
+                            </div>
+                        </div>
+                    </div>
+                </section>
+
+                <section class="cta section">
+                    <div class="container">
+                        <div class="cta-inner section-inner br-12">
+                            <h3 id="joinDescription" class="section-title mt-0">
+                                Pick a room name.<br />
+                                How about this one?
+                            </h3>
+                            <div>
+                                <div class="mb-24">
+                                    <label for="roomName"></label>
+                                    <div class="form-group-desktop">
+                                        <input id="roomName" class="form-input" type="text" maxlength="32" value="" />
+                                        <button
+                                            id="genRoomButton"
+                                            class="button button-primary br-6 mr-8 mb-8 fas fa-arrows-rotate"
+                                        ></button>
+                                        <button id="joinRoomButton" class="button button-primary pulse">
+                                            Join Room
+                                        </button>
+                                    </div>
+                                    <div class="mt-8">
+                                        <button
+                                            id="customizeRoomButton"
+                                            class="button button-secondary button-block br-6"
+                                        >
+                                            Customize Room
+                                        </button>
+                                    </div>
+                                </div>
+                                <div id="lastRoomContainer" class="last-room">
+                                    <span id="joinLastLabel">Your recent room:</span>
+                                    <a id="lastRoom"></a>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </section>
+
+                <!-- Sections removed: topSponsors, teams, tryEasier, poweredBy, sponsors, advertisers, supportUs -->
+            </main>
+
+            <footer id="footer" class="site-footer">
+                <div class="container">
+                    <div class="site-footer-inner">
+                        <div class="brand footer-brand">
+                            <a href="/">
+                                <img class="header-logo-image" src="../images/logo.svg" alt="Logo" />
+                            </a>
+                        </div>
+                        <ul class="footer-links list-reset">
+                            <li>
+                                <a href="/about">About</a>
+                            </li>
+                            <li>
+                                <a href="/privacy">Privacy Policy</a>
+                            </li>
+                        </ul>
+
+                        <div class="footer-copyright">&copy; 2026 Kidokool, all rights reserved</div>
+                    </div>
+                </div>
+            </footer>
+        </div>
+
+        <script defer src="../js/Utils.js"></script>
+        <script defer src="../js/Common.js"></script>
+        <script defer src="../js/Landing.js"></script>
+        <script async defer src="https://buttons.github.io/buttons.js"></script>
+
+        <!-- Author: Sanket - Mobile menu toggle functionality -->
+        <script>
+            document.addEventListener('DOMContentLoaded', function() {
+                const mobileMenuToggle = document.getElementById('mobileMenuToggle');
+                const headerNav = document.getElementById('headerNav');
+                
+                if (mobileMenuToggle && headerNav) {
+                    mobileMenuToggle.addEventListener('click', function() {
+                        this.classList.toggle('active');
+                        headerNav.classList.toggle('active');
+                    });
+
+                    // Close menu when clicking outside
+                    document.addEventListener('click', function(event) {
+                        if (!event.target.closest('.site-header')) {
+                            mobileMenuToggle.classList.remove('active');
+                            headerNav.classList.remove('active');
+                        }
+                    });
+
+                    // Close menu when clicking a link
+                    const navLinks = headerNav.querySelectorAll('.header-nav-link');
+                    navLinks.forEach(link => {
+                        link.addEventListener('click', function() {
+                            mobileMenuToggle.classList.remove('active');
+                            headerNav.classList.remove('active');
+                        });
+                    });
+                }
+            });
+        </script>
+    </body>
+</html>

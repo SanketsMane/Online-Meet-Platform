@@ -1,0 +1,180 @@
+<!doctype html>
+<html lang="en" class="no-js">
+    <head>
+        <!-- Title and Icon -->
+
+        <title id="title">Kidokool - Create your Room name and start the new call.</title>
+        <link id="icon" rel="shortcut icon" href="../images/logo.svg" />
+        <link id="appleTouchIcon" rel="apple-touch-icon" href="../images/logo.svg" />
+
+        <!-- Meta Information -->
+
+        <meta charset="utf-8" />
+        <meta http-equiv="X-UA-Compatible" content="IE=edge" />
+        <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+
+        <meta
+            id="description"
+            name="description"
+            content="Kidokool powered by WebRTC and mediasoup, Real-time Simple Secure Fast video calls, messaging and screen sharing capabilities in the browser."
+        />
+        <meta
+            id="keywords"
+            name="keywords"
+            content="webrtc, miro, mediasoup, mediasoup-client, self hosted, voip, sip, real-time communications, chat, messaging, meet, webrtc stun, webrtc turn, webrtc p2p, webrtc sfu, video meeting, video chat, video conference, multi video chat, multi video conference, peer to peer, p2p, sfu, rtc, alternative to, zoom, microsoft teams, google meet, jitsi, meeting"
+        />
+
+        <!-- https://ogp.me -->
+
+        <meta property="og:type" content="{{OG_TYPE}}" />
+        <meta property="og:site_name" content="{{OG_SITE_NAME}}" />
+        <meta property="og:title" content="{{OG_TITLE}}" />
+        <meta property="og:description" content="{{OG_DESCRIPTION}}" />
+        <meta property="og:image" content="{{OG_IMAGE}}" />
+        <meta property="og:url" content="{{OG_URL}}" />
+
+        <!-- StyleSheet -->
+        <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/animate.css/4.1.1/animate.min.css" />
+        <link rel="stylesheet" href="https://fonts.googleapis.com/css?family=IBM+Plex+Sans:400,600" />
+        <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.1.1/css/all.min.css" />
+        <link rel="stylesheet" type="text/css" href="../css/landing.css" />
+
+        <!-- Js scripts -->
+
+        <script defer src="../js/Brand.js"></script>
+        <script async src="../js/Stats.js"></script>
+
+        <script defer src="https://cdn.jsdelivr.net/npm/sweetalert2@11.4.8"></script>
+        <script src="https://unpkg.com/animejs@3.0.1/lib/anime.min.js"></script>
+        <script src="https://unpkg.com/scrollreveal@4.0.0/dist/scrollreveal.min.js"></script>
+        <script src="https://cdn.jsdelivr.net/npm/xss/dist/xss.min.js"></script>
+        <script defer src="../js/Theme.js"></script>
+    </head>
+    <body class="is-boxed has-animations">
+        <div class="body-wrap">
+            <header class="site-header">
+                <div class="container">
+                    <div class="site-header-inner">
+                        <div class="brand header-brand">
+                            <h1 class="m-0">
+                                <a href="/">
+                                    <img
+                                        class="header-logo-image"
+                                        src="../images/logo.svg"
+                                        alt="kidokool-webrtc-logo"
+                                    />
+
+                                </a>
+                                <button id="themeToggle" class="button button-sm" style="background: transparent; border: 1px solid var(--divider-color); color: var(--heading-color); min-width: auto; padding: 0 12px; margin-left: 20px;">
+                                    <i class="fas fa-sun"></i>
+                                </button>
+                            </h1>
+                        </div>
+                    </div>
+                </div>
+            </header>
+
+            <main>
+                <section class="hero">
+                    <div class="container">
+                        <div class="hero-inner">
+                            <div class="hero-copy reveal-from-bottom">
+                                <h1 id="newRoomTitle" class="hero-title mt-0">
+                                    Pick name. <br />
+                                    Share URL. <br />
+                                    Start conference.
+                                </h1>
+                                <p id="newRoomDescription" class="hero-paragraph">
+                                    Each room has its disposable URL. Just pick a room name and share your custom URL.
+                                    It's that easy.
+                                </p>
+                            </div>
+                            <div class="hero-figure anime-element">
+                                <svg class="placeholder" width="528" height="396" viewBox="0 0 528 396">
+                                    <rect width="528" height="396" style="fill: transparent" />
+                                </svg>
+                                <div class="hero-figure-box hero-figure-box-01" data-rotation="45deg"></div>
+                                <div class="hero-figure-box hero-figure-box-02" data-rotation="-45deg"></div>
+                                <div class="hero-figure-box hero-figure-box-03" data-rotation="0deg"></div>
+                                <div class="hero-figure-box hero-figure-box-04" data-rotation="-135deg"></div>
+                                <div class="hero-figure-box hero-figure-box-05"></div>
+                                <div class="hero-figure-box hero-figure-box-06"></div>
+                                <div class="hero-figure-box hero-figure-box-07"></div>
+                                <div class="hero-figure-box hero-figure-box-08" data-rotation="-22deg"></div>
+                                <div class="hero-figure-box hero-figure-box-09" data-rotation="-52deg"></div>
+                                <div class="hero-figure-box hero-figure-box-10" data-rotation="-50deg"></div>
+                            </div>
+                        </div>
+                    </div>
+                </section>
+
+                <hr />
+
+                <section class="cta section mb-32">
+                    <div class="container">
+                        <div class="cta-inner section-inner br-12">
+                            <h3 id="joinDescription" class="section-title mt-0">
+                                Pick a room name.<br />
+                                How about this one?
+                            </h3>
+                            <div>
+                                <div class="mb-24">
+                                    <label for="roomName"></label>
+                                    <div class="form-group-desktop">
+                                        <input id="roomName" class="form-input" type="text" maxlength="32" value="" />
+                                        <button
+                                            id="genRoomButton"
+                                            class="button button-primary br-6 mr-8 mb-8 fas fa-arrows-rotate"
+                                        ></button>
+                                        <button id="joinRoomButton" class="button button-primary pulse">
+                                            Join Room
+                                        </button>
+                                    </div>
+                                    <div class="mt-8">
+                                        <button
+                                            id="customizeRoomButton"
+                                            class="button button-secondary button-block br-6"
+                                        >
+                                            Customize Room
+                                        </button>
+                                    </div>
+                                </div>
+                                <div id="lastRoomContainer" class="last-room">
+                                    <span id="joinLastLabel">Your recent room:</span>
+                                    <a id="lastRoom"></a>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </section>
+            </main>
+
+            <footer id="footer" class="site-footer">
+                <div class="container">
+                    <div class="site-footer-inner">
+                        <div class="brand footer-brand">
+                            <a href="/">
+                                <img class="header-logo-image" src="../images/logo.svg" alt="Logo" />
+                            </a>
+                        </div>
+                        <ul class="footer-links list-reset">
+                            <li>
+                                <a href="/about">About</a>
+                            </li>
+                            <li>
+                                <a href="/privacy">Privacy Policy</a>
+                            </li>
+                        </ul>
+
+                        <div class="footer-copyright">&copy; 2026 Kidokool, all rights reserved</div>
+                    </div>
+                </div>
+            </footer>
+        </div>
+
+        <script defer src="../js/Utils.js"></script>
+        <script defer src="../js/Landing.js"></script>
+        <script defer src="../js/Common.js"></script>
+        <script async defer src="https://buttons.github.io/buttons.js"></script>
+    </body>
+</html>

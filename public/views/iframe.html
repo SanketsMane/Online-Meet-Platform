@@ -1,0 +1,36 @@
+<!doctype html>
+<html lang="en">
+    <head>
+        <meta charset="UTF-8" />
+        <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+        <title>Kidokool Iframe demo</title>
+
+        <!-- Replace kidokool.com with YOUR-DOMAIN-NAME -->
+        <script src="https://kidokool.com/js/Iframe.js" defer></script>
+
+        <script>
+            document.addEventListener('DOMContentLoaded', function () {
+                const domain = 'kidokool.com'; // YOUR-DOMAIN-NAME
+                const options = {
+                    room: 'test',
+                    roomPassword: 0,
+                    name: 'kidokool',
+                    audio: 0,
+                    video: 0,
+                    screen: 0,
+                    hide: 0,
+                    notify: 0,
+                    duration: 'unlimited', // HH:MM:SS
+                    token: null,
+                    width: '100vw',
+                    height: '100vh',
+                    parentNode: document.querySelector('#meet'),
+                };
+                const api = new IframeApi(domain, options);
+            });
+        </script>
+    </head>
+    <body>
+        <div id="meet"></div>
+    </body>
+</html>

@@ -1,0 +1,897 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Kidokool - Developer Portal</title>
+    <link rel="shortcut icon" href="../images/logo.svg" />
+    
+    <!-- Fonts and Icons -->
+    <link rel="stylesheet" href="https://fonts.googleapis.com/css?family=IBM+Plex+Sans:400,600" />
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.2/css/all.min.css" />
+    <link rel="stylesheet" href="/css/landing.css">
+    
+    <!-- Scripts -->
+    <script defer src="../js/Brand.js"></script>
+    <script defer src="../js/Theme.js"></script>
+    <script src="https://cdn.jsdelivr.net/npm/axios/dist/axios.min.js"></script>
+    <script defer src="https://cdn.jsdelivr.net/npm/sweetalert2@11.4.8"></script>
+
+    <!-- Author: Sanket - Professional developer portal styles -->
+    <style>
+        body {
+            background: var(--bg-color);
+            font-family: 'IBM Plex Sans', sans-serif;
+            margin: 0;
+            padding: 0;
+        }
+
+        /* Header Styles */
+        .site-header {
+            position: sticky;
+            top: 0;
+            z-index: 1000;
+            background: var(--bg-color);
+            border-bottom: 1px solid var(--divider-color);
+            backdrop-filter: blur(10px);
+        }
+
+        /* Author: Sanket - Remove the diagonal crossover design overlay */
+        .site-header::before {
+            display: none !important;
+        }
+
+        .site-header-inner {
+            display: flex;
+            align-items: center;
+            justify-content: space-between;
+            padding: 16px 0;
+            max-width: 1200px;
+            margin: 0 auto;
+            padding-left: 24px;
+            padding-right: 24px;
+        }
+
+        .header-brand {
+            display: flex;
+            align-items: center;
+            gap: 16px;
+        }
+
+        .header-logo {
+            width: 40px;
+            height: 40px;
+        }
+
+        .header-title {
+            font-size: 20px;
+            font-weight: 600;
+            color: var(--heading-color);
+            margin: 0;
+        }
+
+        .header-nav {
+            display: flex;
+            align-items: center;
+            gap: 16px;
+        }
+
+        .nav-link {
+            color: var(--text-color);
+            text-decoration: none;
+            font-weight: 500;
+            padding: 8px 16px;
+            border-radius: 6px;
+            transition: all 0.2s ease;
+            display: flex;
+            align-items: center;
+            gap: 6px;
+        }
+
+        .nav-link:hover {
+            background: var(--divider-color);
+            color: var(--heading-color);
+        }
+
+        .theme-toggle {
+            background: transparent !important;
+            border: 1px solid var(--divider-color) !important;
+            color: var(--heading-color) !important;
+            padding: 8px 12px !important;
+            border-radius: 6px !important;
+            cursor: pointer;
+            transition: all 0.2s ease;
+        }
+
+        .theme-toggle:hover {
+            background: var(--divider-color) !important;
+        }
+
+        /* Auth Container */
+        .auth-container {
+            min-height: calc(100vh - 80px);
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            padding: 40px 16px;
+        }
+
+        .auth-card {
+            max-width: 500px;
+            width: 100%;
+            background: rgba(255, 255, 255, 0.05);
+            border: 1px solid var(--divider-color);
+            border-radius: 16px;
+            overflow: hidden;
+            box-shadow: 0 20px 60px rgba(0, 0, 0, 0.3);
+            backdrop-filter: blur(10px);
+        }
+
+        [data-theme='light'] .auth-card {
+            background: #ffffff;
+            box-shadow: 0 10px 40px rgba(0, 0, 0, 0.1);
+        }
+
+        .auth-tabs {
+            display: flex;
+            border-bottom: 1px solid var(--divider-color);
+        }
+
+        .auth-tab {
+            flex: 1;
+            padding: 20px;
+            background: transparent;
+            border: none;
+            color: var(--text-color);
+            font-size: 16px;
+            font-weight: 600;
+            cursor: pointer;
+            transition: all 0.2s ease;
+            position: relative;
+        }
+
+        .auth-tab.active {
+            color: var(--link-color);
+        }
+
+        .auth-tab.active::after {
+            content: '';
+            position: absolute;
+            bottom: 0;
+            left: 0;
+            right: 0;
+            height: 2px;
+            background: var(--link-color);
+        }
+
+        .auth-content {
+            padding: 40px;
+        }
+
+        .tab-panel {
+            display: none;
+        }
+
+        .tab-panel.active {
+            display: block;
+        }
+
+        .auth-title {
+            font-size: 24px;
+            font-weight: 600;
+            color: var(--heading-color);
+            margin: 0 0 8px 0;
+        }
+
+        .auth-subtitle {
+            font-size: 14px;
+            color: var(--text-color);
+            margin: 0 0 32px 0;
+        }
+
+        /* Dashboard Container */
+        .dashboard-container {
+            max-width: 1200px;
+            margin: 0 auto;
+            padding: 40px 24px;
+        }
+
+        .welcome-section {
+            margin-bottom: 40px;
+        }
+
+        .welcome-title {
+            font-size: 32px;
+            font-weight: 600;
+            color: var(--heading-color);
+            margin: 0 0 8px 0;
+        }
+
+        .welcome-subtitle {
+            font-size: 16px;
+            color: var(--text-color);
+            margin: 0;
+        }
+
+        .dashboard-grid {
+            display: grid;
+            grid-template-columns: 2fr 1fr;
+            gap: 24px;
+        }
+
+        .section-card {
+            background: rgba(255, 255, 255, 0.04);
+            border: 1px solid var(--divider-color);
+            border-radius: 12px;
+            padding: 24px;
+            backdrop-filter: blur(10px);
+        }
+
+        [data-theme='light'] .section-card {
+            background: #ffffff;
+            box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1);
+        }
+
+        .section-header {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            margin-bottom: 24px;
+        }
+
+        .section-title {
+            font-size: 20px;
+            font-weight: 600;
+            color: var(--heading-color);
+            margin: 0;
+        }
+
+        .btn-primary {
+            padding: 10px 20px;
+            font-size: 14px;
+            font-weight: 600;
+            color: #ffffff;
+            background: linear-gradient(135deg, #0270d7 0%, #0056b3 100%);
+            border: none;
+            border-radius: 8px;
+            cursor: pointer;
+            transition: all 0.2s ease;
+            display: inline-flex;
+            align-items: center;
+            gap: 8px;
+        }
+
+        .btn-primary:hover {
+            transform: translateY(-2px);
+            box-shadow: 0 8px 20px rgba(2, 112, 215, 0.3);
+        }
+
+        /* API Key Card */
+        .api-key-card {
+            background: rgba(102, 126, 234, 0.08);
+            border: 1px solid var(--divider-color);
+            border-radius: 12px;
+            padding: 20px;
+            margin-bottom: 16px;
+        }
+
+        .key-header {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            margin-bottom: 12px;
+        }
+
+        .key-name {
+            font-size: 16px;
+            font-weight: 600;
+            color: var(--heading-color);
+        }
+
+        .key-status {
+            padding: 4px 12px;
+            border-radius: 12px;
+            font-size: 12px;
+            font-weight: 600;
+            text-transform: uppercase;
+        }
+
+        .status-active {
+            background: rgba(17, 153, 142, 0.2);
+            color: #38ef7d;
+        }
+
+        .status-inactive {
+            background: rgba(220, 53, 69, 0.2);
+            color: #dc3545;
+        }
+
+        .key-info {
+            display: flex;
+            align-items: center;
+            gap: 12px;
+            margin-bottom: 12px;
+        }
+
+        .key-prefix {
+            font-family: 'Courier New', monospace;
+            font-size: 14px;
+            color: var(--text-color);
+            background: var(--divider-color);
+            padding: 6px 12px;
+            border-radius: 6px;
+        }
+
+        .btn-copy {
+            padding: 6px 12px;
+            background: rgba(2, 112, 215, 0.2);
+            color: var(--link-color);
+            border: none;
+            border-radius: 6px;
+            cursor: pointer;
+            font-size: 12px;
+            font-weight: 500;
+            transition: all 0.2s ease;
+        }
+
+        .btn-copy:hover {
+            background: var(--link-color);
+            color: white;
+        }
+
+        /* Form Styles */
+        .form-group {
+            margin-bottom: 20px;
+        }
+
+        .form-label {
+            display: block;
+            font-size: 14px;
+            font-weight: 500;
+            color: var(--heading-color);
+            margin-bottom: 8px;
+        }
+
+        .form-input-wrapper {
+            position: relative;
+        }
+
+        .form-input-icon {
+            position: absolute;
+            left: 16px;
+            top: 50%;
+            transform: translateY(-50%);
+            color: var(--text-color);
+        }
+
+        .form-input {
+            width: 100%;
+            padding: 12px 16px 12px 48px;
+            font-size: 14px;
+            color: var(--heading-color);
+            background: var(--input-bg);
+            border: 1px solid var(--input-border);
+            border-radius: 8px;
+            transition: all 0.2s ease;
+            font-family: 'IBM Plex Sans', sans-serif;
+        }
+
+        .form-input:focus {
+            outline: none;
+            border-color: var(--link-color);
+            box-shadow: 0 0 0 3px rgba(2, 112, 215, 0.1);
+        }
+
+        .btn-submit {
+            width: 100%;
+            padding: 12px 24px;
+            font-size: 14px;
+            font-weight: 600;
+            color: #ffffff;
+            background: linear-gradient(135deg, #0270d7 0%, #0056b3 100%);
+            border: none;
+            border-radius: 8px;
+            cursor: pointer;
+            transition: all 0.2s ease;
+        }
+
+        .btn-submit:hover {
+            transform: translateY(-2px);
+            box-shadow: 0 8px 20px rgba(2, 112, 215, 0.3);
+        }
+
+        .btn-submit:disabled {
+            opacity: 0.6;
+            cursor: not-allowed;
+            transform: none;
+        }
+
+        .error-message {
+            background: rgba(220, 53, 69, 0.1);
+            border: 1px solid rgba(220, 53, 69, 0.3);
+            color: #dc3545;
+            padding: 12px 16px;
+            border-radius: 8px;
+            font-size: 14px;
+            margin-bottom: 20px;
+            display: none;
+        }
+
+        .error-message.show {
+            display: block;
+        }
+
+        .hidden {
+            display: none !important;
+        }
+
+        .logout-btn {
+            background: rgba(220, 53, 69, 0.2);
+            color: #dc3545;
+            padding: 8px 16px;
+            border-radius: 6px;
+            border: none;
+            cursor: pointer;
+            font-weight: 500;
+            transition: all 0.2s ease;
+        }
+
+        .logout-btn:hover {
+            background: #dc3545;
+            color: white;
+        }
+
+        .quick-start {
+            background: rgba(102, 126, 234, 0.08);
+            border: 1px solid var(--divider-color);
+            border-radius: 12px;
+            padding: 20px;
+            margin-bottom: 16px;
+        }
+
+        .quick-start h4 {
+            color: var(--heading-color);
+            margin: 0 0 12px 0;
+            font-size: 16px;
+        }
+
+        .quick-start p {
+            color: var(--text-color);
+            font-size: 14px;
+            line-height: 1.6;
+            margin: 0;
+        }
+
+        .quick-start code {
+            background: var(--divider-color);
+            padding: 2px 6px;
+            border-radius: 4px;
+            font-family: 'Courier New', monospace;
+            font-size: 13px;
+        }
+
+        @media (max-width: 968px) {
+            .dashboard-grid {
+                grid-template-columns: 1fr;
+            }
+        }
+
+        @media (max-width: 480px) {
+            .auth-content {
+                padding: 24px;
+            }
+        }
+    </style>
+</head>
+<body>
+    <!-- Author: Sanket - Professional header with navigation -->
+    <header class="site-header">
+        <div class="site-header-inner">
+            <div class="header-brand">
+                <a href="/">
+                    <img src="../images/logo.svg" alt="Kidokool" class="header-logo" />
+                </a>
+                <h1 class="header-title">Developer Portal</h1>
+            </div>
+            <nav class="header-nav">
+                <a href="/" class="nav-link">
+                    <i class="fas fa-home"></i> Home
+                </a>
+                <button id="logoutBtn" class="logout-btn hidden" onclick="logout()">
+                    <i class="fas fa-sign-out-alt"></i> Logout
+                </button>
+                <button id="themeToggle" class="theme-toggle">
+                    <i class="fas fa-sun"></i>
+                </button>
+            </nav>
+        </div>
+    </header>
+
+    <!-- Author: Sanket - Auth Section with Tabs -->
+    <div id="authSection" class="auth-container">
+        <div class="auth-card">
+            <div class="auth-tabs">
+                <button class="auth-tab active" onclick="switchTab('login')">Login</button>
+                <button class="auth-tab" onclick="switchTab('register')">Register</button>
+            </div>
+
+            <div class="auth-content">
+                <!-- Login Tab -->
+                <div id="loginPanel" class="tab-panel active">
+                    <h2 class="auth-title">Welcome Back</h2>
+                    <p class="auth-subtitle">Sign in to manage your API keys</p>
+
+                    <div id="loginError" class="error-message"></div>
+
+                    <form id="loginForm">
+                        <div class="form-group">
+                            <label class="form-label">Email</label>
+                            <div class="form-input-wrapper">
+                                <i class="fas fa-envelope form-input-icon"></i>
+                                <input type="email" id="loginEmail" class="form-input" placeholder="your@email.com" required />
+                            </div>
+                        </div>
+
+                        <div class="form-group">
+                            <label class="form-label">Password</label>
+                            <div class="form-input-wrapper">
+                                <i class="fas fa-lock form-input-icon"></i>
+                                <input type="password" id="loginPassword" class="form-input" placeholder="Enter password" required />
+                            </div>
+                        </div>
+
+                        <button type="submit" id="loginBtn" class="btn-submit">
+                            Sign In
+                        </button>
+                    </form>
+                </div>
+
+                <!-- Register Tab -->
+                <div id="registerPanel" class="tab-panel">
+                    <h2 class="auth-title">Create Account</h2>
+                    <p class="auth-subtitle">Start integrating Kidokool into your apps</p>
+
+                    <div id="registerError" class="error-message"></div>
+
+                    <form id="registerForm">
+                        <div class="form-group">
+                            <label class="form-label">Company Name</label>
+                            <div class="form-input-wrapper">
+                                <i class="fas fa-building form-input-icon"></i>
+                                <input type="text" id="regName" class="form-input" placeholder="Your Company" required />
+                            </div>
+                        </div>
+
+                        <div class="form-group">
+                            <label class="form-label">Email</label>
+                            <div class="form-input-wrapper">
+                                <i class="fas fa-envelope form-input-icon"></i>
+                                <input type="email" id="regEmail" class="form-input" placeholder="your@email.com" required />
+                            </div>
+                        </div>
+
+                        <div class="form-group">
+                            <label class="form-label">Password</label>
+                            <div class="form-input-wrapper">
+                                <i class="fas fa-lock form-input-icon"></i>
+                                <input type="password" id="regPassword" class="form-input" placeholder="Create password" required />
+                            </div>
+                        </div>
+
+                        <button type="submit" id="registerBtn" class="btn-submit">
+                            Create Account
+                        </button>
+                    </form>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <!-- Author: Sanket - Dashboard Section -->
+    <div id="dashboardSection" class="dashboard-container hidden">
+        <div class="welcome-section">
+            <h1 class="welcome-title">Welcome, <span id="userName">Developer</span>!</h1>
+            <p class="welcome-subtitle">Manage your API keys and integrate Kidokool into your applications</p>
+        </div>
+
+        <div class="dashboard-grid">
+            <!-- API Keys Section -->
+            <div class="section-card">
+                <div class="section-header">
+                    <h2 class="section-title">Your API Keys</h2>
+                    <button class="btn-primary" onclick="generateKey()">
+                        <i class="fas fa-plus"></i> Generate New Key
+                    </button>
+                </div>
+                <div id="keysList">
+                    <p style="color: var(--text-color); text-align: center; padding: 40px;">Loading...</p>
+                </div>
+            </div>
+
+            <!-- Quick Start Section -->
+            <div class="section-card">
+                <h2 class="section-title" style="margin-bottom: 20px;">Quick Start</h2>
+                
+                <div class="quick-start">
+                    <h4><i class="fas fa-rocket"></i> Getting Started</h4>
+                    <p>Generate an API key and use it to create meetings programmatically.</p>
+                </div>
+
+                <div class="quick-start">
+                    <h4><i class="fas fa-code"></i> API Endpoint</h4>
+                    <p>Base URL: <code id="apiBaseUrl">/api/v1</code></p>
+                </div>
+
+                <script>
+                    document.getElementById('apiBaseUrl').textContent = window.location.origin + '/api/v1';
+                </script>
+
+                <div class="quick-start">
+                    <h4><i class="fas fa-book"></i> Example Request</h4>
+                    <p>Create a meeting:</p>
+                    <p><code>POST /api/v1/meeting</code></p>
+                    <p style="margin-top: 8px;">Header: <code>authorization: YOUR_API_KEY</code></p>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <!-- Author: Sanket - Developer portal functionality -->
+    <script>
+        const API_URL = '/api/v1';
+        let token = localStorage.getItem('dev_token');
+
+        // Author: Sanket - Tab switching
+        function switchTab(tab) {
+            const tabs = document.querySelectorAll('.auth-tab');
+            const panels = document.querySelectorAll('.tab-panel');
+            
+            tabs.forEach(t => t.classList.remove('active'));
+            panels.forEach(p => p.classList.remove('active'));
+            
+            if (tab === 'login') {
+                tabs[0].classList.add('active');
+                document.getElementById('loginPanel').classList.add('active');
+            } else {
+                tabs[1].classList.add('active');
+                document.getElementById('registerPanel').classList.add('active');
+            }
+        }
+
+        // Author: Sanket - Login form handler
+        document.getElementById('loginForm').addEventListener('submit', async function(e) {
+            e.preventDefault();
+            
+            const email = document.getElementById('loginEmail').value.trim();
+            const password = document.getElementById('loginPassword').value;
+            const loginBtn = document.getElementById('loginBtn');
+
+            loginBtn.disabled = true;
+            loginBtn.textContent = 'Signing in...';
+            hideError('loginError');
+
+            try {
+                const res = await axios.post(`${API_URL}/auth/login`, {
+                    email,
+                    password
+                });
+
+                if (res.data && res.data.token) {
+                    token = res.data.token;
+                    localStorage.setItem('dev_token', token);
+                    localStorage.setItem('dev_name', res.data.name || email);
+                    
+                    // Author: Sanket - Show success then load dashboard
+                    Swal.fire({
+                        icon: 'success',
+                        title: 'Login Successful!',
+                        text: 'Welcome back!',
+                        timer: 1500,
+                        showConfirmButton: false
+                    }).then(() => {
+                        showDashboard();
+                    });
+                } else {
+                    showError('loginError', 'Invalid response from server');
+                }
+            } catch (error) {
+                console.error('Login error:', error);
+                let errorMsg = 'Login failed. Please check your credentials.';
+                
+                if (error.response && error.response.data && error.response.data.message) {
+                    errorMsg = error.response.data.message;
+                }
+                
+                showError('loginError', errorMsg);
+            } finally {
+                loginBtn.disabled = false;
+                loginBtn.textContent = 'Sign In';
+            }
+        });
+
+        // Author: Sanket - Register form handler
+        document.getElementById('registerForm').addEventListener('submit', async function(e) {
+            e.preventDefault();
+            
+            const name = document.getElementById('regName').value.trim();
+            const email = document.getElementById('regEmail').value.trim();
+            const password = document.getElementById('regPassword').value;
+            const registerBtn = document.getElementById('registerBtn');
+
+            registerBtn.disabled = true;
+            registerBtn.textContent = 'Creating account...';
+            hideError('registerError');
+
+            try {
+                const res = await axios.post(`${API_URL}/auth/register`, {
+                    name,
+                    email,
+                    password
+                });
+
+                if (res.data) {
+                    await Swal.fire({
+                        icon: 'success',
+                        title: 'Registration Successful!',
+                        text: 'Please login with your credentials',
+                        confirmButtonText: 'OK'
+                    });
+
+                    switchTab('login');
+                    document.getElementById('loginEmail').value = email;
+                }
+            } catch (error) {
+                console.error('Registration error:', error);
+                let errorMsg = 'Registration failed. Please try again.';
+                
+                if (error.response && error.response.data && error.response.data.message) {
+                    errorMsg = error.response.data.message;
+                }
+                
+                showError('registerError', errorMsg);
+            } finally {
+                registerBtn.disabled = false;
+                registerBtn.textContent = 'Create Account';
+            }
+        });
+
+        // Author: Sanket - Show dashboard
+        function showDashboard() {
+            document.getElementById('authSection').classList.add('hidden');
+            document.getElementById('dashboardSection').classList.remove('hidden');
+            document.getElementById('logoutBtn').classList.remove('hidden');
+            
+            const userName = localStorage.getItem('dev_name') || 'Developer';
+            document.getElementById('userName').textContent = userName;
+            
+            loadKeys();
+        }
+
+        // Author: Sanket - Load API keys
+        async function loadKeys() {
+            try {
+                const res = await axios.get(`${API_URL}/keys`, {
+                    headers: { 'Authorization': `Bearer ${token}` }
+                });
+
+                const keys = res.data;
+                const keysList = document.getElementById('keysList');
+                
+                if (keys.length === 0) {
+                    keysList.innerHTML = '<p style="color: var(--text-color); text-align: center; padding: 40px;">No API keys yet. Generate your first key to get started!</p>';
+                } else {
+                    keysList.innerHTML = keys.map(k => `
+                        <div class="api-key-card">
+                            <div class="key-header">
+                                <div class="key-name">${k.name}</div>
+                                <span class="key-status ${k.is_active ? 'status-active' : 'status-inactive'}">
+                                    ${k.is_active ? 'Active' : 'Inactive'}
+                                </span>
+                            </div>
+                            <div class="key-info">
+                                <div class="key-prefix">${k.prefix}...</div>
+                                <button class="btn-copy" onclick="copyPrefix('${k.prefix}')">
+                                    <i class="fas fa-copy"></i> Copy Prefix
+                                </button>
+                            </div>
+                        </div>
+                    `).join('');
+                }
+            } catch (error) {
+                console.error('Failed to load keys:', error);
+                Swal.fire({
+                    icon: 'error',
+                    title: 'Authentication Error',
+                    text: 'Please login again',
+                });
+                logout();
+            }
+        }
+
+        // Author: Sanket - Generate new API key
+        async function generateKey() {
+            const { value: name } = await Swal.fire({
+                title: 'Generate API Key',
+                input: 'text',
+                inputLabel: 'Key Name',
+                inputPlaceholder: 'e.g., Production, Development',
+                showCancelButton: true,
+                inputValidator: (value) => {
+                    if (!value) {
+                        return 'Please enter a key name';
+                    }
+                }
+            });
+
+            if (name) {
+                try {
+                    const res = await axios.post(`${API_URL}/keys`, 
+                        { name },
+                        { headers: { 'Authorization': `Bearer ${token}` }}
+                    );
+
+                    if (res.data && res.data.apiKey) {
+                        await Swal.fire({
+                            icon: 'success',
+                            title: 'API Key Generated!',
+                            html: `
+                                <p>Your API key has been generated. Save it now - you won't be able to see it again!</p>
+                                <div style="background: #f8f9fa; padding: 16px; border-radius: 8px; margin: 16px 0; font-family: monospace; word-break: break-all;">
+                                    ${res.data.apiKey}
+                                </div>
+                                <button onclick="navigator.clipboard.writeText('${res.data.apiKey}')" style="padding: 8px 16px; background: #0270d7; color: white; border: none; border-radius: 6px; cursor: pointer;">
+                                    <i class="fas fa-copy"></i> Copy to Clipboard
+                                </button>
+                            `,
+                            confirmButtonText: 'Done'
+                        });
+                        
+                        loadKeys();
+                    }
+                } catch (error) {
+                    Swal.fire({
+                        icon: 'error',
+                        title: 'Error',
+                        text: 'Failed to generate API key'
+                    });
+                }
+            }
+        }
+
+        // Author: Sanket - Copy prefix helper
+        function copyPrefix(prefix) {
+            navigator.clipboard.writeText(prefix);
+            Swal.fire({
+                icon: 'success',
+                title: 'Copied!',
+                text: 'Key prefix copied to clipboard',
+                timer: 1500,
+                showConfirmButton: false
+            });
+        }
+
+        // Author: Sanket - Logout
+        function logout() {
+            localStorage.removeItem('dev_token');
+            localStorage.removeItem('dev_name');
+            location.reload();
+        }
+
+        // Author: Sanket - Error helpers
+        function showError(id, message) {
+            const errorEl = document.getElementById(id);
+            errorEl.textContent = message;
+            errorEl.classList.add('show');
+        }
+
+        function hideError(id) {
+            document.getElementById(id).classList.remove('show');
+        }
+
+        // Auto-load dashboard if token exists
+        if (token) {
+            showDashboard();
+        }
+    </script>
+</body>
+</html>

@@ -1,0 +1,96 @@
+@import url('https://fonts.googleapis.com/css2?family=Montserrat:wght@500&display=swap');
+
+:root {
+    --body-bg: radial-gradient(#393939, #000000);
+    --border: 0.1px solid rgb(255 255 255 / 32%);
+    --border-radius: 1rem;
+    --msger-width: 800px;
+    --msger-height: 700px;
+    --msger-bubble-width: 85%;
+    --msger-bg: radial-gradient(#393939, #000000);
+    --wb-width: 1920px;
+    --wb-height: 1080px;
+    --wb-bg: radial-gradient(#393939, #000000);
+    --select-bg: #2c2c2c;
+    --left-msg-bg: #252d31;
+    --right-msg-bg: #056162;
+    --private-msg-bg: #6b1226;
+    --box-shadow: 0px 8px 16px 0px rgb(0 0 0);
+    --btns-hover-scale: scale(1.1);
+    --settings-bg: radial-gradient(#393939, #000000);
+    --tab-btn-active: rgb(42 42 42 / 70%);
+    --btns-bg-color: rgba(0, 0, 0, 0.7);
+
+    /* bottom buttons bar horizontal default */
+    --bottom-btns-top: auto;
+    --bottom-btns-left: 50%;
+    --bottom-btns-bottom: 0;
+    --bottom-btns-translate-X: -50%;
+    --bottom-btns-translate-Y: 0%;
+    --bottom-btns-margin-bottom: 18px;
+    --bottom-btns-flex-direction: row;
+
+    --transcription-height: 680px;
+    --transcription-width: 420px;
+    --trx-bg: radial-gradient(#393939, #000000);
+
+    --editor-container-width: 100%;
+    --editor-container-height: 100%;
+    --editor-height: 85vh;
+
+    --vmi-wh: 15vw;
+    /* https://developer.mozilla.org/en-US/docs/Web/CSS/object-fit */
+    --videoObjFit: cover;
+
+    --dd-color: #ffffff;
+
+    --videoBar-active: 1px solid rgba(102, 190, 255, 0.32);
+    
+    /* Theme Variables - Default Dark */
+    --bg-color: #1d2026;
+    --text-color: #8a94a7; /* 600 */
+    --text-color-light: #fff;
+    --heading-color: #fff;
+    --divider-color: #242830;
+    --secondary-bg: #242830; 
+    --card-bg: #181b21;
+    --link-color: #8a94a7;
+    --link-hover-color: #fff;
+    --input-bg: #1d2026;
+    --input-border: #242830;
+    --blockquote-color: #3b404c;
+    --screen-reader-bg: #1d2026;
+    --screen-reader-text: #0270d7;
+}
+
+[data-theme='light'] {
+    --body-bg: radial-gradient(#ffffff, #e6e6e6); 
+    --msger-bg: radial-gradient(#ffffff, #e6e6e6);
+    --wb-bg: radial-gradient(#ffffff, #e6e6e6);
+    --settings-bg: radial-gradient(#ffffff, #e6e6e6);
+    --left-msg-bg: #e6e6e6; /* Light grey for left messages */
+    --right-msg-bg: #dcf8c6; /* WhatsApp style light green or similar */
+    --private-msg-bg: #f8d7da; /* Light red/pink */
+    --select-bg: #f8f9fa;
+
+    /* Landing Page Light Theme */
+    --bg-color: #ffffff;
+    --text-color: #333333;
+    --text-color-light: #333333; /* For headings that were white */
+    --heading-color: #111111;
+    --divider-color: #eaeaea;
+    --secondary-bg: #f9f9f9;
+    --card-bg: #ffffff;
+    --link-color: #0270d7;
+    --link-hover-color: #014c92;
+    --input-bg: #ffffff;
+    --input-border: #cccccc;
+    --blockquote-color: #666666;
+    --screen-reader-bg: #ffffff;
+    --screen-reader-text: #0270d7;
+}
+
+* {
+    outline: none;
+    font-family: 'Montserrat';
+}

@@ -1,0 +1,228 @@
+<!doctype html>
+<html lang="en" class="no-js">
+    <head>
+        <title id="title">Kidokool - Privacy Policy</title>
+        <link id="icon" rel="shortcut icon" href="../images/logo.svg" />
+        
+        <meta charset="utf-8" />
+        <meta http-equiv="X-UA-Compatible" content="IE=edge" />
+        <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+
+        <link rel="stylesheet" href="https://fonts.googleapis.com/css?family=IBM+Plex+Sans:400,600&display=swap" />
+        <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.2/css/all.min.css" />
+        <link rel="stylesheet" type="text/css" href="../css/landing.css" />
+
+        <style>
+            :root {
+                --glass-bg: rgba(255, 255, 255, 0.05);
+                --glass-border: rgba(255, 255, 255, 0.1);
+            }
+
+            [data-theme='light'] {
+                --glass-bg: rgba(0, 0, 0, 0.03);
+                --glass-border: rgba(0, 0, 0, 0.1);
+            }
+
+            body {
+                background: var(--bg-color);
+                color: var(--text-color);
+                overflow-x: hidden;
+            }
+
+            .privacy-hero {
+                padding: 100px 24px 60px;
+                text-align: center;
+                background: radial-gradient(circle at top center, rgba(2, 112, 215, 0.15) 0%, transparent 70%);
+            }
+
+            .privacy-hero h1 {
+                font-size: 56px;
+                background: linear-gradient(135deg, var(--heading-color) 30%, var(--link-color) 100%);
+                -webkit-background-clip: text;
+                -webkit-text-fill-color: transparent;
+                margin-bottom: 24px;
+            }
+
+            .content-section {
+                max-width: 900px;
+                margin: 0 auto;
+                padding: 0 24px 100px;
+            }
+
+            .glass-card {
+                background: var(--glass-bg);
+                border: 1px solid var(--glass-border);
+                border-radius: 24px;
+                padding: 48px;
+                backdrop-filter: blur(12px);
+                margin-bottom: 40px;
+                box-shadow: 0 20px 40px rgba(0, 0, 0, 0.2);
+            }
+
+            .privacy-item {
+                margin-bottom: 32px;
+            }
+
+            .privacy-item h3 {
+                color: var(--heading-color);
+                margin-bottom: 16px;
+                display: flex;
+                align-items: center;
+                gap: 12px;
+            }
+
+            .privacy-item i {
+                color: var(--link-color);
+            }
+
+            .developer-footer {
+                text-align: center;
+                padding: 40px;
+                border-top: 1px solid var(--divider-color);
+                margin-top: 60px;
+            }
+
+            .dev-credit {
+                display: inline-flex;
+                align-items: center;
+                gap: 20px;
+                padding: 20px 32px;
+                background: var(--glass-bg);
+                border: 1px solid var(--glass-border);
+                border-radius: 100px;
+                backdrop-filter: blur(10px);
+            }
+
+            .dev-avatar-sm {
+                width: 50px;
+                height: 50px;
+                background: var(--link-color);
+                border-radius: 50%;
+                display: flex;
+                align-items: center;
+                justify-content: center;
+                font-size: 20px;
+                color: white;
+            }
+
+            .dev-text-sm {
+                text-align: left;
+            }
+
+            .dev-name-sm {
+                display: block;
+                font-weight: 600;
+                color: var(--heading-color);
+            }
+
+            .dev-info-sm {
+                display: block;
+                font-size: 14px;
+                opacity: 0.8;
+            }
+
+            @media (max-width: 640px) {
+                .privacy-hero h1 { font-size: 38px; }
+                .glass-card { padding: 24px; }
+                .dev-credit { flex-direction: column; text-align: center; border-radius: 24px; }
+                .dev-text-sm { text-align: center; }
+            }
+        </style>
+    </head>
+    <body class="is-boxed has-animations">
+        <div class="body-wrap">
+            <header class="site-header">
+                <div class="container">
+                    <div class="site-header-inner">
+                        <div class="brand header-brand">
+                            <a href="/">
+                                <img class="header-logo-image" src="../images/logo.svg" alt="Kidokool Logo" />
+                            </a>
+                        </div>
+                    </div>
+                </div>
+            </header>
+
+            <main>
+                <section class="privacy-hero">
+                    <div class="container">
+                        <h1>Privacy Policy</h1>
+                        <p class="hero-paragraph">Your privacy and security are our top priorities.</p>
+                    </div>
+                </section>
+
+                <section class="content-section">
+                    <div class="glass-card">
+                        <div class="privacy-item">
+                            <h3><i class="fas fa-shield-alt"></i> Media Encryption</h3>
+                            <p>
+                                Kidokool uses Secure Real-time Transport Protocol (SRTP) for end-to-end media encryption. 
+                                Your video and audio streams are encrypted between your browser and our SFU server.
+                            </p>
+                        </div>
+
+                        <div class="privacy-item">
+                            <h3><i class="fas fa-server"></i> SFU Architecture</h3>
+                            <p>
+                                We utilize a Selective Forwarding Unit (SFU) topology. This means each participant sends media to the server, 
+                                which then forwards it to others. This architecture is efficient and secure, allowing for high-capacity rooms 
+                                without compromising your direct connection privacy.
+                            </p>
+                        </div>
+
+                        <div class="privacy-item">
+                            <h3><i class="fas fa-record-vinyl"></i> Recordings</h3>
+                            <p>
+                                When you record a meeting, the data is stored temporarily in your browser's local storage (Blob). 
+                                Once the recording is stopped, it is downloaded directly to your device. 
+                                <strong>We do not store your recordings on our servers.</strong>
+                            </p>
+                        </div>
+
+                        <div class="privacy-item">
+                            <h3><i class="fas fa-chart-line"></i> Analytics</h3>
+                            <p>
+                                We use aggregated usage statistics to improve our service. 
+                                We have no intention of using or selling your personally identifiable data.
+                            </p>
+                        </div>
+
+                        <div style="text-align: center; margin-top: 40px;">
+                            <a class="button button-primary button-wide-mobile" href="/newroom">I UNDERSTAND</a>
+                        </div>
+                    </div>
+
+                    <div class="developer-footer">
+                        <div class="dev-credit">
+                            <div class="dev-avatar-sm">
+                                <i class="fas fa-code"></i>
+                            </div>
+                            <div class="dev-text-sm">
+                                <span class="dev-name-sm">Developed by Sanket Mane</span>
+                                <span class="dev-info-sm">Full Stack Developer | 7310013030 | sanketmane7170@gmail.com</span>
+                            </div>
+                        </div>
+
+                        <div style="margin-top: 32px;">
+                            <a href="/" style="color: var(--link-color); text-decoration: none; font-weight: 600;">
+                                <i class="fas fa-arrow-left"></i> Back to Home
+                            </a>
+                        </div>
+                    </div>
+                </section>
+            </main>
+
+            <footer class="site-footer">
+                <div class="container">
+                    <div class="site-footer-inner">
+                        <div class="footer-copyright">&copy; 2026 Kidokool, all rights reserved</div>
+                        <ul class="footer-links list-reset">
+                            <li><a href="/about">About Us</a></li>
+                        </ul>
+                    </div>
+                </div>
+            </footer>
+        </div>
+        <script src="../js/Theme.js"></script>
+    </body>
+</html>

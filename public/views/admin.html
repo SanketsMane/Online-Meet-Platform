@@ -1,0 +1,761 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <!-- Author: Sanket - Cache busting to force browser refresh -->
+    <meta http-equiv="Cache-Control" content="no-cache, no-store, must-revalidate">
+    <meta http-equiv="Pragma" content="no-cache">
+    <meta http-equiv="Expires" content="0">
+    <title>Kidokool - Admin Dashboard</title>
+    <link rel="shortcut icon" href="../images/logo.svg" />
+    
+    <!-- Fonts and Icons -->
+    <link rel="stylesheet" href="https://fonts.googleapis.com/css?family=IBM+Plex+Sans:400,600" />
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.2/css/all.min.css" />
+    <link rel="stylesheet" href="/css/landing.css">
+    
+    <!-- Scripts -->
+    <script defer src="../js/Brand.js"></script>
+    <script defer src="../js/Theme.js"></script>
+    <script src="https://cdn.jsdelivr.net/npm/axios/dist/axios.min.js"></script>
+    <script defer src="https://cdn.jsdelivr.net/npm/sweetalert2@11.4.8"></script>
+
+    <!-- Author: Sanket - Professional admin dashboard styles -->
+    <style>
+        body {
+            background: var(--bg-color);
+            font-family: 'IBM Plex Sans', sans-serif;
+            margin: 0;
+            padding: 0;
+        }
+
+        /* Header Styles */
+        .site-header {
+            position: sticky;
+            top: 0;
+            z-index: 1000;
+            background: var(--bg-color);
+            border-bottom: 1px solid var(--divider-color);
+            backdrop-filter: blur(10px);
+        }
+
+        /* Author: Sanket - Remove the diagonal crossover design overlay */
+        .site-header::before {
+            display: none !important;
+        }
+
+        .site-header-inner {
+            display: flex;
+            align-items: center;
+            justify-content: space-between;
+            padding: 16px 0;
+            max-width: 1200px;
+            margin: 0 auto;
+            padding-left: 24px;
+            padding-right: 24px;
+        }
+
+        .header-brand {
+            display: flex;
+            align-items: center;
+            gap: 16px;
+        }
+
+        .header-logo {
+            width: 40px;
+            height: 40px;
+        }
+
+        .header-title {
+            font-size: 20px;
+            font-weight: 600;
+            color: var(--heading-color);
+            margin: 0;
+        }
+
+        .header-nav {
+            display: flex;
+            align-items: center;
+            gap: 16px;
+        }
+
+        .nav-link {
+            color: var(--text-color);
+            text-decoration: none;
+            font-weight: 500;
+            padding: 8px 16px;
+            border-radius: 6px;
+            transition: all 0.2s ease;
+            display: flex;
+            align-items: center;
+            gap: 6px;
+        }
+
+        .nav-link:hover {
+            background: var(--divider-color);
+            color: var(--heading-color);
+        }
+
+        .theme-toggle {
+            background: transparent !important;
+            border: 1px solid var(--divider-color) !important;
+            color: var(--heading-color) !important;
+            padding: 8px 12px !important;
+            border-radius: 6px !important;
+            cursor: pointer;
+            transition: all 0.2s ease;
+        }
+
+        .theme-toggle:hover {
+            background: var(--divider-color) !important;
+        }
+
+        /* Login Container */
+        .login-container {
+            min-height: calc(100vh - 80px);
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            padding: 40px 16px;
+        }
+
+        .login-card {
+            max-width: 450px;
+            width: 100%;
+            background: rgba(255, 255, 255, 0.05);
+            border: 1px solid var(--divider-color);
+            border-radius: 16px;
+            padding: 48px 40px;
+            box-shadow: 0 20px 60px rgba(0, 0, 0, 0.3);
+            backdrop-filter: blur(10px);
+        }
+
+        [data-theme='light'] .login-card {
+            background: #ffffff;
+            box-shadow: 0 10px 40px rgba(0, 0, 0, 0.1);
+        }
+
+        .login-header {
+            text-align: center;
+            margin-bottom: 32px;
+        }
+
+        .login-title {
+            font-size: 28px;
+            font-weight: 600;
+            color: var(--heading-color);
+            margin: 0 0 8px 0;
+        }
+
+        .login-subtitle {
+            font-size: 16px;
+            color: var(--text-color);
+            margin: 0;
+        }
+
+        /* Dashboard Container */
+        .dashboard-container {
+            max-width: 1200px;
+            margin: 0 auto;
+            padding: 40px 24px;
+        }
+
+        .dashboard-header {
+            margin-bottom: 32px;
+        }
+
+        .dashboard-title {
+            font-size: 32px;
+            font-weight: 600;
+            color: var(--heading-color);
+            margin: 0 0 8px 0;
+        }
+
+        .dashboard-subtitle {
+            font-size: 16px;
+            color: var(--text-color);
+            margin: 0;
+        }
+
+        /* Stats Grid */
+        .stats-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(250px, 1fr));
+            gap: 24px;
+            margin-bottom: 40px;
+        }
+
+        .stat-card {
+            padding: 24px;
+            border-radius: 12px;
+            color: white;
+            box-shadow: 0 10px 30px rgba(0, 0, 0, 0.2);
+            position: relative;
+            overflow: hidden;
+        }
+
+        .stat-card::before {
+            display: none;
+        }
+
+        .stat-purple { background: linear-gradient(135deg, #667eea 0%, #764ba2 100%); }
+        .stat-blue { background: linear-gradient(135deg, #0270d7 0%, #0056b3 100%); }
+        .stat-green { background: linear-gradient(135deg, #11998e 0%, #38ef7d 100%); }
+
+        .stat-icon {
+            font-size: 32px;
+            margin-bottom: 12px;
+            opacity: 0.9;
+        }
+
+        .stat-number {
+            font-size: 36px;
+            font-weight: 600;
+            margin-bottom: 4px;
+        }
+
+        .stat-label {
+            font-size: 14px;
+            opacity: 0.9;
+        }
+
+        /* Table Section */
+        .table-section {
+            background: rgba(255, 255, 255, 0.03);
+            border: 1px solid var(--divider-color);
+            border-radius: 12px;
+            padding: 24px;
+            backdrop-filter: blur(10px);
+        }
+
+        [data-theme='light'] .table-section {
+            background: #ffffff;
+            box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1);
+        }
+
+        .table-header {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            margin-bottom: 24px;
+        }
+
+        .table-title {
+            font-size: 20px;
+            font-weight: 600;
+            color: var(--heading-color);
+            margin: 0;
+        }
+
+        .data-table {
+            width: 100%;
+            border-collapse: collapse;
+        }
+
+        .data-table th {
+            text-align: left;
+            padding: 12px 16px;
+            color: var(--heading-color);
+            font-weight: 600;
+            border-bottom: 2px solid var(--divider-color);
+        }
+
+        .data-table td {
+            padding: 16px;
+            border-bottom: 1px solid var(--divider-color);
+            color: var(--text-color);
+        }
+
+        .data-table tr:last-child td {
+            border-bottom: none;
+        }
+
+        .status-badge {
+            padding: 4px 12px;
+            border-radius: 12px;
+            font-size: 12px;
+            font-weight: 600;
+            text-transform: uppercase;
+        }
+
+        .status-active {
+            background: rgba(17, 153, 142, 0.2);
+            color: #38ef7d;
+        }
+
+        .status-banned {
+            background: rgba(220, 53, 69, 0.2);
+            color: #dc3545;
+        }
+
+        .btn-action {
+            padding: 6px 16px;
+            border-radius: 6px;
+            border: none;
+            font-size: 14px;
+            font-weight: 500;
+            cursor: pointer;
+            transition: all 0.2s ease;
+        }
+
+        .btn-ban {
+            background: rgba(220, 53, 69, 0.2);
+            color: #dc3545;
+        }
+
+        .btn-ban:hover {
+            background: #dc3545;
+            color: white;
+        }
+
+        .btn-unban {
+            background: rgba(17, 153, 142, 0.2);
+            color: #38ef7d;
+        }
+
+        .btn-unban:hover {
+            background: #38ef7d;
+            color: white;
+        }
+
+        /* Form Styles */
+        .form-group {
+            margin-bottom: 24px;
+        }
+
+        .form-label {
+            display: block;
+            font-size: 14px;
+            font-weight: 500;
+            color: var(--heading-color);
+            margin-bottom: 8px;
+        }
+
+        .form-input-wrapper {
+            position: relative;
+        }
+
+        .form-input-icon {
+            position: absolute;
+            left: 16px;
+            top: 50%;
+            transform: translateY(-50%);
+            color: var(--text-color);
+        }
+
+        .form-input {
+            width: 100%;
+            padding: 14px 16px 14px 48px;
+            font-size: 16px;
+            color: var(--heading-color);
+            background: var(--input-bg);
+            border: 1px solid var(--input-border);
+            border-radius: 8px;
+            transition: all 0.2s ease;
+            font-family: 'IBM Plex Sans', sans-serif;
+        }
+
+        .form-input:focus {
+            outline: none;
+            border-color: var(--link-color);
+            box-shadow: 0 0 0 3px rgba(2, 112, 215, 0.1);
+        }
+
+        .btn-primary {
+            width: 100%;
+            padding: 14px 24px;
+            font-size: 16px;
+            font-weight: 600;
+            color: #ffffff;
+            background: linear-gradient(135deg, #0270d7 0%, #0056b3 100%);
+            border: none;
+            border-radius: 8px;
+            cursor: pointer;
+            transition: all 0.2s ease;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            gap: 8px;
+        }
+
+        .btn-primary:hover {
+            transform: translateY(-2px);
+            box-shadow: 0 8px 20px rgba(2, 112, 215, 0.3);
+        }
+
+        .btn-primary:disabled {
+            opacity: 0.6;
+            cursor: not-allowed;
+            transform: none;
+        }
+
+        .error-message {
+            background: rgba(220, 53, 69, 0.1);
+            border: 1px solid rgba(220, 53, 69, 0.3);
+            color: #dc3545;
+            padding: 12px 16px;
+            border-radius: 8px;
+            font-size: 14px;
+            margin-bottom: 24px;
+            display: none;
+        }
+
+        .error-message.show {
+            display: block;
+        }
+
+        .hidden {
+            display: none !important;
+        }
+
+        .logout-btn {
+            background: rgba(220, 53, 69, 0.2);
+            color: #dc3545;
+            padding: 8px 16px;
+            border-radius: 6px;
+            border: none;
+            cursor: pointer;
+            font-weight: 500;
+            transition: all 0.2s ease;
+        }
+
+        .logout-btn:hover {
+            background: #dc3545;
+            color: white;
+        }
+
+        @media (max-width: 768px) {
+            .stats-grid {
+                grid-template-columns: 1fr;
+            }
+
+            .table-section {
+                overflow-x: auto;
+            }
+
+            .header-title {
+                font-size: 16px;
+            }
+        }
+    </style>
+</head>
+<body>
+    <!-- Author: Sanket - Professional header with navigation -->
+    <header class="site-header">
+        <div class="site-header-inner">
+            <div class="header-brand">
+                <a href="/">
+                    <img src="../images/logo.svg" alt="Kidokool" class="header-logo" />
+                </a>
+                <h1 class="header-title">Admin Dashboard</h1>
+            </div>
+            <nav class="header-nav">
+                <a href="/" class="nav-link">
+                    <i class="fas fa-home"></i> Home
+                </a>
+                <button id="logoutBtn" class="logout-btn hidden" onclick="logout()">
+                    <i class="fas fa-sign-out-alt"></i> Logout
+                </button>
+                <button id="themeToggle" class="theme-toggle">
+                    <i class="fas fa-sun"></i>
+                </button>
+            </nav>
+        </div>
+    </header>
+
+    <!-- Author: Sanket - Login Section -->
+    <div id="loginSection" class="login-container">
+        <div class="login-card">
+            <div class="login-header">
+                <h2 class="login-title">Admin Login</h2>
+                <p class="login-subtitle">Sign in to access the admin dashboard</p>
+            </div>
+
+            <div id="errorMessage" class="error-message"></div>
+
+            <form id="loginForm">
+                <div class="form-group">
+                    <label for="username" class="form-label">Username</label>
+                    <div class="form-input-wrapper">
+                        <i class="fas fa-user form-input-icon"></i>
+                        <input type="text" id="username" class="form-input" placeholder="Enter admin username" required />
+                    </div>
+                </div>
+
+                <div class="form-group">
+                    <label for="password" class="form-label">Password</label>
+                    <div class="form-input-wrapper">
+                        <i class="fas fa-lock form-input-icon"></i>
+                        <input type="password" id="password" class="form-input" placeholder="Enter password" required />
+                    </div>
+                </div>
+
+                <button type="submit" id="loginBtn" class="btn-primary">
+                    <i class="fas fa-sign-in-alt"></i>
+                    <span>Sign In</span>
+                </button>
+            </form>
+        </div>
+    </div>
+
+    <!-- Author: Sanket - Dashboard Section -->
+    <div id="dashboardSection" class="dashboard-container hidden">
+        <div class="dashboard-header">
+            <h2 class="dashboard-title">Welcome, <span id="adminName">Admin</span></h2>
+            <p class="dashboard-subtitle">Manage developers, API keys, and system statistics</p>
+        </div>
+
+        <!-- Stats Cards -->
+        <div class="stats-grid">
+            <div class="stat-card stat-purple">
+                <i class="fas fa-users stat-icon"></i>
+                <div class="stat-number" id="tenantCount">0</div>
+                <div class="stat-label">Total Developers</div>
+            </div>
+            <div class="stat-card stat-blue">
+                <i class="fas fa-key stat-icon"></i>
+                <div class="stat-number" id="keyCount">0</div>
+                <div class="stat-label">Active API Keys</div>
+            </div>
+            <div class="stat-card stat-green">
+                <i class="fas fa-video stat-icon"></i>
+                <div class="stat-number" id="roomCount">0</div>
+                <div class="stat-label">Active Rooms</div>
+            </div>
+        </div>
+
+        <!-- Developers Table -->
+        <div class="table-section">
+            <div class="table-header">
+                <h3 class="table-title">Registered Developers</h3>
+            </div>
+            <table class="data-table">
+                <thead>
+                    <tr>
+                        <th>Name</th>
+                        <th>Email</th>
+                        <th>Plan</th>
+                        <th>Status</th>
+                        <th>Actions</th>
+                    </tr>
+                </thead>
+                <tbody id="tenantTable">
+                    <tr>
+                        <td colspan="5" style="text-align: center; padding: 40px;">Loading...</td>
+                    </tr>
+                </tbody>
+            </table>
+        </div>
+    </div>
+
+    <!-- Author: Sanket - Admin dashboard functionality -->
+    <script>
+        const API_URL = '/api/v1/admin';
+        let token = localStorage.getItem('admin_token');
+
+        // Author: Sanket - Handle login form submission
+        document.getElementById('loginForm').addEventListener('submit', async function(e) {
+            e.preventDefault();
+            
+            const username = document.getElementById('username').value.trim();
+            const password = document.getElementById('password').value;
+            const loginBtn = document.getElementById('loginBtn');
+            const errorMessage = document.getElementById('errorMessage');
+
+            if (!username || !password) {
+                showError('Please enter both username and password');
+                return;
+            }
+
+            loginBtn.disabled = true;
+            loginBtn.innerHTML = '<i class="fas fa-spinner fa-spin"></i><span>Signing in...</span>';
+            hideError();
+
+            try {
+                // Author: Sanket - Use host login endpoint for admin authentication
+                const response = await axios.post('/login', {
+                    username: username,
+                    password: password
+                });
+
+                console.log('Login response received:', response.data);
+                
+                if (response.data && response.data.message) {
+                    token = response.data.message;
+                    localStorage.setItem('admin_token', token);
+                    localStorage.setItem('admin_name', response.data.displayname || username);
+                    
+                    console.log('Token saved, showing success message...');
+                    
+                    // Author: Sanket - Show success message then load dashboard
+                    Swal.fire({
+                        icon: 'success',
+                        title: 'Login Successful!',
+                        text: `Welcome, ${response.data.displayname || username}!`,
+                        timer: 1500,
+                        showConfirmButton: false
+                    }).then(() => {
+                        console.log('Success message closed, loading dashboard...');
+                        loadDashboard();
+                    });
+                } else {
+                    console.error('Invalid response structure:', response.data);
+                    showError('Invalid response from server');
+                }
+            } catch (error) {
+                console.error('Login error:', error);
+                let errorMsg = 'Login failed. Please check your credentials.';
+                
+                if (error.response) {
+                    if (error.response.status === 401) {
+                        errorMsg = 'Invalid admin credentials';
+                    } else if (error.response.data && error.response.data.message) {
+                        errorMsg = error.response.data.message;
+                    }
+                }
+                
+                showError(errorMsg);
+            } finally {
+                loginBtn.disabled = false;
+                loginBtn.innerHTML = '<i class="fas fa-sign-in-alt"></i><span>Sign In</span>';
+            }
+        });
+
+        // Author: Sanket - Load dashboard data
+        async function loadDashboard() {
+            console.log('loadDashboard() called');
+            console.log('Hiding login section, showing dashboard section...');
+            
+            document.getElementById('loginSection').classList.add('hidden');
+            document.getElementById('dashboardSection').classList.remove('hidden');
+            document.getElementById('logoutBtn').classList.remove('hidden');
+            
+            const adminName = localStorage.getItem('admin_name') || 'Admin';
+            document.getElementById('adminName').textContent = adminName;
+            
+            console.log('Dashboard sections toggled, admin name set to:', adminName);
+
+            // Load stats
+            try {
+                const stats = await fetch(`${API_URL}/stats`, {
+                    headers: { 'Authorization': `Bearer ${token}` }
+                }).then(r => r.json());
+                
+                document.getElementById('tenantCount').textContent = stats.tenants || 0;
+                document.getElementById('keyCount').textContent = stats.apiKeys || 0;
+                document.getElementById('roomCount').textContent = stats.activeRooms || 0;
+            } catch (e) {
+                console.error('Failed to load stats:', e);
+            }
+
+            // Load tenants
+            try {
+                const tenants = await fetch(`${API_URL}/tenants`, {
+                    headers: { 'Authorization': `Bearer ${token}` }
+                }).then(r => r.json());
+                
+                const tbody = document.getElementById('tenantTable');
+                if (tenants.length === 0) {
+                    tbody.innerHTML = '<tr><td colspan="5" style="text-align: center; padding: 40px;">No developers registered yet</td></tr>';
+                } else {
+                    tbody.innerHTML = tenants.map(t => `
+                        <tr>
+                            <td><strong>${t.name}</strong></td>
+                            <td>${t.email}</td>
+                            <td>${t.plan || 'Free'}</td>
+                            <td>
+                                <span class="status-badge ${t.status === 'active' ? 'status-active' : 'status-banned'}">
+                                    ${t.status}
+                                </span>
+                            </td>
+                            <td>
+                                <button class="btn-action ${t.status === 'active' ? 'btn-ban' : 'btn-unban'}" 
+                                    onclick="toggleStatus('${t.id}', '${t.status}')">
+                                    ${t.status === 'active' ? 'Ban' : 'Unban'}
+                                </button>
+                            </td>
+                        </tr>
+                    `).join('');
+                }
+            } catch (e) {
+                console.error('Failed to load tenants:', e);
+                Swal.fire({
+                    icon: 'error',
+                    title: 'Authentication Error',
+                    text: 'Invalid admin token. Please login again.',
+                });
+                logout();
+            }
+        }
+
+        // Author: Sanket - Toggle developer status
+        async function toggleStatus(id, currentStatus) {
+            const newStatus = currentStatus === 'active' ? 'banned' : 'active';
+            const action = newStatus === 'banned' ? 'ban' : 'unban';
+            
+            const result = await Swal.fire({
+                title: `${action.charAt(0).toUpperCase() + action.slice(1)} Developer?`,
+                text: `Are you sure you want to ${action} this developer?`,
+                icon: 'warning',
+                showCancelButton: true,
+                confirmButtonColor: newStatus === 'banned' ? '#dc3545' : '#38ef7d',
+                cancelButtonColor: '#6c757d',
+                confirmButtonText: `Yes, ${action}!`
+            });
+
+            if (result.isConfirmed) {
+                try {
+                    await fetch(`${API_URL}/tenants/${id}/status`, {
+                        method: 'PUT',
+                        headers: { 
+                            'Content-Type': 'application/json',
+                            'Authorization': `Bearer ${token}` 
+                        },
+                        body: JSON.stringify({ status: newStatus })
+                    });
+                    
+                    await Swal.fire({
+                        icon: 'success',
+                        title: 'Success!',
+                        text: `Developer ${action}ned successfully`,
+                        timer: 1500,
+                        showConfirmButton: false
+                    });
+                    
+                    loadDashboard();
+                } catch (e) {
+                    Swal.fire({
+                        icon: 'error',
+                        title: 'Error',
+                        text: `Failed to ${action} developer`
+                    });
+                }
+            }
+        }
+
+        // Author: Sanket - Logout function
+        function logout() {
+            localStorage.removeItem('admin_token');
+            localStorage.removeItem('admin_name');
+            location.reload();
+        }
+
+        // Author: Sanket - Error message helpers
+        function showError(message) {
+            const errorEl = document.getElementById('errorMessage');
+            errorEl.textContent = message;
+            errorEl.classList.add('show');
+        }
+
+        function hideError() {
+            document.getElementById('errorMessage').classList.remove('show');
+        }
+
+        // Auto-load dashboard if token exists
+        if (token) {
+            loadDashboard();
+        }
+    </script>
+</body>
+</html>

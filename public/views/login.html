@@ -1,0 +1,388 @@
+<!doctype html>
+<html lang="en" class="no-js">
+    <head>
+        <!-- Title and Icon -->
+        <title id="title">Kidokool - Host Login</title>
+        <link id="icon" rel="shortcut icon" href="../images/logo.svg" />
+        <link id="appleTouchIcon" rel="apple-touch-icon" href="../images/logo.svg" />
+
+        <!-- Meta Information -->
+        <meta charset="utf-8" />
+        <meta http-equiv="X-UA-Compatible" content="IE=edge" />
+        <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+        <meta name="description" content="Kidokool Host Login - Secure access for meeting hosts and presenters" />
+
+        <!-- StyleSheet -->
+        <link rel="stylesheet" href="https://fonts.googleapis.com/css?family=IBM+Plex+Sans:400,600" />
+        <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.2/css/all.min.css" />
+        <link rel="stylesheet" type="text/css" href="../css/landing.css" />
+
+        <!-- Scripts -->
+        <script defer src="../js/Brand.js"></script>
+        <script defer src="../js/Theme.js"></script>
+        <script src="https://cdn.jsdelivr.net/npm/xss/dist/xss.min.js"></script>
+        <script type="text/javascript" src="https://cdn.jsdelivr.net/npm/axios/dist/axios.min.js"></script>
+        <script defer src="https://cdn.jsdelivr.net/npm/sweetalert2@11.4.8"></script>
+
+        <!-- Author: Sanket - Professional login page styles -->
+        <style>
+            .login-container {
+                min-height: 100vh;
+                display: flex;
+                align-items: center;
+                justify-content: center;
+                padding: 40px 16px;
+                background: var(--bg-color);
+            }
+
+            .login-card {
+                max-width: 450px;
+                width: 100%;
+                background: linear-gradient(135deg, rgba(255, 255, 255, 0.08) 0%, rgba(255, 255, 255, 0.03) 100%);
+                border: 1px solid var(--divider-color);
+                border-radius: 16px;
+                padding: 48px 40px;
+                box-shadow: 0 20px 60px rgba(0, 0, 0, 0.3);
+                backdrop-filter: blur(10px);
+                -webkit-backdrop-filter: blur(10px);
+            }
+
+            [data-theme='light'] .login-card {
+                background: #ffffff;
+                box-shadow: 0 10px 40px rgba(0, 0, 0, 0.1);
+                border: 1px solid #eaeaea;
+            }
+
+            .login-header {
+                text-align: center;
+                margin-bottom: 40px;
+            }
+
+            .login-logo {
+                width: 80px;
+                height: 80px;
+                margin: 0 auto 24px;
+            }
+
+            .login-title {
+                font-size: 28px;
+                font-weight: 600;
+                color: var(--heading-color);
+                margin: 0 0 8px 0;
+            }
+
+            .login-subtitle {
+                font-size: 16px;
+                color: var(--text-color);
+                margin: 0;
+            }
+
+            .form-group {
+                margin-bottom: 24px;
+            }
+
+            .form-label {
+                display: block;
+                font-size: 14px;
+                font-weight: 500;
+                color: var(--heading-color);
+                margin-bottom: 8px;
+            }
+
+            .form-input-wrapper {
+                position: relative;
+            }
+
+            .form-input-icon {
+                position: absolute;
+                left: 16px;
+                top: 50%;
+                transform: translateY(-50%);
+                color: var(--text-color);
+                font-size: 16px;
+            }
+
+            .form-input {
+                width: 100%;
+                padding: 14px 16px 14px 48px;
+                font-size: 16px;
+                color: var(--heading-color);
+                background: var(--input-bg);
+                border: 1px solid var(--input-border);
+                border-radius: 8px;
+                transition: all 0.2s ease;
+                font-family: 'IBM Plex Sans', sans-serif;
+            }
+
+            .form-input:focus {
+                outline: none;
+                border-color: var(--link-color);
+                box-shadow: 0 0 0 3px rgba(2, 112, 215, 0.1);
+            }
+
+            .form-input::placeholder {
+                color: var(--text-color);
+                opacity: 0.6;
+            }
+
+            .login-button {
+                width: 100%;
+                padding: 14px 24px;
+                font-size: 16px;
+                font-weight: 600;
+                color: #ffffff;
+                background: linear-gradient(135deg, #0270d7 0%, #0056b3 100%);
+                border: none;
+                border-radius: 8px;
+                cursor: pointer;
+                transition: all 0.2s ease;
+                display: flex;
+                align-items: center;
+                justify-content: center;
+                gap: 8px;
+            }
+
+            .login-button:hover {
+                transform: translateY(-2px);
+                box-shadow: 0 8px 20px rgba(2, 112, 215, 0.3);
+            }
+
+            .login-button:active {
+                transform: translateY(0);
+            }
+
+            .login-button:disabled {
+                opacity: 0.6;
+                cursor: not-allowed;
+                transform: none;
+            }
+
+            .login-footer {
+                margin-top: 32px;
+                text-align: center;
+            }
+
+            .back-link {
+                color: var(--link-color);
+                text-decoration: none;
+                font-size: 14px;
+                font-weight: 500;
+                display: inline-flex;
+                align-items: center;
+                gap: 6px;
+                transition: all 0.2s ease;
+            }
+
+            .back-link:hover {
+                gap: 8px;
+            }
+
+            .theme-toggle-wrapper {
+                position: fixed;
+                top: 24px;
+                right: 24px;
+                z-index: 1000;
+            }
+
+            .theme-toggle {
+                background: transparent !important;
+                border: 1px solid var(--divider-color) !important;
+                color: var(--heading-color) !important;
+                min-width: auto !important;
+                padding: 12px 16px !important;
+                border-radius: 8px !important;
+                cursor: pointer;
+                transition: all 0.2s ease;
+            }
+
+            .theme-toggle:hover {
+                background: var(--divider-color) !important;
+            }
+
+            .error-message {
+                background: rgba(220, 53, 69, 0.1);
+                border: 1px solid rgba(220, 53, 69, 0.3);
+                color: #dc3545;
+                padding: 12px 16px;
+                border-radius: 8px;
+                font-size: 14px;
+                margin-bottom: 24px;
+                display: none;
+            }
+
+            .error-message.show {
+                display: block;
+            }
+
+            @media (max-width: 480px) {
+                .login-card {
+                    padding: 32px 24px;
+                }
+
+                .login-title {
+                    font-size: 24px;
+                }
+
+                .theme-toggle-wrapper {
+                    top: 16px;
+                    right: 16px;
+                }
+            }
+        </style>
+    </head>
+    <body>
+        <!-- Author: Sanket - Theme toggle button -->
+        <div class="theme-toggle-wrapper">
+            <button id="themeToggle" class="theme-toggle">
+                <i class="fas fa-sun"></i>
+            </button>
+        </div>
+
+        <div class="login-container">
+            <div class="login-card">
+                <div class="login-header">
+                    <img src="../images/logo.svg" alt="Kidokool Logo" class="login-logo" />
+                    <h1 class="login-title">Host Login</h1>
+                    <p class="login-subtitle">Sign in to manage your meetings</p>
+                </div>
+
+                <div id="errorMessage" class="error-message"></div>
+
+                <form id="loginForm">
+                    <div class="form-group">
+                        <label for="username" class="form-label">Username</label>
+                        <div class="form-input-wrapper">
+                            <i class="fas fa-user form-input-icon"></i>
+                            <input
+                                id="username"
+                                class="form-input"
+                                type="text"
+                                placeholder="Enter your username"
+                                maxlength="254"
+                                required
+                                autocomplete="username"
+                            />
+                        </div>
+                    </div>
+
+                    <div class="form-group">
+                        <label for="password" class="form-label">Password</label>
+                        <div class="form-input-wrapper">
+                            <i class="fas fa-lock form-input-icon"></i>
+                            <input
+                                id="password"
+                                class="form-input"
+                                type="password"
+                                placeholder="Enter your password"
+                                maxlength="36"
+                                required
+                                autocomplete="current-password"
+                            />
+                        </div>
+                    </div>
+
+                    <button type="submit" id="loginButton" class="login-button">
+                        <i class="fas fa-sign-in-alt"></i>
+                        <span>Sign In</span>
+                    </button>
+                </form>
+
+                <div class="login-footer">
+                    <a href="/" class="back-link">
+                        <i class="fas fa-arrow-left"></i>
+                        <span>Back to Home</span>
+                    </a>
+                </div>
+            </div>
+        </div>
+
+        <!-- Author: Sanket - Login functionality -->
+        <script defer src="../js/Utils.js"></script>
+        <script>
+            document.addEventListener('DOMContentLoaded', function() {
+                const loginForm = document.getElementById('loginForm');
+                const loginButton = document.getElementById('loginButton');
+                const usernameInput = document.getElementById('username');
+                const passwordInput = document.getElementById('password');
+                const errorMessage = document.getElementById('errorMessage');
+
+                // Author: Sanket - Handle login form submission
+                loginForm.addEventListener('submit', async function(e) {
+                    e.preventDefault();
+                    
+                    const username = usernameInput.value.trim();
+                    const password = passwordInput.value;
+
+                    if (!username || !password) {
+                        showError('Please enter both username and password');
+                        return;
+                    }
+
+                    // Disable button and show loading state
+                    loginButton.disabled = true;
+                    loginButton.innerHTML = '<i class="fas fa-spinner fa-spin"></i><span>Signing in...</span>';
+                    hideError();
+
+                    try {
+                        const response = await axios.post('/login', {
+                            username: username,
+                            password: password
+                        });
+
+                        if (response.data && response.data.message) {
+                            // Store token
+                            localStorage.setItem('token', response.data.message);
+                            
+                            // Show success and redirect
+                            await Swal.fire({
+                                icon: 'success',
+                                title: 'Login Successful!',
+                                text: `Welcome, ${response.data.displayname || username}!`,
+                                timer: 1500,
+                                showConfirmButton: false
+                            });
+
+                            // Redirect to home or allowed room
+                            window.location.href = '/';
+                        }
+                    } catch (error) {
+                        console.error('Login error:', error);
+                        
+                        let errorMsg = 'Login failed. Please check your credentials.';
+                        if (error.response) {
+                            if (error.response.status === 401) {
+                                errorMsg = 'Invalid username or password';
+                            } else if (error.response.status === 429) {
+                                errorMsg = 'Too many login attempts. Please try again later.';
+                            } else if (error.response.data && error.response.data.message) {
+                                errorMsg = error.response.data.message;
+                            }
+                        } else if (error.request) {
+                            errorMsg = 'Unable to connect to server. Please try again.';
+                        }
+                        
+                        showError(errorMsg);
+                    } finally {
+                        // Re-enable button
+                        loginButton.disabled = false;
+                        loginButton.innerHTML = '<i class="fas fa-sign-in-alt"></i><span>Sign In</span>';
+                    }
+                });
+
+                // Author: Sanket - Error message helpers
+                function showError(message) {
+                    errorMessage.textContent = message;
+                    errorMessage.classList.add('show');
+                }
+
+                function hideError() {
+                    errorMessage.classList.remove('show');
+                }
+
+                // Clear error on input
+                usernameInput.addEventListener('input', hideError);
+                passwordInput.addEventListener('input', hideError);
+            });
+        </script>
+    </body>
+</html>
