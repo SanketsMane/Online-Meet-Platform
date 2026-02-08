@@ -722,7 +722,7 @@ function startServer() {
                 });
             }
 
-            if (room && (hostCfg.authenticated || isPeerValid)) {
+            if (room && (allowRoomAccess || hostCfg.authenticated || isPeerValid)) {
                 return htmlInjector.injectHtml(views.room, res);
             } else {
                 return htmlInjector.injectHtml(views.login, res);
