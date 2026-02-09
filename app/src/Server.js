@@ -660,6 +660,7 @@ function startServer() {
             let isPeerValid = false;
             let isPeerPresenter = false;
 
+            let allowRoomAccess = false;
             if (token) {
                 try {
                     const validToken = await isValidToken(token);
@@ -692,7 +693,7 @@ function startServer() {
                         : htmlInjector.injectHtml(views.landing, res);
                 }
             } else {
-                const allowRoomAccess = isAllowedRoomAccess('/join/params', req, hostCfg, roomList, room);
+                allowRoomAccess = isAllowedRoomAccess('/join/params', req, hostCfg, roomList, room);
                 const roomAllowedForUser = await isRoomAllowedForUser('Direct Join without token', name, room);
 
                 log.debug('Direct Room Join no JWT --------------->', {
