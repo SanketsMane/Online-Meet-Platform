@@ -1123,7 +1123,8 @@ function startServer() {
 
             if (durationMs && fs.existsSync(filePath)) {
                 try {
-                    fixDurationOrRemux(filePath, Number(durationMs));
+                    const recFormat = config?.media?.recording?.format || 'webm';
+                    fixDurationOrRemux(filePath, Number(durationMs), recFormat);
                 } catch (e) {
                     console.warn('Finalize fix skipped:', e?.message || e);
                 }
@@ -1157,7 +1158,8 @@ function startServer() {
 
             if (durationMs && fs.existsSync(filePath)) {
                 try {
-                    fixDurationOrRemux(filePath, Number(durationMs));
+                    const recFormat = config?.media?.recording?.format || 'webm';
+                    fixDurationOrRemux(filePath, Number(durationMs), recFormat);
                 } catch (e) {
                     log.warn('Finalize fix skipped:', e?.message || e);
                 }
