@@ -1,7 +1,7 @@
 services:
-    kidokool-nms:
-        container_name: kidokool-nms
-        image: kidokool/nms:latest
+    tawktoo-nms:
+        container_name: tawktoo-nms
+        image: tawktoo/nms:latest
         volumes:
             - ./src/config.js/:/app/src/config.js/:ro
             # - /etc/letsencrypt/live/your-domain-name/fullchain.pem/:/app/src/cert.pem/:ro

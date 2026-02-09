@@ -1,6 +1,6 @@
-# 🚀 Kidokool - Premium WebRTC SFU Video Conferencing
+# 🚀 tawktoo - Premium WebRTC SFU Video Conferencing
 
-Kidokool is a powerful, real-time video conferencing platform built with **Node.js**, **WebRTC**, and **Mediasoup**. It provides a simple, secure, and fast solution for video calls, messaging, and screen sharing directly in the browser.
+tawktoo is a powerful, real-time video conferencing platform built with **Node.js**, **WebRTC**, and **Mediasoup**. It provides a simple, secure, and fast solution for video calls, messaging, and screen sharing directly in the browser.
 
 ---
 
@@ -13,7 +13,7 @@ Kidokool is a powerful, real-time video conferencing platform built with **Node.
   - High-resolution Screen Sharing
   - Interactive Whiteboard
   - File Sharing & Recording
-- **🛠️ Developer Portal**: A dedicated portal for developers to manage API Keys, access integration guides, and build atop the Kidokool infrastructure.
+- **🛠️ Developer Portal**: A dedicated portal for developers to manage API Keys, access integration guides, and build atop the tawktoo infrastructure.
 - **📊 Admin Dashboard**: Comprehensive system oversight for managing rooms, monitoring server health, and user administration.
 - **🎨 Modern UI**: A premium "Glassmorphism" aesthetic with full dark/light theme support.
 
@@ -40,8 +40,8 @@ Kidokool is a powerful, real-time video conferencing platform built with **Node.
 
 1. **Clone the repository**:
    ```bash
-   git clone https://github.com/your-username/Kidokool.git
-   cd Kidokool
+   git clone https://github.com/SanketsMane/Online-Meet-Platform.git
+   cd Online-Meet-Platform
    ```
 
 2. **Install dependencies**:
@@ -90,4 +90,4 @@ This project is licensed under the **AGPL-3.0 License**. See the [LICENSE](LICEN
 
 ---
 
-© 2026 Kidokool. Real-time Simple Secure Fast.
+© 2026 tawktoo. Real-time Simple Secure Fast.

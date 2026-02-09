@@ -1,14 +1,14 @@
 'use strict';
 
 /**
- * Kidokool SFU - Client component
+ * tawktoo SFU - Client component
  *
  * @link    GitHub: https://github.com/SanketsMane/Online-Meet-Platform.git
- * @link    Official Live demo: https://sfu.kidokool.com
+ * @link    Official Live demo: https://tawktoo.com
  * @license For open source use: AGPLv3
- * @license For commercial or closed source, contact us at license.kidokool@gmail.com or purchase directly via CodeCanyon
- * @license CodeCanyon: https://codecanyon.net/item/kidokool-sfu-webrtc-realtime-video-conferences/40769970
- * @author  Miroslav Pejic - miroslav.pejic.85@gmail.com
+ * @license For commercial or closed source, contact us at license.tawktoo@gmail.com or purchase directly via CodeCanyon
+ * @license CodeCanyon: https://codecanyon.net/item/tawktoo-sfu-webrtc-realtime-video-conferences/40769970
+ * @author  Sanket Mane - sanketmane7170@gmail.com
  * @version 2.1.06
  *
  */
@@ -79,8 +79,8 @@ const icons = {
 };
 
 const image = {
-    about: '../images/kidokool-logo.gif',
-    avatar: '../images/kidokoolsfu-logo.png',
+    about: '../images/logo.svg',
+    avatar: '../images/logo.svg',
     audio: '../images/audio.gif',
     poster: '../images/loader.gif',
     rec: '../images/rec.png',
@@ -7220,7 +7220,7 @@ class RoomClient {
         Swal.fire({
             allowOutsideClick: false,
             background: swalBackground,
-            imageAlt: 'kidokoolsfu-file-sharing',
+            imageAlt: 'tawktoo-file-sharing',
             imageUrl: image.share,
             position: 'center',
             title: 'Share file',
@@ -7523,7 +7523,7 @@ class RoomClient {
                     title: 'Received file',
                     text: this.incomingFileInfo.fileName + ' size ' + this.bytesToSize(this.incomingFileInfo.fileSize),
                     imageUrl: e.target.result,
-                    imageAlt: 'kidokoolsfu-file-img-download',
+                    imageAlt: 'tawktoo-file-img-download',
                     showDenyButton: true,
                     confirmButtonText: `Save`,
                     denyButtonText: `Cancel`,

@@ -1,9 +1,9 @@
 'use strict';
 
 /**
- * Kidokool Widget Factory - Main class for creating and managing widgets
+ * tawktoo Widget Factory - Main class for creating and managing widgets
  */
-class KidokoolWidget {
+class tawktooWidget {
     static DEFAULT_OPTIONS = {
         autoJoin: true,
         theme: 'dark',
@@ -29,11 +29,11 @@ class KidokoolWidget {
             customMessages: {
                 heading: 'Need a hand?',
                 subheading:
-                    'Hop on a <span style="font-weight: bold">Free 1:1 or Group Consultation</span> with a Kidokool Expert right now!',
+                    'Hop on a <span style="font-weight: bold">Free 1:1 or Group Consultation</span> with a tawktoo Expert right now!',
                 connectText: 'connect in < 10 seconds',
                 onlineText: 'We are online',
                 offlineText: 'We are offline',
-                poweredBy: 'Powered by <span class="kidokool-powered-by">Kidokool</span>',
+                poweredBy: 'Powered by <span class="tawktoo-powered-by">tawktoo</span>',
             },
         },
     };
@@ -45,7 +45,7 @@ class KidokoolWidget {
         this.domain = domain;
         this.roomId = roomId;
         this.userName = userName;
-        this.options = this.mergeDeep(KidokoolWidget.DEFAULT_OPTIONS, options);
+        this.options = this.mergeDeep(tawktooWidget.DEFAULT_OPTIONS, options);
 
         // Initialize widget state and status
         this.widgetState = this.options.widgetState;
@@ -71,8 +71,8 @@ class KidokoolWidget {
     }
 
     initWidgetRegistry() {
-        if (!window.kidokoolWidgets) {
-            window.kidokoolWidgets = new Map();
+        if (!window.tawktooWidgets) {
+            window.tawktooWidgets = new Map();
         }
     }
 
@@ -119,12 +119,12 @@ class KidokoolWidget {
 
             // Automatically minimize on creation
             if (this.options.widgetState === 'minimized' && this.isInitialized) {
-                window.kidokoolWidgetAction('minimize', widget);
+                window.tawktooWidgetAction('minimize', widget);
             }
 
             // Automatically close on creation
             if (this.options.widgetState === 'closed' && this.isInitialized) {
-                window.kidokoolWidgetAction('close', widget);
+                window.tawktooWidgetAction('close', widget);
             }
 
             this.isInitialized = false; // Prevent re-initialization
@@ -246,7 +246,7 @@ class KidokoolWidget {
     async loadSupportWidgetAssets() {
         await this.injectExternalCSS(
             `${this.protocol}://${this.domain}/css/widgets/Support.css`,
-            'kidokool-support-css'
+            'tawktoo-support-css'
         );
     }
 
@@ -271,7 +271,7 @@ class KidokoolWidget {
         const { customMessages, expertImages, position } = supportWidget;
 
         const widget = document.createElement('div');
-        widget.className = `kidokool-support-widget ${position} ${theme === 'light' ? 'light-theme' : ''}`;
+        widget.className = `tawktoo-support-widget ${position} ${theme === 'light' ? 'light-theme' : ''}`;
         widget.innerHTML = this.getSupportWidgetTemplate({ customMessages, expertImages });
 
         const widgetId = this.generateWidgetId('widget');
@@ -287,12 +287,12 @@ class KidokoolWidget {
                 <div class="online-text" style="display: ${this.isOnline ? 'inline' : 'none'}">${customMessages.onlineText}</div>
                 <div class="offline-text" style="display: ${this.isOnline ? 'none' : 'inline'}">${customMessages.offlineText}</div>
                 <div class="widget-controls">
-                    <button class="minimize-btn" onclick="kidokoolWidgetAction('minimize', this)" title="Minimize">
+                    <button class="minimize-btn" onclick="tawktooWidgetAction('minimize', this)" title="Minimize">
                         <svg width="12" height="12" viewBox="0 0 24 24" fill="currentColor">
                             <path d="M19 13H5v-2h14v2z"/>
                         </svg>
                     </button>
-                    <div class="close-btn" onclick="kidokoolWidgetAction('close', this)" title="Close">&times;</div>
+                    <div class="close-btn" onclick="tawktooWidgetAction('close', this)" title="Close">&times;</div>
                 </div>
             </div>
             <h2 class="main-heading">${customMessages.heading}</h2>
@@ -339,7 +339,7 @@ class KidokoolWidget {
         return buttons
             .map(
                 (btn) => `
-            <button class="btn" onclick="kidokoolWidgetAction('${btn.action}', this)">
+            <button class="btn" onclick="tawktooWidgetAction('${btn.action}', this)">
                 <div class="btn-icon">${btn.icon}</div>
                 <span class="btn-text">${btn.text}</span>
             </button>`
@@ -352,7 +352,7 @@ class KidokoolWidget {
     // ============================================================================
 
     minimizeWidget() {
-        const widget = document.querySelector('.kidokool-support-widget');
+        const widget = document.querySelector('.tawktoo-support-widget');
         if (!widget) {
             console.warn('Widget not found for minimizing');
             return;
@@ -365,8 +365,8 @@ class KidokoolWidget {
     }
 
     restoreWidget() {
-        const widget = document.querySelector('.kidokool-support-widget');
-        const minimizedBtn = document.querySelector('.kidokool-minimized-btn');
+        const widget = document.querySelector('.tawktoo-support-widget');
+        const minimizedBtn = document.querySelector('.tawktoo-minimized-btn');
 
         if (widget) {
             widget.classList.remove('minimized');
@@ -386,7 +386,7 @@ class KidokoolWidget {
     }
 
     reopenWidget() {
-        const reopenerBtn = document.querySelector('.kidokool-reopener-btn');
+        const reopenerBtn = document.querySelector('.tawktoo-reopener-btn');
         if (reopenerBtn) reopenerBtn.remove();
         this.createWidget();
         console.log('Widget reopened');
@@ -397,7 +397,7 @@ class KidokoolWidget {
     // ============================================================================
 
     createMinimizedButton() {
-        this.removeExistingElement('.kidokool-minimized-btn');
+        this.removeExistingElement('.tawktoo-minimized-btn');
 
         if (!this.options.supportWidget?.position) {
             console.error('Support widget position not defined');
@@ -406,7 +406,7 @@ class KidokoolWidget {
 
         const minimizedBtn = this.createElement('div', {
             className: this.buildClassNames([
-                'kidokool-minimized-btn',
+                'tawktoo-minimized-btn',
                 this.options.supportWidget.position,
                 this.options.theme === 'light' ? 'light-theme' : '',
             ]),
@@ -436,7 +436,7 @@ class KidokoolWidget {
     }
 
     createReopenerButton() {
-        this.removeExistingElement('.kidokool-reopener-btn');
+        this.removeExistingElement('.tawktoo-reopener-btn');
 
         if (!this.options.supportWidget?.position) {
             console.error('Support widget position not defined');
@@ -445,7 +445,7 @@ class KidokoolWidget {
 
         const reopenerBtn = this.createElement('div', {
             className: this.buildClassNames([
-                'kidokool-reopener-btn',
+                'tawktoo-reopener-btn',
                 this.options.supportWidget.position,
                 this.options.theme === 'light' ? 'light-theme' : 'dark-theme',
             ]),
@@ -494,7 +494,7 @@ class KidokoolWidget {
     updateOnlineStatus(online) {
         this.isOnline = online;
 
-        const elementsToUpdate = ['.kidokool-support-widget', '.kidokool-minimized-btn'];
+        const elementsToUpdate = ['.tawktoo-support-widget', '.tawktoo-minimized-btn'];
 
         elementsToUpdate.forEach((selector) => {
             const element = document.querySelector(selector);
@@ -571,7 +571,7 @@ class KidokoolWidget {
         }
     }
 
-    openKidokool() {
+    openTawktoo() {
         window.open(`https://${this.domain}`, '_blank');
     }
 
@@ -623,7 +623,7 @@ class KidokoolWidget {
     }
 
     registerWidget(widgetId, element) {
-        window.kidokoolWidgets.set(widgetId, this);
+        window.tawktooWidgets.set(widgetId, this);
         element.setAttribute('data-widget-id', widgetId);
     }
 
@@ -637,14 +637,14 @@ class KidokoolWidget {
     }
 
     removeAllWidgetElements() {
-        const selectors = ['.kidokool-support-widget', '.kidokool-minimized-btn', '.kidokool-reopener-btn'];
+        const selectors = ['.tawktoo-support-widget', '.tawktoo-minimized-btn', '.tawktoo-reopener-btn'];
         selectors.forEach((selector) => {
             document.querySelectorAll(selector).forEach((element) => element.remove());
         });
     }
 
     getParentNode() {
-        return document.querySelector('#kidokool-widget') || document.body;
+        return document.querySelector('#tawktoo-widget') || document.body;
     }
 
     clearParentNode(parentNode) {
@@ -652,10 +652,10 @@ class KidokoolWidget {
     }
 
     getWidgetFromElement(element) {
-        const widget = element.closest('.kidokool-support-widget, .kidokool-minimized-btn, .kidokool-reopener-btn');
+        const widget = element.closest('.tawktoo-support-widget, .tawktoo-minimized-btn, .tawktoo-reopener-btn');
         if (widget) {
             const widgetId = widget.getAttribute('data-widget-id');
-            return window.kidokoolWidgets ? window.kidokoolWidgets.get(widgetId) : this;
+            return window.tawktooWidgets ? window.tawktooWidgets.get(widgetId) : this;
         }
         return this;
     }
@@ -719,10 +719,10 @@ class KidokoolWidget {
             this.clearParentNode(parentNode);
         }
 
-        if (window.kidokoolWidgets) {
-            for (const [key, widget] of window.kidokoolWidgets.entries()) {
+        if (window.tawktooWidgets) {
+            for (const [key, widget] of window.tawktooWidgets.entries()) {
                 if (widget === this) {
-                    window.kidokoolWidgets.delete(key);
+                    window.tawktooWidgets.delete(key);
                     break;
                 }
             }
@@ -754,10 +754,10 @@ class KidokoolWidget {
 // GLOBAL ACTION HANDLER
 // ============================================================================
 
-window.kidokoolWidgetAction = function (action, element) {
+window.tawktooWidgetAction = function (action, element) {
     try {
         const widgetElement = element.closest(
-            '.kidokool-support-widget, .kidokool-minimized-btn, .kidokool-reopener-btn'
+            '.tawktoo-support-widget, .tawktoo-minimized-btn, .tawktoo-reopener-btn'
         );
 
         if (!widgetElement) {
@@ -766,7 +766,7 @@ window.kidokoolWidgetAction = function (action, element) {
         }
 
         const widgetId = widgetElement.getAttribute('data-widget-id');
-        const widget = window.kidokoolWidgets?.get(widgetId);
+        const widget = window.tawktooWidgets?.get(widgetId);
 
         if (!widget) {
             console.error('Widget instance not found');
@@ -801,12 +801,12 @@ window.kidokoolWidgetAction = function (action, element) {
 // ============================================================================
 
 document.addEventListener('DOMContentLoaded', function () {
-    const autoInit = document.querySelector('[data-kidokool-auto]');
+    const autoInit = document.querySelector('[data-tawktoo-auto]');
     if (!autoInit) return;
 
     try {
         const buttonsAttr = autoInit.getAttribute('data-buttons');
-        let buttonsConfig = { ...KidokoolWidget.DEFAULT_OPTIONS.supportWidget.buttons };
+        let buttonsConfig = { ...tawktooWidget.DEFAULT_OPTIONS.supportWidget.buttons };
         if (buttonsAttr) {
             // Normalize and map
             const requested = buttonsAttr
@@ -824,12 +824,12 @@ document.addEventListener('DOMContentLoaded', function () {
             domain: autoInit.getAttribute('data-domain') || window.location.host,
             roomId: autoInit.getAttribute('data-room') || 'support-room',
             userName: autoInit.getAttribute('data-user') || `guest-${Math.floor(Math.random() * 10000)}`,
-            theme: autoInit.getAttribute('data-theme') || KidokoolWidget.DEFAULT_OPTIONS.theme,
-            widgetState: autoInit.getAttribute('data-widget-state') || KidokoolWidget.DEFAULT_OPTIONS.widgetState,
+            theme: autoInit.getAttribute('data-theme') || tawktooWidget.DEFAULT_OPTIONS.theme,
+            widgetState: autoInit.getAttribute('data-widget-state') || tawktooWidget.DEFAULT_OPTIONS.widgetState,
             draggable:
                 autoInit.getAttribute('data-draggable') === 'true' ||
-                KidokoolWidget.DEFAULT_OPTIONS.supportWidget.draggable,
-            position: autoInit.getAttribute('data-position') || KidokoolWidget.DEFAULT_OPTIONS.supportWidget.position,
+                tawktooWidget.DEFAULT_OPTIONS.supportWidget.draggable,
+            position: autoInit.getAttribute('data-position') || tawktooWidget.DEFAULT_OPTIONS.supportWidget.position,
             checkOnline: autoInit.getAttribute('data-check-online') === 'true',
             expertImages: autoInit.getAttribute('data-expert-images')
                 ? autoInit
@@ -837,35 +837,35 @@ document.addEventListener('DOMContentLoaded', function () {
                       .split(',')
                       .map((url) => url.trim())
                       .filter(Boolean)
-                : KidokoolWidget.DEFAULT_OPTIONS.supportWidget.expertImages,
+                : tawktooWidget.DEFAULT_OPTIONS.supportWidget.expertImages,
             customMessages: {
                 heading:
                     autoInit.getAttribute('data-heading') ||
-                    KidokoolWidget.DEFAULT_OPTIONS.supportWidget.customMessages.heading,
+                    tawktooWidget.DEFAULT_OPTIONS.supportWidget.customMessages.heading,
                 subheading:
                     autoInit.getAttribute('data-subheading') ||
-                    KidokoolWidget.DEFAULT_OPTIONS.supportWidget.customMessages.subheading,
+                    tawktooWidget.DEFAULT_OPTIONS.supportWidget.customMessages.subheading,
                 connectText:
                     autoInit.getAttribute('data-connect-text') ||
-                    KidokoolWidget.DEFAULT_OPTIONS.supportWidget.customMessages.connectText,
+                    tawktooWidget.DEFAULT_OPTIONS.supportWidget.customMessages.connectText,
                 onlineText:
                     autoInit.getAttribute('data-online-text') ||
-                    KidokoolWidget.DEFAULT_OPTIONS.supportWidget.customMessages.onlineText,
+                    tawktooWidget.DEFAULT_OPTIONS.supportWidget.customMessages.onlineText,
                 offlineText:
                     autoInit.getAttribute('data-offline-text') ||
-                    KidokoolWidget.DEFAULT_OPTIONS.supportWidget.customMessages.offlineText,
+                    tawktooWidget.DEFAULT_OPTIONS.supportWidget.customMessages.offlineText,
                 poweredBy:
                     autoInit.getAttribute('data-powered-by') ||
-                    KidokoolWidget.DEFAULT_OPTIONS.supportWidget.customMessages.poweredBy,
+                    tawktooWidget.DEFAULT_OPTIONS.supportWidget.customMessages.poweredBy,
             },
         };
 
         if (config.domain) {
-            new KidokoolWidget(config.domain, config.roomId, config.userName, {
+            new tawktooWidget(config.domain, config.roomId, config.userName, {
                 widgetState: config.widgetState,
                 theme: config.theme,
                 supportWidget: {
-                    ...KidokoolWidget.DEFAULT_OPTIONS.supportWidget,
+                    ...tawktooWidget.DEFAULT_OPTIONS.supportWidget,
                     draggable: config.draggable,
                     position: config.position,
                     expertImages: config.expertImages,
@@ -876,6 +876,6 @@ document.addEventListener('DOMContentLoaded', function () {
             });
         }
     } catch (error) {
-        console.error('Failed to auto-initialize Kidokool Widget:', error);
+        console.error('Failed to auto-initialize tawktoo Widget:', error);
     }
 });

@@ -1,4 +1,4 @@
-# AWS Deployment Guide for Kidokool SFU
+# AWS Deployment Guide for tawktoo SFU
 
 To ensure this project works "perfectly" on AWS, you need to configure a few critical production settings. By default, the app is set up for local development.
 
@@ -59,4 +59,4 @@ npm start
 
 > [!TIP]
 > Use a process manager like **PM2** to keep the server running:
-> `pm2 start app/src/Server.js --name kidokool-sfu`
+> `pm2 start app/src/Server.js --name tawktoo-sfu`

@@ -1,8 +1,8 @@
 services:
-    kidokoolsfu:
-        image: kidokool/sfu:latest
-        container_name: kidokoolsfu
-        hostname: kidokoolsfu
+    tawktoosfu:
+        image: tawktoo/sfu:latest
+        container_name: tawktoosfu
+        hostname: tawktoosfu
         restart: unless-stopped
         # The following ports are only required if 'network_mode: host' is NOT enabled.
         # If you enable 'network_mode: host', you can comment out or remove the 'ports' section below.

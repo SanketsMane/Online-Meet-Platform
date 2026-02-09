@@ -3,7 +3,7 @@
     <head>
         <!-- Title and Icon -->
 
-        <title id="title">Kidokool, Free Video Calls, Messaging and Screen Sharing</title>
+        <title id="title">tawktoo, Free Video Calls, Messaging and Screen Sharing</title>
         <link id="icon" rel="shortcut icon" href="../images/logo.svg" />
         <link id="appleTouchIcon" rel="apple-touch-icon" href="../images/logo.svg" />
 
@@ -16,7 +16,7 @@
         <meta
             id="description"
             name="description"
-            content="Kidokool powered by WebRTC and mediasoup, Real-time Simple Secure Fast video calls, messaging and screen sharing capabilities in the browser."
+            content="tawktoo powered by WebRTC and mediasoup, Real-time Simple Secure Fast video calls, messaging and screen sharing capabilities in the browser."
         />
         <meta
             id="keywords"
@@ -67,34 +67,47 @@
                 border-bottom: 1px solid var(--divider-color);
                 backdrop-filter: blur(10px);
                 -webkit-backdrop-filter: blur(10px);
+                height: 60px; /* Fixed height for consistency */
             }
 
             .site-header-inner {
                 display: flex;
                 align-items: center;
                 justify-content: space-between;
-                padding: 16px 0;
+                height: 60px; /* Match header height */
+                padding: 0; /* Remove padding as we use fixed height */
+            }
+
+            .header-brand {
+                display: flex;
+                align-items: center;
+            }
+
+            .header-logo-image {
+                height: 32px; /* Restrict logo height */
+                width: auto;
+                display: block;
             }
 
             .header-nav {
                 display: flex;
                 align-items: center;
-                gap: 24px;
+                gap: 16px; /* Reduced gap */
             }
 
             .header-nav-list {
                 display: flex;
                 align-items: center;
-                gap: 8px;
+                gap: 4px; /* Reduced gap */
                 margin: 0;
             }
 
             .header-nav-link {
-                padding: 8px 16px;
+                padding: 6px 12px; /* Compact padding */
                 color: var(--text-color);
                 text-decoration: none;
                 font-weight: 500;
-                font-size: 16px;
+                font-size: 14px; /* Slightly smaller font */
                 border-radius: 6px;
                 transition: all 0.2s ease;
                 display: flex;
@@ -112,7 +125,11 @@
                 border: 1px solid var(--divider-color) !important;
                 color: var(--heading-color) !important;
                 min-width: auto !important;
-                padding: 8px 12px !important;
+                padding: 6px 10px !important; /* Compact padding */
+                height: 32px;
+                display: flex;
+                align-items: center;
+                justify-content: center;
             }
 
             .theme-toggle:hover {
@@ -127,11 +144,11 @@
                 background: none;
                 border: none;
                 cursor: pointer;
-                padding: 8px;
+                padding: 4px; /* Compact */
             }
 
             .mobile-menu-toggle span {
-                width: 24px;
+                width: 20px; /* Smaller menu icon */
                 height: 2px;
                 background: var(--heading-color);
                 transition: all 0.3s ease;
@@ -147,23 +164,32 @@
             }
 
             .mobile-menu-toggle.active span:nth-child(3) {
-                transform: rotate(-45deg) translate(7px, -6px);
+                transform: rotate(-45deg) translate(5px, -5px); /* Adjusted for smaller size */
             }
 
             @media (max-width: 768px) {
+                .site-header {
+                    height: 56px; /* Slightly smaller on mobile */
+                }
+                
+                .site-header-inner {
+                    height: 56px;
+                }
+
                 .header-nav {
                     position: fixed;
-                    top: 70px;
+                    top: 56px; /* Match mobile header height */
                     left: 0;
                     right: 0;
                     background: var(--bg-color);
                     border-bottom: 1px solid var(--divider-color);
-                    padding: 16px;
+                    padding: 12px;
                     flex-direction: column;
                     transform: translateY(-150%);
                     opacity: 0;
                     transition: all 0.3s ease;
                     box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1);
+                    gap: 12px;
                 }
                 
                 .header-nav.active {
@@ -180,7 +206,8 @@
                 .header-nav-link {
                     width: 100%;
                     text-align: left;
-                    padding: 12px 16px;
+                    padding: 10px 16px;
+                    font-size: 15px;
                 }
                 
                 .mobile-menu-toggle {
@@ -189,6 +216,7 @@
 
                 .theme-toggle {
                     width: 100%;
+                    height: 36px;
                 }
             }
         </style>
@@ -202,7 +230,7 @@
                     <div class="site-header-inner">
                         <div class="brand header-brand">
                             <a href="/">
-                                <img class="header-logo-image" src="../images/logo.svg" alt="kidokool-logo" />
+                                <img class="header-logo-image" src="../images/logo.svg" alt="tawktoo-logo" />
                             </a>
                         </div>
                         <nav class="header-nav" id="headerNav">
@@ -231,7 +259,7 @@
                         <div class="hero-inner">
                             <div class="hero-copy">
                                 <h1 id="appTitle" class="hero-title mt-0">
-                                    Kidokool<br />Free browser based Real-time video calls.<br />
+                                    tawktoo<br />Free browser based Real-time video calls.<br />
                                     Simple, Secure, Fast.
                                 </h1>
                                 <p id="appDescription" class="hero-paragraph">
@@ -316,7 +344,7 @@
                             </li>
                         </ul>
 
-                        <div class="footer-copyright">&copy; 2026 Kidokool, all rights reserved</div>
+                        <div class="footer-copyright">&copy; 2026 tawktoo, all rights reserved</div>
                     </div>
                 </div>
             </footer>

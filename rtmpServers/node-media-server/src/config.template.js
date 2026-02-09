@@ -19,11 +19,11 @@ const config = {
     },
     auth: {
         api: true,
-        api_user: 'kidokool',
-        api_pass: 'kidokoolRtmpPassword', // http://localhost:8081/admin
+        api_user: 'tawktoo',
+        api_pass: 'tawktooRtmpPassword', // http://localhost:8081/admin
         play: false, // Require authentication for playing streams
         publish: false, // Require authentication for publishing streams
-        secret: 'kidokoolRtmpSecret', // Check the sign.js file to generate a valid RTMP URL
+        secret: 'tawktooRtmpSecret', // Check the sign.js file to generate a valid RTMP URL
     },
 };
 

@@ -41,7 +41,7 @@ function generateRTMPUrl(baseURL, streamPath, secretKey, expirationHours = 8) {
 const baseURL = 'rtmp://localhost:1935'; // Rtmp server
 const streamKey = uuidv4(); // Generate random stream key
 const streamPath = '/live/' + streamKey; // Path/stream-key
-const secretKey = 'kidokoolRtmpSecret'; // Must be the same as in config.js auth.secret
+const secretKey = 'tawktooRtmpSecret'; // Must be the same as in config.js auth.secret
 const expirationHours = 8;
 
 // Run: node sign.js

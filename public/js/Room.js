@@ -3,14 +3,14 @@
 if (location.href.substr(0, 5) !== 'https') location.href = 'https' + location.href.substr(4, location.href.length - 4);
 
 /**
- * Kidokool SFU - Room component
+ * tawktoo SFU - Room component
  *
  * @link    GitHub: https://github.com/SanketsMane/Online-Meet-Platform.git
- * @link    Official Live demo: https://sfu.kidokool.com
+ * @link    Official Live demo: https://tawktoo.com
  * @license For open source use: AGPLv3
- * @license For commercial or closed source, contact us at license.kidokool@gmail.com or purchase directly via CodeCanyon
- * @license CodeCanyon: https://codecanyon.net/item/kidokool-sfu-webrtc-realtime-video-conferences/40769970
- * @author  Miroslav Pejic - miroslav.pejic.85@gmail.com
+ * @license For commercial or closed source, contact us at license.tawktoo@gmail.com or purchase directly via CodeCanyon
+ * @license CodeCanyon: https://codecanyon.net/item/tawktoo-sfu-webrtc-realtime-video-conferences/40769970
+ * @author  Sanket Mane - sanketmane7170@gmail.com
  * @version 2.1.06
  *
  */
@@ -3920,7 +3920,7 @@ function leaveFeedback(allowCancel) {
         imageUrl: image.feedback,
         position: 'top',
         title: 'Leave a feedback',
-        text: 'Do you want to rate your Kidokool experience?',
+        text: 'Do you want to rate your tawktoo experience?',
         confirmButtonText: `Yes`,
         denyButtonText: `No`,
         cancelButtonText: `Cancel`,
@@ -6701,19 +6701,19 @@ function showAbout() {
                                 data-umami-event="Linkedin button" 
                                 href="https://www.linkedin.com/in/miroslav-pejic-976a07101/" 
                                 target="_blank"> 
-                                Miroslav Pejic
+                                Sanket Mane
                             </a>
                             <br /><br />
                             Email: 
                             <a 
                                 id="email-button" 
                                 data-umami-event="Email button" 
-                                href="mailto:miroslav.pejic.85@gmail.com?subject=Kidokool SFU info"> 
-                                miroslav.pejic.85@gmail.com
+                                href="mailto:sanketmane7170@gmail.com?subject=tawktoo SFU info"> 
+                                sanketmane7170@gmail.com
                             </a>
                             <br /><br />
                             <hr />
-                            <span>&copy; 2026 Kidokool SFU, all rights reserved</span>
+                            <span>&copy; 2026 tawktoo SFU, all rights reserved</span>
                             <hr />
                         `
                 }

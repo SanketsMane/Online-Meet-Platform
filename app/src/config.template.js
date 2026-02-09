@@ -202,7 +202,7 @@ module.exports = {
          * - appName            : Application name (default: 'live')
          * - streamKey          : Optional authentication key (auto-generated UUID if empty)
          * - secret             : Must match NodeMediaServer's config.js (default: 'kidokoolRtmpSecret')
-         * - apiSecret          : WebRTC→RTMP API secret (default: 'kidokoolRtmpApiSecret')
+         * - apiSecret          : WebRTC→RTMP API secret (default: 'tawktooRtmpApiSecret')
          * - expirationHours    : Stream URL expiry in hours (default: 4)
          * - dir                : Video storage directory (Relative to app/src/ default: app/rtmp)
          * - ffmpegPath         : FFmpeg binary path (auto-detected)
@@ -252,7 +252,7 @@ module.exports = {
             appName: process.env.RTMP_APP_NAME || 'live',
             streamKey: process.env.RTMP_STREAM_KEY || '',
             secret: process.env.RTMP_SECRET || 'kidokoolRtmpSecret',
-            apiSecret: process.env.RTMP_API_SECRET || 'kidokoolRtmpApiSecret',
+            apiSecret: process.env.RTMP_API_SECRET || 'tawktooRtmpApiSecret',
             expirationHours: parseInt(process.env.RTMP_EXPIRATION_HOURS) || 4,
             dir: process.env.RTMP_DIR || '../rtmp',
             ffmpegPath: RTMP_FFMPEG_PATH,
@@ -471,7 +471,7 @@ module.exports = {
                     ? process.env.PRESENTERS.split(splitChar)
                           .map((presenter) => presenter.trim())
                           .filter((presenter) => presenter !== '')
-                    : ['Miroslav Pejic', 'miroslav.pejic.85@gmail.com'],
+                    : ['Sanket Mane', 'sanketmane7170@gmail.com'],
                 join_first: process.env.PRESENTER_JOIN_FIRST !== 'false',
             },
         },
@@ -1012,7 +1012,7 @@ module.exports = {
                 name: process.env.APP_NAME || 'Kidokool SFU',
                 title:
                     process.env.APP_TITLE ||
-                    '<h1>Kidokool SFU</h1> Free browser based Real-time video calls.<br />Simple, Secure, Fast.',
+                    '<h1>tawktoo</h1> Free browser based Real-time video calls.<br />Simple, Secure, Fast.',
                 description:
                     process.env.APP_DESCRIPTION ||
                     'Start your next video call with a single click. No download, plug-in, or login is required.',
@@ -1114,15 +1114,15 @@ module.exports = {
                     <br />
                     ${process.env.AUTHOR_LABEL || 'Author'}: 
                     <a id="linkedin-button" data-umami-event="Linkedin button"
-                        href="${process.env.LINKEDIN_URL || 'https://www.linkedin.com/in/miroslav-pejic-976a07101/'}" 
+                        href="${process.env.LINKEDIN_URL || 'https://github.com/SanketsMane'}" 
                         target="_blank">
-                        ${process.env.AUTHOR_NAME || 'Miroslav Pejic'}
+                        ${process.env.AUTHOR_NAME || 'Sanket Mane'}
                     </a>
                     <br />
                     ${process.env.EMAIL_LABEL || 'Email'}: 
                     <a id="email-button" data-umami-event="Email button"
-                        href="mailto:${process.env.CONTACT_EMAIL || 'miroslav.pejic.85@gmail.com'}?subject=${process.env.EMAIL_SUBJECT || 'Kidokool SFU info'}">
-                        ${process.env.CONTACT_EMAIL || 'miroslav.pejic.85@gmail.com'}
+                        href="mailto:${process.env.CONTACT_EMAIL || 'sanketmane7170@gmail.com'}?subject=${process.env.EMAIL_SUBJECT || 'Kidokool SFU info'}">
+                        ${process.env.CONTACT_EMAIL || 'sanketmane7170@gmail.com'}
                     </a>
                     <hr />
                     <span>

@@ -1,7 +1,7 @@
 {
     "name": "cloud",
     "version": "1.0.1",
-    "description": "Cloud server to handle Kidokool SFU recording uploads",
+    "description": "Cloud server to handle tawktoo SFU recording uploads",
     "main": "server.js",
     "scripts": {
         "start": "node server.js",
@@ -11,7 +11,7 @@
         "cloud",
         "recording"
     ],
-    "author": "Miroslav Pejic",
+    "author": "Sanket Mane <sanketmane7170@gmail.com>",
     "license": "AGPLv3",
     "dependencies": {
         "cors": "2.8.5",

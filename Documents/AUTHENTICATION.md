@@ -1,8 +1,8 @@
-# Kidokool Authentication Guide
+# tawktoo Authentication Guide
 
 ## Overview
 
-Kidokool has **three authentication systems** for different user types:
+tawktoo has **three authentication systems** for different user types:
 
 1. **Regular Users** - No authentication required
 2. **Hosts/Presenters** - Login via `/login`
@@ -247,7 +247,7 @@ Check `app/src/config.js` for detailed configuration options:
 ```javascript
 security: {
     jwt: {
-        key: process.env.JWT_SECRET || 'kidokool_sfu_secret',
+        key: process.env.JWT_SECRET || 'tawktoo_sfu_secret',
         exp: process.env.JWT_EXPIRATION || '1h',
     },
 },
@@ -336,5 +336,5 @@ host: {
 
 For issues or questions:
 - Check the [GitHub Issues](https://github.com/SanketsMane/Online-Meet-Platform.git/issues)
-- Review the [Official Documentation](https://docs.kidokool.com)
-- Contact support: miroslav.pejic.85@gmail.com
+- Review the [Official Documentation](https://docs.tawktoo.com)
+- Contact support: sanketmane7170@gmail.com

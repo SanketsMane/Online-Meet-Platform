@@ -1,7 +1,7 @@
 {
-    "name": "kidokool-rtmp-nms",
+    "name": "tawktoo-rtmp-nms",
     "version": "1.0.1",
-    "description": "Kidokool RTMP Node Media Server",
+    "description": "tawktoo RTMP Node Media Server",
     "main": "server.js",
     "scripts": {
         "start": "node src/server.js",
@@ -13,7 +13,7 @@
         "media",
         "server"
     ],
-    "author": "Miroslav Pejic",
+    "author": "Sanket Mane <sanketmane7170@gmail.com>",
     "license": "AGPLv3",
     "dependencies": {
         "crypto": "^1.0.1",

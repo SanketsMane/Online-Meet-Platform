@@ -1,7 +1,7 @@
 {
-    "name": "kidokool-rtmp-server-streamer",
+    "name": "tawktoo-rtmp-server-streamer",
     "version": "1.0.3",
-    "description": "Kidokool RTMP Server Streamer",
+    "description": "tawktoo RTMP Server Streamer",
     "main": "server.js",
     "scripts": {
         "start": "node server.js",
@@ -9,14 +9,14 @@
         "nms-start": "docker-compose -f ../../../node-media-server/docker-compose.yml up -d",
         "nms-stop": "docker-compose -f ../../../node-media-server/docker-compose.yml down",
         "nms-restart": "docker-compose -f ../../../node-media-server/docker-compose.yml down && docker-compose -f ../../node-media-server/docker-compose.yml up -d",
-        "nms-logs": "docker logs -f kidokool-nms"
+        "nms-logs": "docker logs -f tawktoo-nms"
     },
     "keywords": [
         "rtmp",
         "server",
         "streaming"
     ],
-    "author": "Miroslav Pejic",
+    "author": "Sanket Mane <sanketmane7170@gmail.com>",
     "license": "AGPLv3",
     "dependencies": {
         "@ffmpeg-installer/ffmpeg": "^1.1.0",

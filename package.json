@@ -1,7 +1,7 @@
 {
-    "name": "kidokoolsfu",
+    "name": "tawktoosfu",
     "version": "2.1.06",
-    "description": "WebRTC SFU browser-based video calls",
+    "description": "WebRTC SFU browser-based video calls for tawktoo",
     "main": "Server.js",
     "scripts": {
         "test": "mocha tests/*.js",
@@ -10,24 +10,24 @@
         "debug": "DEBUG='mediasoup*' node app/src/Server.js",
         "compile": "npx webpack",
         "lint": "npx prettier --write .",
-        "docker-build": "docker build --tag sanketsmane/kidokool:latest .",
+        "docker-build": "docker build --tag tawktoo/sfu:latest .",
         "docker-rmi": "docker image prune -f",
-        "docker-push": "docker push sanketsmane/kidokool:latest",
-        "docker-pull": "docker pull sanketsmane/kidokool:latest",
-        "docker-rmc": "docker container rm kidokool --force",
-        "docker-run": "docker run -d -p 40000-40100:40000-40100 -p 3010:3010 -v ./.env:/src/.env -v ./app/src/config.js:/src/app/src/config.js:ro --name kidokool sanketsmane/kidokool:latest",
-        "docker-run-vm": "docker run -d -p 40000-40100:40000-40100 -p 3010:3010 -v ./.env:/src/.env -v ./app/:/src/app/:ro -v ./public/:/src/public/:ro --name kidokoolsfu kidokool/sfu:latest",
-        "docker-start": "docker start kidokoolsfu",
-        "docker-stop": "docker stop kidokoolsfu",
+        "docker-push": "docker push tawktoo/sfu:latest",
+        "docker-pull": "docker pull tawktoo/sfu:latest",
+        "docker-rmc": "docker container rm tawktoosfu --force",
+        "docker-run": "docker run -d -p 40000-40100:40000-40100 -p 3010:3010 -v ./.env:/src/.env -v ./app/src/config.js:/src/app/src/config.js:ro --name tawktoosfu tawktoo/sfu:latest",
+        "docker-run-vm": "docker run -d -p 40000-40100:40000-40100 -p 3010:3010 -v ./.env:/src/.env -v ./app/:/src/app/:ro -v ./public/:/src/public/:ro --name tawktoosfu tawktoo/sfu:latest",
+        "docker-start": "docker start tawktoosfu",
+        "docker-stop": "docker stop tawktoosfu",
         "rtmp-start": "docker-compose -f rtmpServers/nginx-rtmp/docker-compose.yml up -d",
         "rtmp-stop": "docker-compose -f rtmpServers/nginx-rtmp/docker-compose.yml down",
         "rtmp-restart": "docker-compose -f rtmpServers/nginx-rtmp/docker-compose.yml down && docker-compose -f rtmpServers/nginx-rtmp/docker-compose.yml up -d",
-        "rtmp-logs": "docker logs -f kidokool-rtmp",
+        "rtmp-logs": "docker logs -f tawktoo-rtmp",
         "nms-node-start": "node rtmpServers/node-media-server/src/server.js",
         "nms-start": "docker-compose -f rtmpServers/node-media-server/docker-compose.yml up -d",
         "nms-stop": "docker-compose -f rtmpServers/node-media-server/docker-compose.yml down",
         "nms-restart": "docker-compose -f rtmpServers/node-media-server/docker-compose.yml down && docker-compose -f rtmpServers/node-media-server/docker-compose.yml up -d",
-        "nms-logs": "docker logs -f kidokool-nms"
+        "nms-logs": "docker logs -f tawktoo-nms"
     },
     "repository": {
         "type": "git",
@@ -51,7 +51,7 @@
         "streaming",
         "realtime"
     ],
-    "author": "Miroslav Pejic",
+    "author": "Sanket Mane <sanketmane7170@gmail.com>",
     "license": "AGPL-3.0",
     "engines": {
         "node": ">=22"

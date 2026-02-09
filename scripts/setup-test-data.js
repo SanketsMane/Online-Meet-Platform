@@ -12,7 +12,7 @@ const seed = async () => {
     await connectDB();
 
     // 1. Create Admin
-    const adminEmail = 'admin@kidokool.com';
+    const adminEmail = 'admin@tawktoo.com';
     const adminPassword = 'adminpassword';
     
     let admin = await Tenant.findOne({ where: { email: adminEmail } });

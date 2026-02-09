@@ -3,7 +3,7 @@
     <head>
         <meta charset="UTF-8" />
         <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-        <title>Kidokool Widget Maker</title>
+        <title>tawktoo Widget Maker</title>
         <link
             rel="icon"
             href="data:image/svg+xml,<svg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 100 100'><text y='.9em' font-size='90'>🚀</text></svg>"
@@ -449,7 +449,7 @@
     <body>
         <div class="container">
             <div class="header">
-                <h1>Kidokool Widget Maker</h1>
+                <h1>tawktoo Widget Maker</h1>
                 <p>Create custom embeddable widgets for your website in seconds</p>
             </div>
 
@@ -459,14 +459,14 @@
                     <h2>Widget Configuration</h2>
 
                     <div class="form-group">
-                        <label for="domain" class="tooltip" data-tooltip="Your Kidokool server domain">
+                        <label for="domain" class="tooltip" data-tooltip="Your tawktoo server domain">
                             Domain <span style="color: #dc3545">*</span>
                         </label>
                         <input
                             type="text"
                             id="domain"
-                            value="sfu.kidokool.com"
-                            placeholder="example.com or sfu.kidokool.com"
+                            value="tawktoo.com"
+                            placeholder="example.com or tawktoo.com"
                         />
                     </div>
 
@@ -577,8 +577,8 @@ Get instant support from our expert team!</textarea
                         <input
                             type="text"
                             id="powered-by"
-                            value="Powered by Kidokool"
-                            placeholder="Powered by Kidokool"
+                            value="Powered by tawktoo"
+                            placeholder="Powered by tawktoo"
                         />
                     </div>
 
@@ -648,7 +648,7 @@ https://i.pravatar.cc/40?img=1,https://i.pravatar.cc/40?img=2,https://i.pravatar
             // Generate HTML code
             function generateCode() {
                 const config = {
-                    domain: form.domain.value || 'sfu.kidokool.com',
+                    domain: form.domain.value || 'tawktoo.com',
                     room: form.room.value || 'support-room',
                     theme: form.theme.value,
                     position: form.position.value,
@@ -659,7 +659,7 @@ https://i.pravatar.cc/40?img=1,https://i.pravatar.cc/40?img=2,https://i.pravatar
                     connectText: form.connectText.value || 'connect in < 5 seconds',
                     onlineText: form.onlineText.value || 'We are online',
                     offlineText: form.offlineText.value || 'We are offline',
-                    poweredBy: form.poweredBy.value || 'Powered by Kidokool',
+                    poweredBy: form.poweredBy.value || 'Powered by tawktoo',
                     expertImages:
                         form.expertImages.value ||
                         'https://i.pravatar.cc/40?img=1,https://i.pravatar.cc/40?img=2,https://i.pravatar.cc/40?img=3',
@@ -679,13 +679,13 @@ https://i.pravatar.cc/40?img=1,https://i.pravatar.cc/40?img=2,https://i.pravatar
 <head>
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width,initial-scale=1.0">
-<title>Kidokool Widget</title>
+<title>tawktoo Widget</title>
 <script src="https://${config.domain}/js/Widget.js"><\/script>
 </head>
 <body>
 <div
-  id="kidokool-widget"
-  data-kidokool-auto
+  id="tawktoo-widget"
+  data-tawktoo-auto
   data-domain="${config.domain}"
   data-room="${config.room}"
   data-theme="${config.theme}"
@@ -740,7 +740,7 @@ https://i.pravatar.cc/40?img=1,https://i.pravatar.cc/40?img=2,https://i.pravatar
                 const url = URL.createObjectURL(blob);
                 const a = document.createElement('a');
                 a.href = url;
-                a.download = `kidokool-widget-${Date.now()}.html`;
+                a.download = `tawktoo-widget-${Date.now()}.html`;
                 document.body.appendChild(a);
                 a.click();
                 document.body.removeChild(a);
@@ -749,7 +749,7 @@ https://i.pravatar.cc/40?img=1,https://i.pravatar.cc/40?img=2,https://i.pravatar
 
             // Reset form to defaults
             function resetForm() {
-                form.domain.value = 'sfu.kidokool.com';
+                form.domain.value = 'tawktoo.com';
                 form.room.value = 'support-room';
                 form.theme.value = 'dark';
                 form.position.value = 'bottom-right';
@@ -760,7 +760,7 @@ https://i.pravatar.cc/40?img=1,https://i.pravatar.cc/40?img=2,https://i.pravatar
                 form.connectText.value = 'connect in < 5 seconds';
                 form.onlineText.value = 'We are online';
                 form.offlineText.value = 'We are offline';
-                form.poweredBy.value = 'Powered by Kidokool';
+                form.poweredBy.value = 'Powered by tawktoo';
                 form.expertImages.value =
                     'https://i.pravatar.cc/40?img=1,https://i.pravatar.cc/40?img=2,https://i.pravatar.cc/40?img=3';
                 form.btnAudio.checked =
@@ -783,13 +783,13 @@ https://i.pravatar.cc/40?img=1,https://i.pravatar.cc/40?img=2,https://i.pravatar
                     if (form[key].type === 'checkbox') data[key] = form[key].checked;
                     else data[key] = form[key].value;
                 });
-                localStorage.setItem('kidokool-widget-maker', JSON.stringify(data));
+                localStorage.setItem('tawktoo-widget-maker', JSON.stringify(data));
             }
 
             // Load form data from localStorage
             function loadFormData() {
                 try {
-                    const data = JSON.parse(localStorage.getItem('kidokool-widget-maker'));
+                    const data = JSON.parse(localStorage.getItem('tawktoo-widget-maker'));
                     if (data) {
                         Object.keys(data).forEach((key) => {
                             if (!form[key]) return;

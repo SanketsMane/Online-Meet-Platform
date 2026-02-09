@@ -1,8 +1,8 @@
 services:
-    kidokool-rtmp:
-        container_name: kidokool-rtmp
+    tawktoo-rtmp:
+        container_name: tawktoo-rtmp
         #image: tiangolo/nginx-rtmp
-        image: kidokool/rtmp:latest
+        image: tawktoo/rtmp:latest
         volumes:
             - ./nginx.conf/:/etc/nginx/nginx.conf/:ro
             - ./stat.xsl/:/usr/share/nginx/html/stat.xsl/:ro

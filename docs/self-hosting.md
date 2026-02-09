@@ -1,7 +1,7 @@
-# Kidokool SFU - Self Hosting
+# tawktoo SFU - Self Hosting
 
-### How can I self-host Kidokool SFU on my own server?
+### How can I self-host tawktoo SFU on my own server?
 
-[https://docs.kidokool.com/kidokool-sfu/self-hosting/](https://docs.kidokool.com/kidokool-sfu/self-hosting/)
+[https://docs.tawktoo.com/tawktoo-sfu/self-hosting/](https://docs.tawktoo.com/tawktoo-sfu/self-hosting/)
 
 ---

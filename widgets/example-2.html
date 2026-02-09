@@ -1,18 +1,18 @@
 <!doctype html>
 <html>
     <head>
-        <script src="https://sfu.kidokool.com/js/Widget.js"></script>
+        <script src="https://tawktoo.com/js/Widget.js"></script>
     </head>
     <body>
         <script>
             // Advanced configuration
             window.addEventListener('DOMContentLoaded', function () {
-                if (typeof KidokoolWidget !== 'undefined') {
-                    const domain = 'sfu.kidokool.com';
+                if (typeof tawktooWidget !== 'undefined') {
+                    const domain = 'tawktoo.com';
                     const roomId = 'support-room';
                     const userName = 'guest-' + Math.floor(Math.random() * 10000);
 
-                    new KidokoolWidget(domain, roomId, userName, {
+                    new tawktooWidget(domain, roomId, userName, {
                         theme: 'dark', // or 'light'
                         widgetState: 'normal', // 'normal', 'minimized', 'closed'
                         widgetType: 'support',
@@ -32,12 +32,12 @@
                                 connectText: 'connect in < 5 seconds',
                                 onlineText: 'We are online',
                                 offlineText: 'We are offline',
-                                poweredBy: 'Powered by Kidokool SFU',
+                                poweredBy: 'Powered by tawktoo SFU',
                             },
                         },
                     });
                 } else {
-                    console.error('KidokoolWidget is not defined. Please check Widget.js loading.');
+                    console.error('tawktooWidget is not defined. Please check Widget.js loading.');
                 }
             });
         </script>

@@ -1,9 +1,9 @@
-# Kidokool Project Audit Report
+# tawktoo Project Audit Report
 
 **Date:** 2026-02-09
 **Auditor:** Sanket
 
-This report summarizes the "Deep Test" findings for the Kidokool (formerly MiroTalk) platform. While the core WebRTC and Branding features are solid, several "Developer Platform" and "Admin Dashboard" features are currently in a professional-looking but incomplete state.
+This report summarizes the "Deep Test" findings for the tawktoo (formerly MiroTalk) platform. While the core WebRTC and Branding features are solid, several "Developer Platform" and "Admin Dashboard" features are currently in a professional-looking but incomplete state.
 
 ## 🔴 Critical Gaps & Bugs
 

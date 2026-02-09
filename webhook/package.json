@@ -10,7 +10,7 @@
         "webhook",
         "server"
     ],
-    "author": "Miroslav Pejic",
+    "author": "Sanket Mane <sanketmane7170@gmail.com>",
     "license": "AGPLv3",
     "dependencies": {
         "express": "5.1.0",

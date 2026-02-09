@@ -16,7 +16,7 @@ npm start
 
 ## Edit config.js
 
-In the Kidokool SFU `.env` file, change the endpoint to send recording chunks:
+In the tawktoo SFU `.env` file, change the endpoint to send recording chunks:
 
 ```bash
 RECORDING_ENDPOINT=http://localhost:8080

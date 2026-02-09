@@ -14,10 +14,10 @@ const rtmpCfg = {
     enabled: true,
     maxStreams: 1,
     server: 'rtmp://localhost:1935',
-    appName: 'kidokool',
+    appName: 'tawktoo',
     streamKey: '',
-    secret: 'kidokoolRtmpSecret', // Must match the key in node-media-server/src/config.js if play and publish are set to true, otherwise leave it ''
-    apiSecret: 'kidokoolRtmpApiSecret', // Must match the apiSecret specified in the Client side.
+    secret: 'tawktooRtmpSecret', // Must match the key in node-media-server/src/config.js if play and publish are set to true, otherwise leave it ''
+    apiSecret: 'tawktooRtmpApiSecret', // Must match the apiSecret specified in the Client side.
     expirationHours: 4,
 };
 

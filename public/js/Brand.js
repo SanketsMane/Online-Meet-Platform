@@ -39,8 +39,8 @@ const guestJoinRoomButton = document.getElementById('guestJoinRoomButton');
 let BRAND = {
     app: {
         language: 'en',
-        name: 'Kidokool',
-        title: 'Kidokool<br />Free browser based Real-time video calls.<br />Simple, Secure, Fast.',
+        name: 'tawktoo',
+        title: 'tawktoo<br />Free browser based Real-time video calls.<br />Simple, Secure, Fast.',
         description:
             'Start your next video call with a single click. No download, plug-in, or login is required. Just get straight to talking, messaging, and sharing your screen.',
         joinDescription: 'Pick a room name.<br />How about this one?',
@@ -49,7 +49,7 @@ let BRAND = {
         joinLastLabel: 'Your recent room:',
     },
     site: {
-        title: 'Kidokool, Free Video Calls, Messaging and Screen Sharing',
+        title: 'tawktoo, Free Video Calls, Messaging and Screen Sharing',
         icon: '../images/logo.svg',
         appleTouchIcon: '../images/logo.svg',
         newRoomTitle: 'Pick name. <br />Share URL. <br />Start conference.',
@@ -58,7 +58,7 @@ let BRAND = {
     },
     meta: {
         description:
-            'Kidokool powered by WebRTC and mediasoup, Real-time Simple Secure Fast video calls, messaging and screen sharing capabilities in the browser.',
+            'tawktoo powered by WebRTC and mediasoup, Real-time Simple Secure Fast video calls, messaging and screen sharing capabilities in the browser.',
         keywords:
             'webrtc, miro, mediasoup, mediasoup-client, self hosted, voip, sip, real-time communications, chat, messaging, meet, webrtc stun, webrtc turn, webrtc p2p, webrtc sfu, video meeting, video chat, video conference, multi video chat, multi video conference, peer to peer, p2p, sfu, rtc, alternative to, zoom, microsoft teams, google meet, jitsi, meeting',
     },
@@ -81,7 +81,7 @@ let BRAND = {
         buttonJoinLabel: 'JOIN ROOM',
     },
     about: {
-        imageUrl: '../images/kidokool-logo.gif',
+        imageUrl: '../images/logo.svg',
         title: '<strong>WebRTC SFU v2.1.06</strong>',
         html: `
             <button 
@@ -95,21 +95,21 @@ let BRAND = {
             <a 
                 id="linkedin-button" 
                 data-umami-event="Linkedin button" 
-                href="https://www.linkedin.com/in/miroslav-pejic-976a07101/" 
+                href="https://github.com/SanketsMane" 
                 target="_blank"> 
-                Miroslav Pejic
+                Sanket Mane
             </a>
             <br /><br />
             Email: 
             <a 
                 id="email-button" 
                 data-umami-event="Email button" 
-                href="mailto:miroslav.pejic.85@gmail.com?subject=Kidokool SFU info"> 
-                miroslav.pejic.85@gmail.com
+                href="mailto:sanketmane7170@gmail.com?subject=tawktoo SFU info"> 
+                sanketmane7170@gmail.com
             </a>
             <br /><br />
             <hr />
-            <span>&copy; 2026 Kidokool, all rights reserved</span>
+            <span>&copy; 2026 tawktoo, all rights reserved</span>
             <hr />
         `,
     },
@@ -139,7 +139,7 @@ let BRAND = {
                 connectText: 'connect in < 5 seconds',
                 onlineText: 'We are online',
                 offlineText: 'We are offline',
-                poweredBy: 'Powered by Kidokool',
+                poweredBy: 'Powered by tawktoo',
             },
             alert: {
                 enabled: false,
@@ -257,10 +257,10 @@ function customizeWidget() {
         const domain = window.location.host;
         const roomId = BRAND.widget?.roomId || 'support-room';
         const userName = 'guest-' + Math.floor(Math.random() * 10000);
-        if (typeof KidokoolWidget !== 'undefined') {
-            new KidokoolWidget(domain, roomId, userName, BRAND.widget);
+        if (typeof tawktooWidget !== 'undefined') {
+            new tawktooWidget(domain, roomId, userName, BRAND.widget);
         } else {
-            console.warn('KidokoolWidget is not defined in the current context. Please check Widget.js loading.', {
+            console.warn('tawktooWidget is not defined in the current context. Please check Widget.js loading.', {
                 domain,
                 roomId,
                 userName,

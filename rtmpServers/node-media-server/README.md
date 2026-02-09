@@ -24,14 +24,14 @@ $ cp config.template.js config.js
 # Copy the docker.compose.yml
 $ cp docker-compose.template.yml docker-compose.yml
 
-# Pull the official kidokool rtmp image
-$ docker pull kidokool/nms:latest
+# Pull the official tawktoo rtmp image
+$ docker pull tawktoo/nms:latest
 
 # Create and start containers
 $ docker-compose up -d
 
 # Check the logs
-$ docker logs -f kidokool-nms
+$ docker logs -f tawktoo-nms
 
 # To stop and remove resources
 $ docker-compose down
