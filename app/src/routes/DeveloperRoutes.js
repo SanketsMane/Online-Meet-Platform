@@ -2,7 +2,8 @@
 
 const express = require('express');
 const router = express.Router();
-const { Tenant, ApiKey } = require('../db/models');
+const { Tenant, ApiKey, UsageLog } = require('../db/models');
+const { sequelize } = require('../db/database');
 const bcrypt = require('bcrypt');
 const jwt = require('jsonwebtoken');
 const { v4: uuidv4 } = require('uuid');
@@ -42,15 +43,54 @@ router.post('/auth/login', async (req, res) => {
             return res.status(401).json({ message: 'Invalid credentials' });
         }
 
+        if (tenant.status !== 'active') {
+            return res.status(403).json({ message: 'Account suspended. Please contact support.' });
+        }
+
         const token = jwt.sign(
             { id: tenant.id, role: tenant.role },
             config.security.jwt.key,
             { expiresIn: '24h' }
         );
 
-        res.json({ token, role: tenant.role });
+        res.json({ token, role: tenant.role, name: tenant.name });
     } catch (err) {
         res.status(500).json({ message: 'Login failed', error: err.message });
+    }
+});
+
+// Usage Stats
+router.get('/stats/usage', async (req, res) => {
+    const authHeader = req.headers['authorization'];
+    const token = authHeader && authHeader.split(' ')[1];
+    if (!token) return res.status(401).json({ message: 'Unauthorized' });
+
+    try {
+        const decoded = jwt.verify(token, config.security.jwt.key);
+        const { UsageLog } = require('../db/models');
+        const { Op } = require('sequelize');
+
+        // Get stats for last 7 days
+        const sevenDaysAgo = new Date();
+        sevenDaysAgo.setDate(sevenDaysAgo.getDate() - 7);
+
+        const logs = await UsageLog.findAll({
+            where: {
+                tenant_id: decoded.id,
+                timestamp: { [Op.gte]: sevenDaysAgo },
+            },
+            attributes: [
+                [sequelize.fn('DATE', sequelize.col('timestamp')), 'date'],
+                [sequelize.fn('COUNT', sequelize.col('id')), 'count'],
+            ],
+            group: [sequelize.fn('DATE', sequelize.col('timestamp'))],
+            order: [[sequelize.fn('DATE', sequelize.col('timestamp')), 'ASC']],
+        });
+
+        res.json(logs);
+    } catch (err) {
+        console.error('Usage stats error:', err);
+        res.status(500).json({ message: 'Failed to fetch usage stats' });
     }
 });
 

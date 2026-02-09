@@ -90,6 +90,7 @@ const fs = require('fs');
 const sanitizeFilename = require('sanitize-filename');
 const helmet = require('helmet');
 const config = require('./config');
+const { UsageLog } = require('./db/models');
 
 // Rest API configuration
 const restApi = {
@@ -199,7 +200,7 @@ app.use(express.urlencoded({ extended: true, limit: '50mb' }));
 
 // Mount Developer Routes
 app.use('/api/v1', developerRoutes);
-app.use('/api/v1/admin', adminRoutes);
+app.use('/api/v1/admin', adminRoutes(roomList));
 
 // Protect key API endpoints with API Key validation for external developers
 // Note: Internal usage (frontend) might need a different path or bypass if using session cookies
@@ -1156,23 +1157,28 @@ function startServer() {
                 return res.status(500).json({ error: 'Rec Finalization failed file not exists' });
             }
 
+            let finalFilePath = filePath;
             if (durationMs && fs.existsSync(filePath)) {
                 try {
                     const recFormat = config?.media?.recording?.format || 'webm';
-                    fixDurationOrRemux(filePath, Number(durationMs), recFormat);
+                    const resultPath = fixDurationOrRemux(filePath, Number(durationMs), recFormat);
+                    if (resultPath && typeof resultPath === 'string') {
+                        finalFilePath = resultPath;
+                    }
                 } catch (e) {
                     log.warn('Finalize fix skipped:', e?.message || e);
                 }
             }
 
             const bucket = config?.integrations?.s3?.bucket;
-            const s3 = await uploadToS3(filePath, fileName, roomId, bucket, s3Client);
+            const finalFileName = path.basename(finalFilePath);
+            const s3 = await uploadToS3(finalFilePath, finalFileName, roomId, bucket, s3Client);
 
             const duration = ((Date.now() - start) / 1000).toFixed(2);
 
-            log.info(`[Rec Finalization] done ${fileName} in ${duration}s`, { ...s3 });
+            log.info(`[Rec Finalization] done ${finalFileName} in ${duration}s`, { ...s3 });
 
-            deleteFile(filePath); // Delete local file after successful upload
+            deleteFile(finalFilePath); // Delete local file after successful upload
 
             return res.status(200).json({ status: 's3_upload_complete', ...s3 });
         } catch (error) {
@@ -1285,9 +1291,25 @@ function startServer() {
     });
 
     // Create Meeting (Dual Auth)
-    app.post(restApi.basePath + '/meeting', apiAuth, (req, res) => {
+    app.post(restApi.basePath + '/meeting', apiAuth, async (req, res) => {
         const api = new ServerApi(req.headers.host, config.api.keySecret);
-        res.json({ meeting: api.getMeetingURL() });
+        const response = { meeting: api.getMeetingURL() };
+
+        // Log usage if this was a developer API key
+        if (req.tenant && req.apiKey) {
+            try {
+                await UsageLog.create({
+                    tenant_id: req.tenant.id,
+                    api_key_id: req.apiKey.id,
+                    action: 'create_meeting',
+                    status: 'success'
+                });
+            } catch (err) {
+                log.error('Failed to log usage entry', err);
+            }
+        }
+
+        res.json(response);
     });
 
     // Join (Dual Auth)

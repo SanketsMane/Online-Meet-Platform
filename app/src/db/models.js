@@ -95,6 +95,26 @@ const Webhook = sequelize.define('Webhook', {
     },
 });
 
+const UsageLog = sequelize.define('UsageLog', {
+    id: {
+        type: DataTypes.UUID,
+        defaultValue: DataTypes.UUIDV4,
+        primaryKey: true,
+    },
+    action: {
+        type: DataTypes.STRING, // e.g., 'create_meeting'
+        allowNull: false,
+    },
+    status: {
+        type: DataTypes.STRING,
+        defaultValue: 'success',
+    },
+    timestamp: {
+        type: DataTypes.DATE,
+        defaultValue: DataTypes.NOW,
+    },
+});
+
 // Associations
 Tenant.hasMany(ApiKey, { foreignKey: 'tenant_id' });
 ApiKey.belongsTo(Tenant, { foreignKey: 'tenant_id' });
@@ -102,9 +122,15 @@ ApiKey.belongsTo(Tenant, { foreignKey: 'tenant_id' });
 Tenant.hasMany(Webhook, { foreignKey: 'tenant_id' });
 Webhook.belongsTo(Tenant, { foreignKey: 'tenant_id' });
 
+Tenant.hasMany(UsageLog, { foreignKey: 'tenant_id' });
+UsageLog.belongsTo(Tenant, { foreignKey: 'tenant_id' });
+
+ApiKey.hasMany(UsageLog, { foreignKey: 'api_key_id' });
+UsageLog.belongsTo(ApiKey, { foreignKey: 'api_key_id' });
+
 // Methods
 Tenant.prototype.checkPassword = async function (password) {
     return await bcrypt.compare(password, this.password_hash);
 };
 
-module.exports = { Tenant, ApiKey, Webhook };
+module.exports = { Tenant, ApiKey, Webhook, UsageLog };

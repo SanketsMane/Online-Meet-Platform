@@ -630,11 +630,25 @@
                     <h4><i class="fas fa-book"></i> Example Request</h4>
                     <p>Create a meeting:</p>
                     <p><code>POST /api/v1/meeting</code></p>
-                    <p style="margin-top: 8px;">Header: <code>authorization: YOUR_API_KEY</code></p>
+                    <p style="margin-top: 8px;">Header: <code>x-api-key: YOUR_API_KEY</code></p>
+                </div>
+            </div>
+
+            <!-- Analytics Section -->
+            <div class="section-card" style="grid-column: span 2;">
+                <div class="section-header">
+                    <h2 class="section-title">Usage Analytics (Last 7 Days)</h2>
+                </div>
+                <!-- Author: Sanket - Usage chart container -->
+                <div style="height: 300px; width: 100%;">
+                    <canvas id="usageChart"></canvas>
                 </div>
             </div>
         </div>
     </div>
+
+    <!-- Chart.js -->
+    <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
 
     <!-- Author: Sanket - Developer portal functionality -->
     <script>
@@ -765,6 +779,64 @@
             document.getElementById('userName').textContent = userName;
             
             loadKeys();
+            loadUsageStats();
+        }
+
+        // Author: Sanket - Load usage stats and render chart
+        let usageChart = null;
+        async function loadUsageStats() {
+            try {
+                const res = await axios.get(`${API_URL}/stats/usage`, {
+                    headers: { 'Authorization': `Bearer ${token}` }
+                });
+
+                const data = res.data;
+                const ctx = document.getElementById('usageChart').getContext('2d');
+                
+                // Author: Sanket - Prepare labels and values for the chart
+                const labels = data.map(d => d.date);
+                const values = data.map(d => d.count);
+
+                if (usageChart) usageChart.destroy();
+
+                usageChart = new Chart(ctx, {
+                    type: 'line',
+                    data: {
+                        labels: labels.length ? labels : ['No Data'],
+                        datasets: [{
+                            label: 'Meetings Created',
+                            data: values.length ? values : [0],
+                            borderColor: '#0270d7',
+                            backgroundColor: 'rgba(2, 112, 215, 0.1)',
+                            borderWidth: 2,
+                            tension: 0.4,
+                            fill: true
+                        }]
+                    },
+                    options: {
+                        responsive: true,
+                        maintainAspectRatio: false,
+                        plugins: {
+                            legend: {
+                                display: false
+                            }
+                        },
+                        scales: {
+                            y: {
+                                beginAtZero: true,
+                                grid: { color: 'rgba(255, 255, 255, 0.05)' },
+                                ticks: { color: '#9ca3af', precision: 0 }
+                            },
+                            x: {
+                                grid: { color: 'rgba(255, 255, 255, 0.05)' },
+                                ticks: { color: '#9ca3af' }
+                            }
+                        }
+                    }
+                });
+            } catch (error) {
+                console.error('Failed to load usage stats:', error);
+            }
         }
 
         // Author: Sanket - Load API keys
