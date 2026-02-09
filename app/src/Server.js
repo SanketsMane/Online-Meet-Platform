@@ -1680,7 +1680,11 @@ function startServer() {
 
             const data = checkXSS(dataObject);
 
-            log.debug('User joined', data);
+            log.debug('Join event received', {
+                room_id: socket.room_id,
+                user_auth: hostCfg.user_auth,
+                peer_info: data.peer_info
+            });
 
             if (!Validator.isValidRoomName(socket.room_id)) {
                 log.warn('[Join] - Invalid room name', socket.room_id);
@@ -3497,7 +3501,8 @@ function startServer() {
 
         async function handleJoinWebHook(room_id, peer_info) {
             // handle WebHook
-            if (webhook.enabled) {
+            const webhook = config?.api?.webhook;
+            if (webhook?.enabled) {
                 // Trigger a POST request when a user joins
                 const data = {
                     timestamp: log.getDateTime(false),
