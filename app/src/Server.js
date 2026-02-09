@@ -1714,33 +1714,35 @@ function startServer() {
                     try {
                         const validToken = await isValidToken(peer_token);
 
-                        if (!validToken) {
+                        if (!validToken && hostCfg.user_auth) {
                             log.warn('[Join] - Invalid token', peer_token);
                             return cb('unauthorized');
                         }
 
-                        const { username, password, presenter } = checkXSS(decodeToken(peer_token));
+                        if (validToken) {
+                            const { username, password, presenter } = checkXSS(decodeToken(peer_token));
 
-                        const isPeerValid = await isAuthPeer(username, password);
+                            const isPeerValid = await isAuthPeer(username, password);
 
-                        if (!isPeerValid) {
-                            // redirect peer to login page
-                            log.warn('[Join] - Invalid peer not authenticated', isPeerValid);
-                            return cb('unauthorized');
+                            if (!isPeerValid) {
+                                // redirect peer to login page
+                                log.warn('[Join] - Invalid peer not authenticated', isPeerValid);
+                                return cb('unauthorized');
+                            }
+
+                            is_presenter =
+                                presenter === '1' ||
+                                presenter === 'true' ||
+                                (hostCfg?.presenters?.join_first && room?.getPeersCount() === 0);
+
+                            log.debug('[Join] - HOST PROTECTED - USER AUTH check peer', {
+                                ip: peer_ip,
+                                peer_username: username,
+                                peer_password: password,
+                                peer_valid: isPeerValid,
+                                peer_presenter: is_presenter,
+                            });
                         }
-
-                        is_presenter =
-                            presenter === '1' ||
-                            presenter === 'true' ||
-                            (hostCfg?.presenters?.join_first && room?.getPeersCount() === 0);
-
-                        log.debug('[Join] - HOST PROTECTED - USER AUTH check peer', {
-                            ip: peer_ip,
-                            peer_username: username,
-                            peer_password: password,
-                            peer_valid: isPeerValid,
-                            peer_presenter: is_presenter,
-                        });
                     } catch (err) {
                         log.error('[Join] - JWT error', {
                             error: err.message,
@@ -1748,7 +1750,8 @@ function startServer() {
                         });
                         return cb('unauthorized');
                     }
-                } else {
+                }
+ else {
                     if (!hostCfg.users_from_db) return cb('unauthorized');
                 }
 
