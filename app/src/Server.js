@@ -185,6 +185,7 @@ const widget = config?.ui?.brand?.widget || { enabled: false, alert: { enabled: 
 const { connectDB } = require('./db/database');
 const developerRoutes = require('./routes/DeveloperRoutes');
 const adminRoutes = require('./routes/AdminRoutes');
+const aiRoutes = require('./routes/AiRoutes');
 const { validateApiKey } = require('./middleware/AuthMiddleware');
 
 // Connect to DB
@@ -205,6 +206,9 @@ const server = httpolyglot.createServer(options, app);
 
 app.use(express.json({ limit: '50mb' })); 
 app.use(express.urlencoded({ extended: true, limit: '50mb' }));
+
+// Mount AI Routes
+app.use('/api/v1/ai', aiRoutes);
 
 // Mount Developer Routes
 app.use('/api/v1', developerRoutes);

@@ -165,4 +165,15 @@ Tenant.prototype.checkPassword = async function (password) {
     return await bcrypt.compare(password, this.password_hash);
 };
 
-module.exports = { Tenant, ApiKey, Webhook, UsageLog, Feedback };
+const GlobalSetting = sequelize.define('GlobalSetting', {
+    key: {
+        type: DataTypes.STRING,
+        primaryKey: true,
+    },
+    value: {
+        type: DataTypes.TEXT,
+        allowNull: true,
+    },
+});
+
+module.exports = { Tenant, ApiKey, Webhook, UsageLog, Feedback, GlobalSetting };

@@ -491,6 +491,7 @@ function initClient() {
         setTippy('transcriptionSpeechStatus', 'Status', 'bottom');
         setTippy('transcriptShowOnMsg', 'Show transcript on new message comes', 'bottom');
         setTippy('transcriptionSpeechStart', 'Start transcription', 'top');
+        setTippy('transcriptionSummarizeBtn', 'AI Summarize', 'top');
         setTippy('transcriptionSpeechStop', 'Stop transcription', 'top');
     }
     setupWhiteboard();
@@ -2224,6 +2225,10 @@ function handleButtons() {
     };
     transcriptionSpeechStart.onclick = () => {
         transcription.start();
+    };
+
+    transcriptionSummarizeBtn.onclick = () => {
+        transcription.summarize();
     };
     transcriptionSpeechStop.onclick = () => {
         transcription.stop();

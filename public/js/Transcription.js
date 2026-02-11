@@ -181,6 +181,69 @@ class Transcription {
         }
     }
 
+    async summarize() {
+        if (this.transcripts.length === 0) {
+            return userLog('info', 'No transcripts available to summarize.', 'top-end');
+        }
+
+        Swal.fire({
+            title: 'AI Summarizing...',
+            text: 'Please wait while we generate your meeting minutes.',
+            allowOutsideClick: false,
+            didOpen: () => {
+                Swal.showLoading();
+            },
+        });
+
+        try {
+            const response = await fetch('/api/v1/ai/summarize', {
+                method: 'POST',
+                headers: {
+                    'Content-Type': 'application/json',
+                },
+                body: JSON.stringify({
+                    roomId: room_id,
+                    transcripts: this.transcripts,
+                }),
+            });
+
+            const data = await response.json();
+
+            if (data.success) {
+                Swal.fire({
+                    title: '<i class="fas fa-magic"></i> AI Meeting Summary',
+                    html: `
+                        <div style="text-align: left; max-height: 400px; overflow-y: auto; padding: 10px; border: 1px solid #444; border-radius: 5px; background: #222; color: #fff; font-family: sans-serif; font-size: 14px; line-height: 1.6;">
+                            ${data.summary.replace(/\n/g, '<br>')}
+                        </div>
+                    `,
+                    width: 600,
+                    confirmButtonText: '<i class="fas fa-copy"></i> Copy to Clipboard',
+                    showCancelButton: true,
+                    cancelButtonText: 'Close',
+                    background: '#1a1a1a',
+                    color: '#ffffff',
+                }).then((result) => {
+                    if (result.isConfirmed) {
+                        navigator.clipboard.writeText(data.summary);
+                        userLog('success', 'Summary copied to clipboard!', 'top-end');
+                    }
+                });
+            } else {
+                throw new Error(data.message || 'Failed to generate summary');
+            }
+        } catch (error) {
+            console.error('Summarization error:', error);
+            Swal.fire({
+                icon: 'error',
+                title: 'Summarization Failed',
+                text: error.message || 'An error occurred while generating the summary.',
+                background: '#1a1a1a',
+                color: '#ffffff',
+            });
+        }
+    }
+
     showTranscriptionEmptyNoticeIfNoTranscriptions() {
         const transcriptions = transcriptionChat.querySelectorAll('.msg-transcription-text');
         transcriptions.length === 0

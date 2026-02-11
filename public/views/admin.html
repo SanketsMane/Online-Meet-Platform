@@ -477,6 +477,9 @@
                 <a href="/admin/feedbacks" class="nav-link">
                     <i class="fas fa-comments"></i> Feedbacks
                 </a>
+                <a href="#" class="nav-link" id="navSettings">
+                    <i class="fas fa-cog"></i> Settings
+                </a>
                 <button id="logoutBtn" class="logout-btn hidden" onclick="logout()">
                     <i class="fas fa-sign-out-alt"></i> Logout
                 </button>
@@ -550,7 +553,7 @@
         </div>
 
         <!-- Developers Table -->
-        <div class="table-section">
+        <div id="tenantsSection" class="table-section">
             <div class="table-header">
                 <h3 class="table-title">Registered Developers</h3>
             </div>
@@ -570,6 +573,56 @@
                     </tr>
                 </tbody>
             </table>
+        </div>
+
+        <!-- System Settings Section -->
+        <div id="settingsSection" class="table-section hidden">
+            <div class="table-header">
+                <h3 class="table-title">System Settings</h3>
+            </div>
+            
+            <form id="settingsForm">
+                <h4 style="color: var(--heading-color); margin: 24px 0 16px 0; border-bottom: 1px solid var(--divider-color); padding-bottom: 8px;">AI Configuration</h4>
+                
+                <div class="stats-grid" style="grid-template-columns: 1fr 1fr; gap: 24px; margin-bottom: 24px;">
+                    <div class="form-group">
+                        <label class="form-label">ChatGPT Enabled</label>
+                        <select id="setting_CHATGPT_ENABLED" class="form-input" style="padding-left: 16px;">
+                            <option value="true">Enabled</option>
+                            <option value="false">Disabled</option>
+                        </select>
+                    </div>
+                    <div class="form-group">
+                        <label class="form-label">ChatGPT Model</label>
+                        <input type="text" id="setting_CHATGPT_MODEL" class="form-input" style="padding-left: 16px;" placeholder="gpt-3.5-turbo" />
+                    </div>
+                </div>
+
+                <div class="form-group">
+                    <label class="form-label">ChatGPT API Key</label>
+                    <div class="form-input-wrapper">
+                        <i class="fas fa-key form-input-icon"></i>
+                        <input type="password" id="setting_CHATGPT_API_KEY" class="form-input has-toggle" placeholder="sk-..." />
+                        <i class="fas fa-eye password-toggle" id="toggleApiKey"></i>
+                    </div>
+                </div>
+
+                <div class="stats-grid" style="grid-template-columns: 1fr 1fr; gap: 24px; margin-bottom: 24px;">
+                    <div class="form-group">
+                        <label class="form-label">Max Tokens</label>
+                        <input type="number" id="setting_CHATGPT_MAX_TOKENS" class="form-input" style="padding-left: 16px;" placeholder="1024" />
+                    </div>
+                    <div class="form-group">
+                        <label class="form-label">Temperature (0.0 - 1.0)</label>
+                        <input type="number" step="0.1" id="setting_CHATGPT_TEMPERATURE" class="form-input" style="padding-left: 16px;" placeholder="0.7" />
+                    </div>
+                </div>
+
+                <button type="submit" id="saveSettingsBtn" class="btn-primary" style="width: auto; min-width: 200px;">
+                    <i class="fas fa-save"></i>
+                    <span>Save Settings</span>
+                </button>
+            </form>
         </div>
     </div>
 
@@ -786,6 +839,88 @@
         function hideError() {
             document.getElementById('errorMessage').classList.remove('show');
         }
+
+        // Author: Sanket - Navigation between sections
+        document.getElementById('navSettings')?.addEventListener('click', function(e) {
+            e.preventDefault();
+            document.getElementById('tenantsSection').classList.add('hidden');
+            document.getElementById('settingsSection').classList.remove('hidden');
+            loadSettings();
+        });
+
+        document.querySelector('.header-title').addEventListener('click', function() {
+            document.getElementById('tenantsSection').classList.remove('hidden');
+            document.getElementById('settingsSection').classList.add('hidden');
+        });
+
+        // Author: Sanket - Load system settings
+        async function loadSettings() {
+            try {
+                const response = await fetch(`${API_URL}/settings`, {
+                    headers: { 'Authorization': `Bearer ${token}` }
+                });
+                const settings = await response.json();
+                
+                for (const [key, value] of Object.entries(settings)) {
+                    const el = document.getElementById(`setting_${key}`);
+                    if (el) el.value = value;
+                }
+            } catch (e) {
+                console.error('Failed to load settings:', e);
+            }
+        }
+
+        // Author: Sanket - Handle settings form submission
+        document.getElementById('settingsForm').addEventListener('submit', async function(e) {
+            e.preventDefault();
+            const btn = document.getElementById('saveSettingsBtn');
+            btn.disabled = true;
+            btn.innerHTML = '<i class="fas fa-spinner fa-spin"></i><span>Saving...</span>';
+
+            const settings = {
+                CHATGPT_ENABLED: document.getElementById('setting_CHATGPT_ENABLED').value === 'true',
+                CHATGPT_MODEL: document.getElementById('setting_CHATGPT_MODEL').value,
+                CHATGPT_API_KEY: document.getElementById('setting_CHATGPT_API_KEY').value,
+                CHATGPT_MAX_TOKENS: parseInt(document.getElementById('setting_CHATGPT_MAX_TOKENS').value),
+                CHATGPT_TEMPERATURE: parseFloat(document.getElementById('setting_CHATGPT_TEMPERATURE').value),
+            };
+
+            try {
+                const response = await fetch(`${API_URL}/settings`, {
+                    method: 'PUT',
+                    headers: { 
+                        'Content-Type': 'application/json',
+                        'Authorization': `Bearer ${token}` 
+                    },
+                    body: JSON.stringify(settings)
+                });
+
+                if (response.ok) {
+                    Swal.fire({
+                        icon: 'success',
+                        title: 'Settings Saved',
+                        timer: 1500,
+                        showConfirmButton: false
+                    });
+                } else {
+                    throw new Error('Failed to save settings');
+                }
+            } catch (e) {
+                Swal.fire({ icon: 'error', title: 'Error', text: e.message });
+            } finally {
+                btn.disabled = false;
+                btn.innerHTML = '<i class="fas fa-save"></i><span>Save Settings</span>';
+            }
+        });
+
+        // Author: Sanket - API Key toggle functionality
+        document.getElementById('toggleApiKey').addEventListener('click', function() {
+            const input = document.getElementById('setting_CHATGPT_API_KEY');
+            const type = input.getAttribute('type') === 'password' ? 'text' : 'password';
+            input.setAttribute('type', type);
+            this.classList.toggle('fa-eye');
+            this.classList.toggle('fa-eye-slash');
+        });
 
         // Auto-load dashboard if token exists
         if (token) {
