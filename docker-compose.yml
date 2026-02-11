@@ -1,9 +1,11 @@
 services:
     tawktoosfu:
         image: sanketsmane/kidokool:latest
+        build: .
         container_name: tawktoosfu
         hostname: tawktoosfu
         restart: unless-stopped
+        env_file: .env
         network_mode: 'host'
         volumes:
             - ./app/src/config.js:/src/app/src/config.js:ro

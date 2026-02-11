@@ -1,9 +1,11 @@
 services:
     tawktoosfu:
         image: sanketsmane/kidokool:latest
+        build: .
         container_name: tawktoosfu
         hostname: tawktoosfu
         restart: unless-stopped
+        env_file: .env
         # The following ports are only required if 'network_mode: host' is NOT enabled.
         # If you enable 'network_mode: host', you can comment out or remove the 'ports' section below.
         # network_mode: 'host'
