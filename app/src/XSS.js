@@ -61,8 +61,8 @@ const checkXSS = (dataObject) => {
     try {
         return sanitizeData(dataObject);
     } catch (error) {
-        log.error('Sanitization error:', error);
-        return dataObject; // Return original data in case of error
+        log.error('Sanitization error - returning null to prevent XSS:', error);
+        return null; // Fail safe: return null instead of potentially dangerous data
     }
 };
 

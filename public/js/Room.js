@@ -3908,32 +3908,80 @@ async function leaveRoom(allowCancel = true) {
 }
 
 function leaveFeedback(allowCancel) {
+    let rating = 0;
     Swal.fire({
-        allowOutsideClick: false,
-        allowEscapeKey: false,
-        showDenyButton: true,
-        showCancelButton: allowCancel,
-        confirmButtonColor: 'green',
-        denyButtonColor: 'red',
-        cancelButtonColor: 'gray',
         background: swalBackground,
-        imageUrl: image.feedback,
-        position: 'top',
-        title: 'Leave a feedback',
-        text: 'Do you want to rate your tawktoo experience?',
-        confirmButtonText: `Yes`,
-        denyButtonText: `No`,
-        cancelButtonText: `Cancel`,
+        title: 'Rate your experience',
+        html: `
+            <div id="starRating" style="font-size: 2.5rem; color: #ffc107; cursor: pointer; margin-bottom: 20px;">
+                <i class="far fa-star" data-rating="1"></i>
+                <i class="far fa-star" data-rating="2"></i>
+                <i class="far fa-star" data-rating="3"></i>
+                <i class="far fa-star" data-rating="4"></i>
+                <i class="far fa-star" data-rating="5"></i>
+            </div>
+            <textarea id="feedbackMessage" class="swal2-textarea" placeholder="Leave a short message (optional)..." style="width: 90%; margin: 10px auto; display: block;"></textarea>
+        `,
+        showCancelButton: allowCancel,
+        confirmButtonText: 'Submit Feedback',
+        cancelButtonText: 'Stay in Room',
+        confirmButtonColor: '#0270d7',
         showClass: { popup: 'animate__animated animate__fadeInDown' },
         hideClass: { popup: 'animate__animated animate__fadeOutUp' },
+        didOpen: () => {
+            const stars = document.getElementById('starRating').querySelectorAll('i');
+            stars.forEach((star) => {
+                star.addEventListener('click', (e) => {
+                    rating = parseInt(e.target.getAttribute('data-rating'));
+                    stars.forEach((s, index) => {
+                        if (index < rating) {
+                            s.classList.remove('far');
+                            s.classList.add('fas');
+                        } else {
+                            s.classList.remove('fas');
+                            s.classList.add('far');
+                        }
+                    });
+                });
+            });
+        },
+        preConfirm: () => {
+            const message = document.getElementById('feedbackMessage').value;
+            if (rating === 0) {
+                Swal.showValidationMessage('Please select a rating stars');
+                return false;
+            }
+            return { rating, message };
+        },
     }).then((result) => {
         if (result.isConfirmed) {
-            endRoomSession();
-            openURL(survey.url);
-        } else if (result.isDenied) {
+            submitFeedback(result.value.rating, result.value.message);
+        } else if (result.dismiss === Swal.DismissReason.cancel) {
+            // Stay in room
+        } else {
             redirectOnLeave();
         }
     });
+}
+
+function submitFeedback(rating, message) {
+    const data = {
+        room_id: room_id,
+        peer_name: peer_name,
+        rating: rating,
+        message: message,
+    };
+
+    axios
+        .post('/api/feedback', data)
+        .then(() => {
+            userLog('success', 'Thank you for your feedback!', 'top-end');
+            setTimeout(() => redirectOnLeave(), 1500);
+        })
+        .catch((err) => {
+            console.error('Feedback error:', err);
+            redirectOnLeave();
+        });
 }
 
 function redirectOnLeave() {

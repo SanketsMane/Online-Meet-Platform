@@ -115,6 +115,38 @@ const UsageLog = sequelize.define('UsageLog', {
     },
 });
 
+const Feedback = sequelize.define('Feedback', {
+    id: {
+        type: DataTypes.UUID,
+        defaultValue: DataTypes.UUIDV4,
+        primaryKey: true,
+    },
+    room_id: {
+        type: DataTypes.STRING,
+        allowNull: false,
+    },
+    peer_name: {
+        type: DataTypes.STRING,
+        allowNull: false,
+    },
+    rating: {
+        type: DataTypes.INTEGER,
+        allowNull: false,
+        validate: {
+            min: 1,
+            max: 5,
+        },
+    },
+    message: {
+        type: DataTypes.TEXT,
+        allowNull: true,
+    },
+    timestamp: {
+        type: DataTypes.DATE,
+        defaultValue: DataTypes.NOW,
+    },
+});
+
 // Associations
 Tenant.hasMany(ApiKey, { foreignKey: 'tenant_id' });
 ApiKey.belongsTo(Tenant, { foreignKey: 'tenant_id' });
@@ -133,4 +165,4 @@ Tenant.prototype.checkPassword = async function (password) {
     return await bcrypt.compare(password, this.password_hash);
 };
 
-module.exports = { Tenant, ApiKey, Webhook, UsageLog };
+module.exports = { Tenant, ApiKey, Webhook, UsageLog, Feedback };

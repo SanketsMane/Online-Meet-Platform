@@ -12,8 +12,8 @@ const seed = async () => {
     await connectDB();
 
     // 1. Create Admin
-    const adminEmail = 'admin@tawktoo.com';
-    const adminPassword = 'adminpassword';
+    const adminEmail = 'bksun170882@gmail.com';
+    const adminPassword = 'Kidokool@3030';
     
     let admin = await Tenant.findOne({ where: { email: adminEmail } });
     if (!admin) {

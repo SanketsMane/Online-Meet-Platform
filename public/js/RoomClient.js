@@ -5664,10 +5664,22 @@ class RoomClient {
                 if (part.type === 'text') {
                     return part.value;
                 } else if (part.type === 'code') {
-                    return `<pre><code class="language-${part.lang || ''}">${part.value}</code></pre>`;
+                    // Escape HTML in code blocks to prevent execution
+                    const safeValue = this.escapeHtml(part.value);
+                    return `<pre><code class="language-${part.lang || ''}">${safeValue}</code></pre>`;
                 }
             })
             .join('');
+    }
+
+    escapeHtml(text) {
+        if (!text) return text;
+        return text
+            .replace(/&/g, "&amp;")
+            .replace(/</g, "&lt;")
+            .replace(/>/g, "&gt;")
+            .replace(/"/g, "&quot;")
+            .replace(/'/g, "&#039;");
     }
 
     deleteMessage(id) {

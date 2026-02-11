@@ -2,7 +2,7 @@
 
 const express = require('express');
 const router = express.Router();
-const { Tenant, ApiKey } = require('../db/models');
+const { Tenant, ApiKey, Feedback } = require('../db/models');
 const { isAdmin } = require('../middleware/AuthMiddleware');
 
 router.use(isAdmin);
@@ -48,6 +48,19 @@ module.exports = function (roomList) {
             });
         } catch (err) {
             res.status(500).json({ message: 'Error fetching stats' });
+        }
+    });
+
+    // Get all feedbacks
+    router.get('/feedbacks_data', async (req, res) => {
+        try {
+            const feedbacks = await Feedback.findAll({
+                order: [['timestamp', 'DESC']],
+            });
+            res.json(feedbacks);
+        } catch (err) {
+            log.error('Error fetching feedbacks:', err.message);
+            res.status(500).json({ message: 'Error fetching feedbacks' });
         }
     });
 

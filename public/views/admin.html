@@ -438,6 +438,26 @@
                 font-size: 16px;
             }
         }
+
+        /* Author: Sanket - Password toggle styles */
+        .password-toggle {
+            position: absolute;
+            right: 16px;
+            top: 50%;
+            transform: translateY(-50%);
+            color: var(--text-color);
+            cursor: pointer;
+            z-index: 10;
+            padding: 8px; /* Increase click area */
+        }
+        
+        .password-toggle:hover {
+            color: var(--heading-color);
+        }
+
+        .form-input.has-toggle {
+            padding-right: 48px;
+        }
     </style>
 </head>
 <body>
@@ -453,6 +473,9 @@
             <nav class="header-nav">
                 <a href="/" class="nav-link">
                     <i class="fas fa-home"></i> Home
+                </a>
+                <a href="/admin/feedbacks" class="nav-link">
+                    <i class="fas fa-comments"></i> Feedbacks
                 </a>
                 <button id="logoutBtn" class="logout-btn hidden" onclick="logout()">
                     <i class="fas fa-sign-out-alt"></i> Logout
@@ -487,7 +510,8 @@
                     <label for="password" class="form-label">Password</label>
                     <div class="form-input-wrapper">
                         <i class="fas fa-lock form-input-icon"></i>
-                        <input type="password" id="password" class="form-input" placeholder="Enter password" required />
+                        <input type="password" id="password" class="form-input has-toggle" placeholder="Enter password" required />
+                        <i class="fas fa-eye password-toggle" id="togglePassword"></i>
                     </div>
                 </div>
 
@@ -620,6 +644,17 @@
                 loginBtn.disabled = false;
                 loginBtn.innerHTML = '<i class="fas fa-sign-in-alt"></i><span>Sign In</span>';
             }
+        });
+
+        // Author: Sanket - Password toggle functionality
+        document.getElementById('togglePassword').addEventListener('click', function() {
+            const passwordInput = document.getElementById('password');
+            const type = passwordInput.getAttribute('type') === 'password' ? 'text' : 'password';
+            passwordInput.setAttribute('type', type);
+            
+            // Toggle icon
+            this.classList.toggle('fa-eye');
+            this.classList.toggle('fa-eye-slash');
         });
 
         // Author: Sanket - Load dashboard data

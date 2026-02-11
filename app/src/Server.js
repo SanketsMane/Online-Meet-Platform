@@ -69,6 +69,12 @@ dev dependencies: {
  *
  */
 
+
+if (!process.env.JWT_SECRET) {
+    console.error('CRITICAL: JWT_SECRET is not defined in the environment variables. The server cannot start securely.');
+    process.exit(1);
+}
+
 const express = require('express');
 const { auth, requiresAuth } = require('express-openid-connect');
 const { withFileLock } = require('./MutexManager');
@@ -91,7 +97,7 @@ const fs = require('fs');
 const sanitizeFilename = require('sanitize-filename');
 const helmet = require('helmet');
 const config = require('./config');
-const { UsageLog } = require('./db/models');
+const { UsageLog, Feedback } = require('./db/models');
 
 // Rest API configuration
 const restApi = {
@@ -144,6 +150,7 @@ const loginLimiter = rateLimit({
 
 // Branding configuration
 const brandHtmlInjection = config?.ui?.brand?.htmlInjection ?? true;
+const webhook = config?.api?.webhook;
 
 // Incoming Stream to RTPM
 const { v4: uuidv4 } = require('uuid');
@@ -262,6 +269,7 @@ const views = {
     // Author: Sanket - Added admin and developer portal views
     admin: path.join(__dirname, '../../', 'public/views/admin.html'),
     developer: path.join(__dirname, '../../', 'public/views/developer.html'),
+    feedbacks: path.join(__dirname, '../../', 'public/views/admin/feedbacks.html'),
 };
 
 const filesPath = [
@@ -272,6 +280,9 @@ const filesPath = [
     views.whoAreYou,
     views.activeRooms,
     views.customizeRoom,
+    views.admin,
+    views.developer,
+    views.feedbacks,
 ];
 
 const htmlInjector = new HtmlInjector(filesPath, config.ui.brand);
@@ -601,6 +612,26 @@ function startServer() {
         } else {
             htmlInjector.injectHtml(views.newRoom, res);
         }
+    });
+
+    // Feedback submission
+    app.post('/api/feedback', async (req, res) => {
+        log.info('Feedback submission received:', req.body);
+        try {
+            const { room_id, peer_name, rating, message } = req.body;
+            await Feedback.create({ room_id, peer_name, rating, message });
+            res.json({ message: 'Feedback submitted successfully' });
+        } catch (err) {
+            log.error('Error saving feedback:', err.message);
+            res.status(500).json({ error: 'Internal server error' });
+        }
+    });
+
+    // Admin view for feedbacks
+    app.get('/admin/feedbacks', OIDCAuth, (req, res) => {
+        // Redirection check for admin if not using session-based isAdmin middleware here
+        // If not using the specialized middleware, check manually or just serve.
+        htmlInjector.injectHtml(views.feedbacks, res);
     });
 
     // Get Active rooms
@@ -3408,128 +3439,140 @@ function startServer() {
         });
 
         socket.on('disconnect', (reason) => {
-            if (!roomExists(socket)) {
-                // Clean up socket listeners even if room doesn't exist
+            try {
+                if (!roomExists(socket)) {
+                    // Clean up socket listeners even if room doesn't exist
+                    socket.removeAllListeners();
+                    return;
+                }
+
+                const { room, peer } = getRoomAndPeer(socket);
+
+                const { peer_name, peer_uuid } = peer || {};
+
+                const isPresenter = isPeerPresenter(socket.room_id, socket.id, peer_name, peer_uuid);
+
+                log.debug('[Disconnect] - peer name', { peer_name, reason });
+
+                if (webhook?.enabled) {
+                    const data = {
+                        timestamp: log.getDateTime(false),
+                        room_id: socket.room_id,
+                        peer: peer?.peer_info,
+                        reason: reason,
+                    };
+                    // Trigger a POST request when a user disconnects
+                    axios
+                        .post(webhook.url, { event: 'disconnect', data }, { timeout: 5000 })
+                        .then((response) => log.debug('Disconnect event tracked:', response.data))
+                        .catch((error) => log.error('Error tracking disconnect event:', error.message));
+                }
+
+                if (room) {
+                    room.removePeer(socket.id);
+
+                    room.broadCast(socket.id, 'removeMe', removeMeData(room, peer_name, isPresenter));
+
+                    if (room.getPeersCount() === 0) {
+                        //
+                        stopRTMPActiveStreams(isPresenter, room);
+
+                        roomList.delete(socket.room_id);
+
+                        delete presenters[socket.room_id];
+
+                        log.debug('[Disconnect] - Last peer - current presenters grouped by roomId', presenters);
+
+                        const activeRooms = getActiveRooms();
+
+                        log.debug('[Disconnect] - Last peer - current active rooms', activeRooms);
+
+                        const activeStreams = getRTMPActiveStreams();
+
+                        log.debug('[Disconnect] - Last peer - current active RTMP streams', activeStreams);
+                    }
+                }
+
+                removeIP(socket);
+
+                socket.room_id = null;
+
+                // Clean up all socket event listeners to prevent memory leaks
                 socket.removeAllListeners();
-                return;
+            } catch (error) {
+                log.error('Error in disconnect handler:', error.message);
             }
-
-            const { room, peer } = getRoomAndPeer(socket);
-
-            const { peer_name, peer_uuid } = peer || {};
-
-            const isPresenter = isPeerPresenter(socket.room_id, socket.id, peer_name, peer_uuid);
-
-            log.debug('[Disconnect] - peer name', { peer_name, reason });
-
-            if (webhook.enabled) {
-                const data = {
-                    timestamp: log.getDateTime(false),
-                    room_id: socket.room_id,
-                    peer: peer?.peer_info,
-                    reason: reason,
-                };
-                // Trigger a POST request when a user disconnects
-                axios
-                    .post(webhook.url, { event: 'disconnect', data }, { timeout: 5000 })
-                    .then((response) => log.debug('Disconnect event tracked:', response.data))
-                    .catch((error) => log.error('Error tracking disconnect event:', error.message));
-            }
-
-            room.removePeer(socket.id);
-
-            room.broadCast(socket.id, 'removeMe', removeMeData(room, peer_name, isPresenter));
-
-            if (room.getPeersCount() === 0) {
-                //
-                stopRTMPActiveStreams(isPresenter, room);
-
-                roomList.delete(socket.room_id);
-
-                delete presenters[socket.room_id];
-
-                log.debug('[Disconnect] - Last peer - current presenters grouped by roomId', presenters);
-
-                const activeRooms = getActiveRooms();
-
-                log.debug('[Disconnect] - Last peer - current active rooms', activeRooms);
-
-                const activeStreams = getRTMPActiveStreams();
-
-                log.debug('[Disconnect] - Last peer - current active RTMP streams', activeStreams);
-            }
-
-            removeIP(socket);
-
-            socket.room_id = null;
-
-            // Clean up all socket event listeners to prevent memory leaks
-            socket.removeAllListeners();
         });
 
         socket.on('exitRoom', (_, callback) => {
-            if (!roomExists(socket)) {
-                return callback({
-                    error: 'Not currently in a room',
-                });
+            try {
+                if (!roomExists(socket)) {
+                    return callback({
+                        error: 'Not currently in a room',
+                    });
+                }
+
+                const { room, peer } = getRoomAndPeer(socket);
+
+                const { peer_name, peer_uuid } = peer || {};
+
+                const isPresenter = isPeerPresenter(socket.room_id, socket.id, peer_name, peer_uuid);
+
+                log.debug('Exit room', peer_name);
+
+                if (webhook?.enabled) {
+                    const data = {
+                        timestamp: log.getDateTime(false),
+                        room_id: socket.room_id,
+                        peer: peer?.peer_info,
+                    };
+                    // Trigger a POST request when a user exits
+                    axios
+                        .post(webhook.url, { event: 'exit', data }, { timeout: 5000 })
+                        .then((response) => log.debug('ExitRoom event tracked:', response.data))
+                        .catch((error) => log.error('Error tracking exitRoom event:', error.message));
+                }
+
+                if (room) {
+                    room.removePeer(socket.id);
+
+                    room.broadCast(socket.id, 'removeMe', removeMeData(room, peer_name, isPresenter));
+
+                    if (room.getPeersCount() === 0) {
+                        //
+                        stopRTMPActiveStreams(isPresenter, room);
+
+                        roomList.delete(socket.room_id);
+
+                        delete presenters[socket.room_id];
+
+                        log.debug('[REMOVE ME] - Last peer - current presenters grouped by roomId', presenters);
+
+                        const activeRooms = getActiveRooms();
+
+                        log.debug('[REMOVE ME] - Last peer - current active rooms', activeRooms);
+
+                        const activeStreams = getRTMPActiveStreams();
+
+                        log.debug('[REMOVE ME] - Last peer - current active RTMP streams', activeStreams);
+                    }
+                }
+
+                removeIP(socket);
+
+                socket.room_id = null;
+
+                callback('Successfully exited room');
+            } catch (error) {
+                log.error('Error in exitRoom handler:', error.message);
+                if (typeof callback === 'function') callback({ error: 'Internal server error' });
             }
-
-            const { room, peer } = getRoomAndPeer(socket);
-
-            const { peer_name, peer_uuid } = peer || {};
-
-            const isPresenter = isPeerPresenter(socket.room_id, socket.id, peer_name, peer_uuid);
-
-            log.debug('Exit room', peer_name);
-
-            if (webhook.enabled) {
-                const data = {
-                    timestamp: log.getDateTime(false),
-                    room_id: socket.room_id,
-                    peer: peer?.peer_info,
-                };
-                // Trigger a POST request when a user exits
-                axios
-                    .post(webhook.url, { event: 'exit', data }, { timeout: 5000 })
-                    .then((response) => log.debug('ExitRoom event tracked:', response.data))
-                    .catch((error) => log.error('Error tracking exitRoom event:', error.message));
-            }
-
-            room.removePeer(socket.id);
-
-            room.broadCast(socket.id, 'removeMe', removeMeData(room, peer_name, isPresenter));
-
-            if (room.getPeersCount() === 0) {
-                //
-                stopRTMPActiveStreams(isPresenter, room);
-
-                roomList.delete(socket.room_id);
-
-                delete presenters[socket.room_id];
-
-                log.debug('[REMOVE ME] - Last peer - current presenters grouped by roomId', presenters);
-
-                const activeRooms = getActiveRooms();
-
-                log.debug('[REMOVE ME] - Last peer - current active rooms', activeRooms);
-
-                const activeStreams = getRTMPActiveStreams();
-
-                log.debug('[REMOVE ME] - Last peer - current active RTMP streams', activeStreams);
-            }
-
-            removeIP(socket);
-
-            socket.room_id = null;
-
-            callback('Successfully exited room');
         });
 
         // Helpers
 
         async function handleJoinWebHook(room_id, peer_info) {
             // handle WebHook
-            const webhook = config?.api?.webhook;
             if (webhook?.enabled) {
                 // Trigger a POST request when a user joins
                 const data = {

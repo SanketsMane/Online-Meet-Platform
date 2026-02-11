@@ -6,7 +6,12 @@ const CryptoJS = require('crypto-js');
 const config = require('./config');
 const { v4: uuidV4 } = require('uuid');
 
-const JWT_KEY = config.security?.jwt?.key || 'kidokoolsfu_jwt_secret';
+const JWT_KEY = process.env.JWT_SECRET;
+
+if (!JWT_KEY) {
+    console.error('CRITICAL: JWT_SECRET not set in environment variables.');
+    process.exit(1);
+}
 const JWT_EXP = config.security?.jwt?.exp || '1h';
 
 module.exports = class ServerApi {

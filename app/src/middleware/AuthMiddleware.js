@@ -57,7 +57,11 @@ function decodeToken(jwtToken) {
     if (!jwtToken) return null;
 
     try {
-        const secret = process.env.JWT_SECRET || 'kidokoolSfuSecret';
+        const secret = process.env.JWT_SECRET;
+        if (!secret) {
+            console.error('CRITICAL: JWT_SECRET not set.');
+            return null;
+        }
         
         // Verify and decode the JWT token
         const decodedToken = jwt.verify(jwtToken, secret);
@@ -111,10 +115,10 @@ async function isAdmin(req, res, next) {
         const token = authHeader.substring(7);
         const decoded = decodeToken(token);
         
-        console.log('[isAdmin] Decoded token:', JSON.stringify(decoded));
+        // console.log('[isAdmin] Decoded token:', JSON.stringify(decoded)); // REDACTED SENSITIVE LOG
 
         if (!decoded || !decoded.username || !decoded.password) {
-            console.error('[isAdmin] Token missing credentials:', decoded);
+            console.error('[isAdmin] Token missing credentials'); // REDACTED SENSITIVE LOG
             return res.status(401).json({ message: 'Invalid token' });
         }
 

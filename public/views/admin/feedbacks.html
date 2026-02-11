@@ -1,0 +1,289 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <meta http-equiv="Cache-Control" content="no-cache, no-store, must-revalidate">
+    <meta http-equiv="Pragma" content="no-cache">
+    <meta http-equiv="Expires" content="0">
+    <title>tawktoo - User Feedbacks</title>
+    <link rel="shortcut icon" href="../../images/logo.svg" />
+    
+    <link rel="stylesheet" href="https://fonts.googleapis.com/css?family=IBM+Plex+Sans:400,600" />
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.2/css/all.min.css" />
+    <link rel="stylesheet" href="/css/landing.css">
+    
+    <script defer src="../../js/Brand.js"></script>
+    <script defer src="../../js/Theme.js"></script>
+    <script src="https://cdn.jsdelivr.net/npm/axios/dist/axios.min.js"></script>
+    <script defer src="https://cdn.jsdelivr.net/npm/sweetalert2@11.4.8"></script>
+
+    <style>
+        body {
+            background: var(--bg-color);
+            font-family: 'IBM Plex Sans', sans-serif;
+            margin: 0;
+            padding: 0;
+        }
+
+        .site-header {
+            position: sticky;
+            top: 0;
+            z-index: 1000;
+            background: var(--bg-color);
+            border-bottom: 1px solid var(--divider-color);
+            backdrop-filter: blur(10px);
+        }
+
+        .site-header-inner {
+            display: flex;
+            align-items: center;
+            justify-content: space-between;
+            padding: 16px 0;
+            max-width: 1200px;
+            margin: 0 auto;
+            padding-left: 24px;
+            padding-right: 24px;
+        }
+
+        .header-brand {
+            display: flex;
+            align-items: center;
+            gap: 16px;
+        }
+
+        .header-logo {
+            width: 40px;
+            height: 40px;
+        }
+
+        .header-title {
+            font-size: 20px;
+            font-weight: 600;
+            color: var(--heading-color);
+            margin: 0;
+        }
+
+        .header-nav {
+            display: flex;
+            align-items: center;
+            gap: 16px;
+        }
+
+        .nav-link {
+            color: var(--text-color);
+            text-decoration: none;
+            font-weight: 500;
+            padding: 8px 16px;
+            border-radius: 6px;
+            transition: all 0.2s ease;
+            display: flex;
+            align-items: center;
+            gap: 6px;
+        }
+
+        .nav-link:hover {
+            background: var(--divider-color);
+            color: var(--heading-color);
+        }
+
+        .dashboard-container {
+            max-width: 1200px;
+            margin: 0 auto;
+            padding: 40px 24px;
+        }
+
+        .dashboard-header {
+            margin-bottom: 32px;
+        }
+
+        .dashboard-title {
+            font-size: 32px;
+            font-weight: 600;
+            color: var(--heading-color);
+            margin: 0 0 8px 0;
+        }
+
+        .table-section {
+            background: rgba(255, 255, 255, 0.03);
+            border: 1px solid var(--divider-color);
+            border-radius: 12px;
+            padding: 24px;
+            backdrop-filter: blur(10px);
+        }
+
+        [data-theme='light'] .table-section {
+            background: #ffffff;
+            box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1);
+        }
+
+        .data-table {
+            width: 100%;
+            border-collapse: collapse;
+        }
+
+        .data-table th {
+            text-align: left;
+            padding: 12px 16px;
+            color: var(--heading-color);
+            font-weight: 600;
+            border-bottom: 2px solid var(--divider-color);
+        }
+
+        .data-table td {
+            padding: 16px;
+            border-bottom: 1px solid var(--divider-color);
+            color: var(--text-color);
+        }
+
+        .star-rating {
+            color: #ffc107;
+        }
+
+        .hidden {
+            display: none !important;
+        }
+
+        @media (max-width: 768px) {
+            .table-section {
+                overflow-x: auto;
+            }
+        }
+    </style>
+</head>
+<body>
+    <header class="site-header">
+        <div class="site-header-inner">
+            <div class="header-brand">
+                <a href="/admin">
+                    <img src="../../images/logo.svg" alt="tawktoo" class="header-logo" />
+                </a>
+                <h1 class="header-title">User Feedbacks</h1>
+            </div>
+            <nav class="header-nav">
+                <a href="/admin" class="nav-link">
+                    <i class="fas fa-chart-line"></i> Dashboard
+                </a>
+                <a href="/" class="nav-link">
+                    <i class="fas fa-home"></i> Home
+                </a>
+            </nav>
+        </div>
+    </header>
+
+    <div class="dashboard-container">
+        <div class="dashboard-header">
+            <h2 class="dashboard-title">Meeting Experience Feedbacks</h2>
+            <p class="dashboard-subtitle">Review ratings and messages from meeting participants</p>
+        </div>
+
+        <div class="table-section">
+            <table class="data-table">
+                <thead>
+                    <tr>
+                        <th>Date</th>
+                        <th>User</th>
+                        <th>Room</th>
+                        <th>Rating</th>
+                        <th>Message</th>
+                    </tr>
+                </thead>
+                <tbody id="feedbackTable">
+                    <tr>
+                        <td colspan="5" style="text-align: center; padding: 40px;">Loading feedbacks...</td>
+                    </tr>
+                </tbody>
+            </table>
+        </div>
+    </div>
+
+    <script>
+        const API_URL = '/api/v1/admin/feedbacks_data';
+        const token = localStorage.getItem('admin_token');
+
+        if (!token) {
+            window.location.href = '/admin';
+        }
+
+        async function loadFeedbacks() {
+            try {
+                const response = await axios.get(API_URL, {
+                    headers: { 'Authorization': `Bearer ${token}` }
+                });
+                
+                const tableBody = document.getElementById('feedbackTable');
+                tableBody.innerHTML = ''; // Clear existing content
+
+                if (response.data.length === 0) {
+                    const row = document.createElement('tr');
+                    const cell = document.createElement('td');
+                    cell.colSpan = 5;
+                    cell.style.textAlign = 'center';
+                    cell.style.padding = '40px';
+                    cell.textContent = 'No feedbacks yet';
+                    row.appendChild(cell);
+                    tableBody.appendChild(row);
+                    return;
+                }
+
+                response.data.forEach(f => {
+                    const row = document.createElement('tr');
+
+                    // Date
+                    const dateCell = document.createElement('td');
+                    dateCell.textContent = new Date(f.timestamp).toLocaleString();
+                    row.appendChild(dateCell);
+
+                    // User
+                    const userCell = document.createElement('td');
+                    const userStrong = document.createElement('strong');
+                    userStrong.textContent = f.peer_name;
+                    userCell.appendChild(userStrong);
+                    row.appendChild(userCell);
+
+                    // Room
+                    const roomCell = document.createElement('td');
+                    roomCell.textContent = f.room_id;
+                    row.appendChild(roomCell);
+
+                    // Rating
+                    const ratingCell = document.createElement('td');
+                    ratingCell.className = 'star-rating';
+                    ratingCell.textContent = '★'.repeat(f.rating) + '☆'.repeat(5 - f.rating);
+                    row.appendChild(ratingCell);
+
+                    // Message (Critical XSS Fix)
+                    const messageCell = document.createElement('td');
+                    if (f.message) {
+                        messageCell.textContent = f.message;
+                    } else {
+                        const noMsg = document.createElement('i');
+                        noMsg.style.color = 'grey';
+                        noMsg.textContent = 'No message';
+                        messageCell.appendChild(noMsg);
+                    }
+                    row.appendChild(messageCell);
+
+                    tableBody.appendChild(row);
+                });
+            } catch (error) {
+                console.error('Error loading feedbacks:', error);
+                const tableBody = document.getElementById('feedbackTable');
+                tableBody.innerHTML = '';
+                
+                const row = document.createElement('tr');
+                const cell = document.createElement('td');
+                cell.colSpan = 5;
+                cell.style.textAlign = 'center';
+                cell.style.padding = '40px';
+                cell.style.color = 'red';
+                cell.textContent = 'Failed to load feedbacks. Please ensure you are logged in.';
+                row.appendChild(cell);
+                tableBody.appendChild(row);
+            }
+        }
+
+        loadFeedbacks();
+    </script>
+</body>
+</html>

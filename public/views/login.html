@@ -228,6 +228,26 @@
                     right: 16px;
                 }
             }
+
+            /* Author: Sanket - Password toggle styles */
+            .password-toggle {
+                position: absolute;
+                right: 16px;
+                top: 50%;
+                transform: translateY(-50%);
+                color: var(--text-color);
+                cursor: pointer;
+                z-index: 10;
+                padding: 8px; /* Increase click area */
+            }
+            
+            .password-toggle:hover {
+                color: var(--heading-color);
+            }
+
+            .form-input.has-toggle {
+                padding-right: 48px;
+            }
         </style>
     </head>
     <body>
@@ -271,13 +291,14 @@
                             <i class="fas fa-lock form-input-icon"></i>
                             <input
                                 id="password"
-                                class="form-input"
+                                class="form-input has-toggle"
                                 type="password"
                                 placeholder="Enter your password"
                                 maxlength="36"
                                 required
                                 autocomplete="current-password"
                             />
+                            <i class="fas fa-eye password-toggle" id="togglePassword"></i>
                         </div>
                     </div>
 
@@ -306,6 +327,19 @@
                 const passwordInput = document.getElementById('password');
                 const errorMessage = document.getElementById('errorMessage');
 
+                // Author: Sanket - Password toggle functionality
+                const togglePassword = document.getElementById('togglePassword');
+                if (togglePassword) {
+                    togglePassword.addEventListener('click', function() {
+                        const type = passwordInput.getAttribute('type') === 'password' ? 'text' : 'password';
+                        passwordInput.setAttribute('type', type);
+                        
+                        // Toggle icon
+                        this.classList.toggle('fa-eye');
+                        this.classList.toggle('fa-eye-slash');
+                    });
+                }
+                
                 // Author: Sanket - Handle login form submission
                 loginForm.addEventListener('submit', async function(e) {
                     e.preventDefault();
