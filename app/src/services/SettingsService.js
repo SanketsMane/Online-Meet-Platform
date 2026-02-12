@@ -57,6 +57,7 @@ class SettingsService {
             'CHATGPT_TEMPERATURE',
             'DEEPSEEK_ENABLED',
             'DEEPSEEK_API_KEY',
+            'FOOTER_CONFIG',
         ];
 
         const settings = {};
@@ -102,6 +103,16 @@ class SettingsService {
                 return config.integrations?.deepSeek?.enabled;
             case 'DEEPSEEK_API_KEY':
                 return config.integrations?.deepSeek?.apiKey;
+            case 'FOOTER_CONFIG':
+                return {
+                    copyright: '© 2026 tawktoo',
+                    contactEmail: 'sanketmane7170@gmail.com',
+                    links: [
+                        { label: 'Home', url: '/' },
+                        { label: 'About', url: '/about' },
+                        { label: 'Privacy', url: '/privacy' }
+                    ]
+                };
             default:
                 return null;
         }

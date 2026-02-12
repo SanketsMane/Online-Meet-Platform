@@ -1,4 +1,4 @@
-'use strict';
+'use strict'; // Trigger restart 1
 
 /*
 ████████╗ █████╗ ██╗    ██╗██╗  ██╗████████╗ ██████╗  ██████╗ 
@@ -71,7 +71,38 @@ dev dependencies: {
 
 
 const config = require('./config');
-const { UsageLog, Feedback } = require('./db/models');
+const { UsageLog, Feedback, User, AuditLog, GlobalSetting, WebhookLog, ApiKey } = require('./db/models');
+
+/**
+ * Log Admin Action
+ * @param {object} req 
+ * @param {string} action 
+ * @param {string} target 
+ * @param {string} details 
+ */
+async function logAdminAction(req, action, target, details = '') {
+    try {
+        const ip = req.headers['x-forwarded-for'] || req.socket.remoteAddress;
+        let adminId = 'System';
+        
+        // Try to get adminId from auth session if possible
+        if (req.session && req.session.adminId) {
+            adminId = req.session.adminId;
+        } else if (req.headers['authorization']) {
+            adminId = 'Admin (API)';
+        }
+
+        await AuditLog.create({
+            admin_id: adminId,
+            action: action,
+            target: target,
+            details: details,
+            ip_address: ip
+        });
+    } catch (e) {
+        console.error('Failed to log admin action:', e);
+    }
+}
 
 if (!process.env.JWT_SECRET) {
     console.error('CRITICAL: JWT_SECRET is not defined in the environment variables. The server cannot start securely.');
@@ -97,6 +128,8 @@ const axios = require('axios');
 const ngrok = require('@ngrok/ngrok');
 const jwt = require('jsonwebtoken');
 const fs = require('fs');
+const statsService = require('./services/StatsService');
+const settingsService = require('./services/SettingsService');
 const sanitizeFilename = require('sanitize-filename');
 const helmet = require('helmet');
 
@@ -185,6 +218,7 @@ const widget = config?.ui?.brand?.widget || { enabled: false, alert: { enabled: 
 // DB
 const { connectDB } = require('./db/database');
 const developerRoutes = require('./routes/DeveloperRoutes');
+const userRoutes = require('./routes/UserRoutes');
 const adminRoutes = require('./routes/AdminRoutes');
 const aiRoutes = require('./routes/AiRoutes');
 const { validateApiKey } = require('./middleware/AuthMiddleware');
@@ -213,6 +247,9 @@ app.use('/api/v1/ai', aiRoutes);
 
 // Mount Developer Routes
 app.use('/api/v1', developerRoutes);
+
+// Mount User Routes (Host Registration)
+app.use('/api/v1/user', userRoutes);
 
 // Protect key API endpoints with API Key validation for external developers
 // Note: Internal usage (frontend) might need a different path or bypass if using session cookies
@@ -268,6 +305,7 @@ const views = {
     notFound: path.join(__dirname, '../../', 'public/views/404.html'),
     permission: path.join(__dirname, '../../', 'public/views/permission.html'),
     privacy: path.join(__dirname, '../../', 'public/views/privacy.html'),
+    terms: path.join(__dirname, '../../', 'public/views/terms.html'),
     room: path.join(__dirname, '../../', 'public/views/Room.html'),
     rtmpStreamer: path.join(__dirname, '../../', 'public/views/RtmpStreamer.html'),
     whoAreYou: path.join(__dirname, '../../', 'public/views/whoAreYou.html'),
@@ -581,9 +619,37 @@ function startServer() {
         res.status(200).json({ message: config?.ui?.buttons || false });
     });
 
-    // Brand configuration
-    app.get('/brand', (req, res) => {
-        res.status(200).json({ message: brandHtmlInjection ? config?.ui?.brand : false });
+    // Author: Sanket - Brand configuration
+    app.get('/brand', async (req, res) => {
+        try {
+            const dbSettings = await GlobalSetting.findAll();
+            const branding = JSON.parse(JSON.stringify(config.ui.brand)); 
+            
+            dbSettings.forEach(s => {
+                const val = s.value;
+                if (s.key === 'app_name' && branding.app) {
+                    branding.app.name = val;
+                    if (branding.site) {
+                        branding.site.title = val + ' - Free Video Calls, Messaging and Screen Sharing';
+                    }
+                }
+                if (s.key === 'logo_url' && branding.site) {
+                    branding.site.icon = val;
+                    branding.site.appleTouchIcon = val;
+                    if (branding.about) branding.about.imageUrl = val;
+                }
+                if (s.key === 'favicon_url' && branding.site) {
+                    branding.site.icon = val;
+                }
+                if (s.key === 'brand_color') {
+                    branding.brand_color = val; // Passing this to Brand.js
+                }
+            });
+
+            res.status(200).json({ message: brandHtmlInjection ? branding : false });
+        } catch (e) {
+            res.status(200).json({ message: brandHtmlInjection ? config?.ui?.brand : false });
+        }
     });
 
     // main page
@@ -595,6 +661,17 @@ function startServer() {
             return;
         } else {
             return htmlInjector.injectHtml(views.landing, res);
+        }
+    });
+    
+    // Public footer configuration
+    app.get('/api/v1/footer', async (req, res) => {
+        try {
+            const footer = await settingsService.get('FOOTER_CONFIG');
+            res.json(footer);
+        } catch (err) {
+            log.error('Error fetching footer:', err.message);
+            res.status(500).json({ message: 'Error fetching footer' });
         }
     });
 
@@ -823,6 +900,11 @@ function startServer() {
     // privacy policy
     app.get('/privacy', (req, res) => {
         res.sendFile(views.privacy);
+    });
+
+    // terms and conditions
+    app.get('/terms', (req, res) => {
+        res.sendFile(views.terms);
     });
 
     // tawktoo about
@@ -1426,10 +1508,39 @@ function startServer() {
         log.debug('Kidokool get active rooms - Authorized', {
             header: req.headers,
             body: req.body,
-            activeRooms: activeRooms,
         });
     });
 
+    // Author: Sanket - Public Branding Info
+    app.get('/api/v1/branding', async (req, res) => {
+        try {
+            const dbSettings = await GlobalSetting.findAll({
+                where: {
+                    key: ['app_name', 'brand_color', 'logo_url', 'favicon_url']
+                }
+            });
+            const branding = {
+                app_name: 'MiroTalk SFU', // Default
+                brand_color: '#0270d7',
+                logo_url: '../images/logo.svg',
+                favicon_url: '../images/favicon.png'
+            };
+            dbSettings.forEach(s => {
+                branding[s.key] = s.value;
+            });
+            res.json(branding);
+        } catch (e) {
+            res.json({ app_name: 'MiroTalk SFU' });
+        }
+    });
+
+    // ####################################################
+    // Admin Management Routes (Refactored to AdminRoutes)
+    // ####################################################
+    
+    app.use('/api/v1/admin', adminRoutes(roomList));
+
+    // ####################################################
     // not match any of page before, so 404 not found
     app.use((req, res) => {
         res.sendFile(views.notFound);
@@ -3765,26 +3876,40 @@ function startServer() {
     }
 
     async function isAuthPeer(username, password) {
-        if (hostCfg.users_from_db && hostCfg.users_api_endpoint) {
+        if (hostCfg.users_from_db) {
+            // Check local DB first
             try {
-                // Using either email or username, as the username can also be an email here.
-                const response = await axios.post(
-                    hostCfg.users_api_endpoint,
-                    {
-                        email: username,
-                        username: username,
-                        password: password,
-                        api_secret_key: hostCfg.users_api_secret_key,
-                    },
-                    {
-                        timeout: 5000, // Timeout set to 5 seconds (5000 milliseconds)
-                    }
-                );
-                return response.data && response.data.message === true;
-            } catch (error) {
-                log.error('AXIOS isAuthPeer error', error.message);
-                return false;
+                const user = await User.findOne({ where: { username } });
+                if (user) {
+                    return await user.checkPassword(password);
+                }
+            } catch (err) {
+                log.error('Local DB isAuthPeer error', err);
             }
+
+            // Fallback to external API if configured
+            if (hostCfg.users_api_endpoint) {
+                try {
+                    // Using either email or username, as the username can also be an email here.
+                    const response = await axios.post(
+                        hostCfg.users_api_endpoint,
+                        {
+                            email: username,
+                            username: username,
+                            password: password,
+                            api_secret_key: hostCfg.users_api_secret_key,
+                        },
+                        {
+                            timeout: 5000, // Timeout set to 5 seconds (5000 milliseconds)
+                        }
+                    );
+                    return response.data && response.data.message === true;
+                } catch (error) {
+                    log.error('AXIOS isAuthPeer error', error.message);
+                    return false;
+                }
+            }
+            return false;
         } else {
             return (
                 hostCfg.users && hostCfg.users.some((user) => user.username === username && user.password === password)

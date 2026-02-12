@@ -17,6 +17,25 @@
         <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.2/css/all.min.css" />
         <link rel="stylesheet" type="text/css" href="../css/landing.css" />
 
+        <!-- Tailwind and Font Awesome -->
+        <script src="https://cdn.tailwindcss.com"></script>
+        <script>
+            tailwind.config = {
+                darkMode: 'class',
+                theme: {
+                    extend: {
+                        colors: {
+                            gray: {
+                                900: '#15181d',
+                                800: '#1d2026',
+                            }
+                        }
+                    }
+                }
+            }
+        </script>
+        <script src="https://kit.fontawesome.com/7433d3320f.js" crossorigin="anonymous"></script>
+
         <!-- Scripts -->
         <script defer src="../js/Brand.js"></script>
         <script defer src="../js/Theme.js"></script>
@@ -25,307 +44,245 @@
         <script defer src="https://cdn.jsdelivr.net/npm/sweetalert2@11.4.8"></script>
 
         <!-- Author: Sanket - Professional login page styles -->
-        <style>
-            .login-container {
-                min-height: 100vh;
-                display: flex;
-                align-items: center;
-                justify-content: center;
-                padding: 40px 16px;
-                background: var(--bg-color);
-            }
+    <style>
+        /* Custom animations if needed not covered by Tailwind */
+        .blob {
+            position: absolute;
+            filter: blur(40px);
+            z-index: -1;
+            opacity: 0.4;
+            animation: move 10s infinite alternate;
+        }
+        @keyframes move {
+            from { transform: translate(0, 0) scale(1); }
+            to { transform: translate(20px, -20px) scale(1.1); }
+        }
+    </style>
+    <body class="bg-gray-50 dark:bg-gray-900 text-gray-800 dark:text-white transition-colors duration-300 min-h-screen flex flex-col items-center justify-center relative overflow-hidden font-sans antialiased">
+        
+        <!-- Standard Header -->
+        <header class="w-full bg-white dark:bg-gray-900/95 sticky top-0 z-50 transition-all duration-300 border-b border-gray-100 dark:border-gray-800">
+            <div class="w-full h-16 flex px-4 md:px-6 flex-row items-center justify-between">
+                <!-- Left: Logo & Branding -->
+                <a href="/" class="flex items-center gap-2 group mr-8">
+                    <img src="../images/logo.svg" alt="logo" class="h-7 w-auto mb-1">
+                </a>
 
-            .login-card {
-                max-width: 450px;
-                width: 100%;
-                background: linear-gradient(135deg, rgba(255, 255, 255, 0.08) 0%, rgba(255, 255, 255, 0.03) 100%);
-                border: 1px solid var(--divider-color);
-                border-radius: 16px;
-                padding: 48px 40px;
-                box-shadow: 0 20px 60px rgba(0, 0, 0, 0.3);
-                backdrop-filter: blur(10px);
-                -webkit-backdrop-filter: blur(10px);
-            }
+                <!-- Middle: Navigation (Hidden on mobile) -->
+                 <nav class="hidden md:flex items-center gap-6 mr-auto">
+                    <a href="/login" class="text-base font-medium text-blue-600 transition-colors">Host Login</a>
+                    <a href="/developer" class="text-base font-normal text-gray-500 hover:text-blue-600 transition-colors">Developer</a>
+                </nav>
 
-            [data-theme='light'] .login-card {
-                background: #ffffff;
-                box-shadow: 0 10px 40px rgba(0, 0, 0, 0.1);
-                border: 1px solid #eaeaea;
-            }
+                <!-- Right: Actions -->
+                <div class="flex items-center gap-2 md:gap-4">
+                     <!-- Date & Time -->
+                    <div id="headerDateTime" class="hidden xl:block text-lg text-gray-500 font-normal mr-2"></div>
 
-            .login-header {
-                text-align: center;
-                margin-bottom: 40px;
-            }
 
-            .login-logo {
-                width: 80px;
-                height: 80px;
-                margin: 0 auto 24px;
-            }
+                    <!-- Theme Toggle -->
+                    <button id="themeToggle" class="p-2.5 rounded-full text-gray-500 hover:bg-gray-100 transition-colors focus:outline-none">
+                        <i class="fas fa-sun text-xl"></i>
+                    </button>
 
-            .login-title {
-                font-size: 28px;
-                font-weight: 600;
-                color: var(--heading-color);
-                margin: 0 0 8px 0;
-            }
+                    <!-- Auth/Nav Actions -->
+                     <div class="flex items-center gap-3 ml-2">
+                         <a href="/" class="md:hidden text-gray-600 hover:text-blue-600 font-medium px-2">Home</a>
+                         <button onclick="window.location.href='/'" class="hidden md:block bg-blue-600 text-white px-6 py-2 rounded hover:bg-blue-700 font-medium text-sm shadow-md transition-all hover:shadow-lg active:scale-95">Join Meeting</button>
+                     </div>
+                </div>
+            </div>
+        </header>
 
-            .login-subtitle {
-                font-size: 16px;
-                color: var(--text-color);
-                margin: 0;
-            }
-
-            .form-group {
-                margin-bottom: 24px;
-            }
-
-            .form-label {
-                display: block;
-                font-size: 14px;
-                font-weight: 500;
-                color: var(--heading-color);
-                margin-bottom: 8px;
-            }
-
-            .form-input-wrapper {
-                position: relative;
-            }
-
-            .form-input-icon {
-                position: absolute;
-                left: 16px;
-                top: 50%;
-                transform: translateY(-50%);
-                color: var(--text-color);
-                font-size: 16px;
-            }
-
-            .form-input {
-                width: 100%;
-                padding: 14px 16px 14px 48px;
-                font-size: 16px;
-                color: var(--heading-color);
-                background: var(--input-bg);
-                border: 1px solid var(--input-border);
-                border-radius: 8px;
-                transition: all 0.2s ease;
-                font-family: 'IBM Plex Sans', sans-serif;
-            }
-
-            .form-input:focus {
-                outline: none;
-                border-color: var(--link-color);
-                box-shadow: 0 0 0 3px rgba(2, 112, 215, 0.1);
-            }
-
-            .form-input::placeholder {
-                color: var(--text-color);
-                opacity: 0.6;
-            }
-
-            .login-button {
-                width: 100%;
-                padding: 14px 24px;
-                font-size: 16px;
-                font-weight: 600;
-                color: #ffffff;
-                background: linear-gradient(135deg, #0270d7 0%, #0056b3 100%);
-                border: none;
-                border-radius: 8px;
-                cursor: pointer;
-                transition: all 0.2s ease;
-                display: flex;
-                align-items: center;
-                justify-content: center;
-                gap: 8px;
-            }
-
-            .login-button:hover {
-                transform: translateY(-2px);
-                box-shadow: 0 8px 20px rgba(2, 112, 215, 0.3);
-            }
-
-            .login-button:active {
-                transform: translateY(0);
-            }
-
-            .login-button:disabled {
-                opacity: 0.6;
-                cursor: not-allowed;
-                transform: none;
-            }
-
-            .login-footer {
-                margin-top: 32px;
-                text-align: center;
-            }
-
-            .back-link {
-                color: var(--link-color);
-                text-decoration: none;
-                font-size: 14px;
-                font-weight: 500;
-                display: inline-flex;
-                align-items: center;
-                gap: 6px;
-                transition: all 0.2s ease;
-            }
-
-            .back-link:hover {
-                gap: 8px;
-            }
-
-            .theme-toggle-wrapper {
-                position: fixed;
-                top: 24px;
-                right: 24px;
-                z-index: 1000;
-            }
-
-            .theme-toggle {
-                background: transparent !important;
-                border: 1px solid var(--divider-color) !important;
-                color: var(--heading-color) !important;
-                min-width: auto !important;
-                padding: 12px 16px !important;
-                border-radius: 8px !important;
-                cursor: pointer;
-                transition: all 0.2s ease;
-            }
-
-            .theme-toggle:hover {
-                background: var(--divider-color) !important;
-            }
-
-            .error-message {
-                background: rgba(220, 53, 69, 0.1);
-                border: 1px solid rgba(220, 53, 69, 0.3);
-                color: #dc3545;
-                padding: 12px 16px;
-                border-radius: 8px;
-                font-size: 14px;
-                margin-bottom: 24px;
-                display: none;
-            }
-
-            .error-message.show {
-                display: block;
-            }
-
-            @media (max-width: 480px) {
-                .login-card {
-                    padding: 32px 24px;
-                }
-
-                .login-title {
-                    font-size: 24px;
-                }
-
-                .theme-toggle-wrapper {
-                    top: 16px;
-                    right: 16px;
-                }
-            }
-
-            /* Author: Sanket - Password toggle styles */
-            .password-toggle {
-                position: absolute;
-                right: 16px;
-                top: 50%;
-                transform: translateY(-50%);
-                color: var(--text-color);
-                cursor: pointer;
-                z-index: 10;
-                padding: 8px; /* Increase click area */
-            }
-            
-            .password-toggle:hover {
-                color: var(--heading-color);
-            }
-
-            .form-input.has-toggle {
-                padding-right: 48px;
-            }
-        </style>
-    </head>
-    <body>
-        <!-- Author: Sanket - Theme toggle button -->
-        <div class="theme-toggle-wrapper">
-            <button id="themeToggle" class="theme-toggle">
-                <i class="fas fa-sun"></i>
-            </button>
+        <!-- Background Decoration -->
+        <div class="fixed top-0 left-0 w-full h-full overflow-hidden pointer-events-none z-0">
+            <div class="absolute top-0 right-0 -mr-20 -mt-20 w-96 h-96 rounded-full bg-blue-400/20 dark:bg-blue-900/20 blur-3xl"></div>
+            <div class="absolute bottom-0 left-0 -ml-20 -mb-20 w-80 h-80 rounded-full bg-purple-400/20 dark:bg-purple-900/20 blur-3xl"></div>
         </div>
 
-        <div class="login-container">
-            <div class="login-card">
-                <div class="login-header">
-                    <img src="../images/logo.svg" alt="tawktoo Logo" class="login-logo" />
-                    <h1 class="login-title">Host Login</h1>
-                    <p class="login-subtitle">Sign in to manage your meetings</p>
+        <div class="relative z-10 w-full max-w-md px-6 mt-10 mb-20 animate__animated animate__fadeInUp">
+                <!-- Header -->
+                <div class="text-center mb-8">
+                    <a href="/" class="inline-block mb-6">
+                        <img src="../images/logo.svg" alt="tawktoo Logo" class="h-12 w-auto mx-auto drop-shadow-md" />
+                    </a>
+                    <h1 class="text-3xl font-bold tracking-tight text-gray-900 dark:text-white mb-2">Host Login</h1>
+                    <p class="text-gray-500 dark:text-gray-400 text-sm">Sign in to manage your meetings</p>
                 </div>
 
-                <div id="errorMessage" class="error-message"></div>
+                <!-- Error Message -->
+                <div id="errorMessage" class="hidden mb-6 p-4 rounded-lg bg-red-50 dark:bg-red-900/20 border border-red-200 dark:border-red-800 text-red-600 dark:text-red-400 text-sm font-medium flex items-center gap-3">
+                    <i class="fas fa-exclamation-circle text-lg"></i>
+                    <span></span>
+                </div>
 
-                <form id="loginForm">
-                    <div class="form-group">
-                        <label for="username" class="form-label">Username</label>
-                        <div class="form-input-wrapper">
-                            <i class="fas fa-user form-input-icon"></i>
-                            <input
-                                id="username"
-                                class="form-input"
-                                type="text"
-                                placeholder="Enter your username"
-                                maxlength="254"
-                                required
-                                autocomplete="username"
-                            />
+                <!-- Toggle Buttons -->
+                <div class="flex p-1 bg-gray-100/50 dark:bg-gray-800/50 mb-8 rounded-xl">
+                    <button class="auth-tab flex-1 py-2 text-sm font-semibold text-center rounded-lg text-blue-600 bg-white dark:bg-gray-700 dark:text-white shadow-sm transition-all duration-200" onclick="switchTab('login')">Login</button>
+                    <button class="auth-tab flex-1 py-2 text-sm font-medium text-center rounded-lg text-gray-500 hover:text-gray-700 dark:text-gray-400 dark:hover:text-gray-200 transition-all duration-200" onclick="switchTab('register')">Register</button>
+                </div>
+
+                <!-- Login Form -->
+                <div id="loginPanel" class="tab-panel active">
+                    <form id="loginForm" class="space-y-6">
+                        <div>
+                            <label for="username" class="block text-sm font-medium text-gray-700 dark:text-gray-300 mb-2">Username</label>
+                            <div class="relative">
+                                <div class="absolute inset-y-0 left-0 pl-3 flex items-center pointer-events-none">
+                                    <i class="fas fa-user text-gray-400"></i>
+                                </div>
+                                <input id="username" type="text" class="w-full pl-10 pr-4 py-3 rounded-lg bg-gray-50 dark:bg-gray-800/50 border border-gray-200 dark:border-gray-700 text-gray-900 dark:text-white placeholder-gray-400 focus:ring-2 focus:ring-blue-500/20 focus:border-blue-600 outline-none transition-all duration-200 sm:text-sm" placeholder="Enter your username" required autocomplete="username" />
+                            </div>
                         </div>
-                    </div>
 
-                    <div class="form-group">
-                        <label for="password" class="form-label">Password</label>
-                        <div class="form-input-wrapper">
-                            <i class="fas fa-lock form-input-icon"></i>
-                            <input
-                                id="password"
-                                class="form-input has-toggle"
-                                type="password"
-                                placeholder="Enter your password"
-                                maxlength="36"
-                                required
-                                autocomplete="current-password"
-                            />
-                            <i class="fas fa-eye password-toggle" id="togglePassword"></i>
+                        <div>
+                            <label for="password" class="block text-sm font-medium text-gray-700 dark:text-gray-300 mb-2">Password</label>
+                            <div class="relative">
+                                <div class="absolute inset-y-0 left-0 pl-3 flex items-center pointer-events-none">
+                                    <i class="fas fa-lock text-gray-400"></i>
+                                </div>
+                                <input id="password" type="password" class="w-full pl-10 pr-10 py-3 rounded-lg bg-gray-50 dark:bg-gray-800/50 border border-gray-200 dark:border-gray-700 text-gray-900 dark:text-white placeholder-gray-400 focus:ring-2 focus:ring-blue-500/20 focus:border-blue-600 outline-none transition-all duration-200 sm:text-sm" placeholder="Enter your password" required autocomplete="current-password" />
+                                <div class="absolute inset-y-0 right-0 pr-3 flex items-center cursor-pointer text-gray-400 hover:text-gray-600 dark:hover:text-gray-200 transition-colors" id="togglePassword">
+                                    <i class="fas fa-eye"></i>
+                                </div>
+                            </div>
                         </div>
-                    </div>
 
-                    <button type="submit" id="loginButton" class="login-button">
-                        <i class="fas fa-sign-in-alt"></i>
-                        <span>Sign In</span>
-                    </button>
-                </form>
+                        <button type="submit" id="loginButton" class="w-full flex justify-center items-center py-3.5 px-4 border border-transparent rounded-xl shadow-lg text-sm font-semibold text-white bg-blue-600 hover:bg-blue-700 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-blue-500 transition-all duration-200 transform hover:-translate-y-0.5">
+                            <i class="fas fa-sign-in-alt mr-2"></i>
+                            <span>Sign In</span>
+                        </button>
+                    </form>
+                </div>
 
-                <div class="login-footer">
-                    <a href="/" class="back-link">
-                        <i class="fas fa-arrow-left"></i>
-                        <span>Back to Home</span>
+                <!-- Register Form -->
+                <div id="registerPanel" class="tab-panel hidden">
+                    <form id="registerForm" class="space-y-6">
+                        <div>
+                            <label for="regUsername" class="block text-sm font-medium text-gray-700 dark:text-gray-300 mb-2">Username</label>
+                            <div class="relative">
+                                <div class="absolute inset-y-0 left-0 pl-3 flex items-center pointer-events-none">
+                                    <i class="fas fa-user text-gray-400"></i>
+                                </div>
+                                <input id="regUsername" type="text" class="w-full pl-10 pr-4 py-3 rounded-lg bg-gray-50 dark:bg-gray-800/50 border border-gray-200 dark:border-gray-700 text-gray-900 dark:text-white placeholder-gray-400 focus:ring-2 focus:ring-blue-500/20 focus:border-blue-600 outline-none transition-all duration-200 sm:text-sm" placeholder="Choose a username" required />
+                            </div>
+                        </div>
+
+                        <div>
+                            <label for="regDisplayname" class="block text-sm font-medium text-gray-700 dark:text-gray-300 mb-2">Display Name</label>
+                            <div class="relative">
+                                <div class="absolute inset-y-0 left-0 pl-3 flex items-center pointer-events-none">
+                                    <i class="fas fa-id-card text-gray-400"></i>
+                                </div>
+                                <input id="regDisplayname" type="text" class="w-full pl-10 pr-4 py-3 rounded-lg bg-gray-50 dark:bg-gray-800/50 border border-gray-200 dark:border-gray-700 text-gray-900 dark:text-white placeholder-gray-400 focus:ring-2 focus:ring-blue-500/20 focus:border-blue-600 outline-none transition-all duration-200 sm:text-sm" placeholder="Your full name" required />
+                            </div>
+                        </div>
+
+                        <div>
+                            <label for="regPassword" class="block text-sm font-medium text-gray-700 dark:text-gray-300 mb-2">Password</label>
+                            <div class="relative">
+                                <div class="absolute inset-y-0 left-0 pl-3 flex items-center pointer-events-none">
+                                    <i class="fas fa-lock text-gray-400"></i>
+                                </div>
+                                <input id="regPassword" type="password" class="w-full pl-10 pr-4 py-3 rounded-lg bg-gray-50 dark:bg-gray-800/50 border border-gray-200 dark:border-gray-700 text-gray-900 dark:text-white placeholder-gray-400 focus:ring-2 focus:ring-blue-500/20 focus:border-blue-600 outline-none transition-all duration-200 sm:text-sm" placeholder="Create a password" required />
+                            </div>
+                        </div>
+
+                        <button type="submit" id="registerButton" class="w-full flex justify-center items-center py-3.5 px-4 border border-transparent rounded-xl shadow-lg text-sm font-semibold text-white bg-green-600 hover:bg-green-700 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-green-500 transition-all duration-200 transform hover:-translate-y-0.5">
+                            <i class="fas fa-user-plus mr-2"></i>
+                            <span>Create Account</span>
+                        </button>
+                    </form>
+                </div>
+
+
+                <div class="mt-8 text-center">
+                    <a href="/" class="inline-flex items-center gap-2 text-sm font-medium text-gray-500 hover:text-gray-900 dark:text-gray-400 dark:hover:text-white transition-colors">
+                        <i class="fas fa-arrow-left text-xs"></i>
+                        Back to Home
                     </a>
                 </div>
             </div>
         </div>
 
+        <!-- Inject Tailwind Config for this page if standalone -->
+        <script>
+             // Only if not already present in global scope from other scripts? 
+             // login.html imports landing.css but usually we need tailwind script for utility classes if not compiled.
+             // Checking imports: 
+             // <link rel="stylesheet" type="text/css" href="../css/landing.css" /> 
+             // We need either the CDN or the config to work with specific classes if they aren't in landing.css
+        </script>
+        <!-- Adding Tailwind CDN for safety to ensure all utility classes work as this is a standalone page -->
+        <script src="https://cdn.tailwindcss.com"></script>
+        <script>
+            tailwind.config = {
+                darkMode: 'class',
+                theme: {
+                    extend: {
+                        colors: {
+                            gray: {
+                                900: '#15181d',
+                                800: '#1d2026',
+                            }
+                        }
+                    }
+                }
+            }
+        </script>
+
+        <!-- Dynamic Footer -->
+        <footer id="site-footer"></footer>
+
         <!-- Author: Sanket - Login functionality -->
         <script defer src="../js/Utils.js"></script>
+        <script defer src="../js/Common.js"></script>
         <script>
+            function switchTab(tab) {
+                const loginPanel = document.getElementById('loginPanel');
+                const registerPanel = document.getElementById('registerPanel');
+                const tabs = document.querySelectorAll('.auth-tab');
+                
+                if (tab === 'login') {
+                    loginPanel.classList.remove('hidden');
+                    loginPanel.classList.add('active');
+                    registerPanel.classList.add('hidden');
+                    registerPanel.classList.remove('active');
+                    
+                    // Update tab styles
+                    tabs[0].classList.add('text-blue-600', 'bg-white', 'dark:bg-gray-700', 'dark:text-white', 'shadow-sm');
+                    tabs[0].classList.remove('text-gray-500', 'hover:text-gray-700', 'dark:text-gray-400');
+                    
+                    tabs[1].classList.remove('text-blue-600', 'bg-white', 'dark:bg-gray-700', 'dark:text-white', 'shadow-sm');
+                    tabs[1].classList.add('text-gray-500', 'hover:text-gray-700', 'dark:text-gray-400');
+                } else {
+                    loginPanel.classList.add('hidden');
+                    loginPanel.classList.remove('active');
+                    registerPanel.classList.remove('hidden');
+                    registerPanel.classList.add('active');
+                    
+                    // Update tab styles
+                    tabs[1].classList.add('text-blue-600', 'bg-white', 'dark:bg-gray-700', 'dark:text-white', 'shadow-sm');
+                    tabs[1].classList.remove('text-gray-500', 'hover:text-gray-700', 'dark:text-gray-400');
+                    
+                    tabs[0].classList.remove('text-blue-600', 'bg-white', 'dark:bg-gray-700', 'dark:text-white', 'shadow-sm');
+                    tabs[0].classList.add('text-gray-500', 'hover:text-gray-700', 'dark:text-gray-400');
+                }
+            }
+
             document.addEventListener('DOMContentLoaded', function() {
                 const loginForm = document.getElementById('loginForm');
                 const loginButton = document.getElementById('loginButton');
                 const usernameInput = document.getElementById('username');
                 const passwordInput = document.getElementById('password');
                 const errorMessage = document.getElementById('errorMessage');
+
+                // Register elements
+                const registerForm = document.getElementById('registerForm');
+                const registerButton = document.getElementById('registerButton');
+                const regUsernameInput = document.getElementById('regUsername');
+                const regDisplaynameInput = document.getElementById('regDisplayname');
+                const regPasswordInput = document.getElementById('regPassword');
 
                 // Author: Sanket - Password toggle functionality
                 const togglePassword = document.getElementById('togglePassword');
@@ -403,6 +360,65 @@
                     }
                 });
 
+                // Author: Sanket - Handle registration form submission
+                if (registerForm) {
+                    registerForm.addEventListener('submit', async function(e) {
+                        e.preventDefault();
+                        
+                        const username = regUsernameInput.value.trim();
+                        const displayname = regDisplaynameInput.value.trim();
+                        const password = regPasswordInput.value;
+
+                        if (!username || !password || !displayname) {
+                            showError('Please fill in all fields');
+                            return;
+                        }
+
+                        // Disable button
+                        registerButton.disabled = true;
+                        registerButton.innerHTML = '<i class="fas fa-spinner fa-spin"></i><span>Creating Account...</span>';
+                        hideError();
+
+                        try {
+                            const response = await axios.post('/api/v1/user/register', {
+                                username: username,
+                                displayname: displayname,
+                                password: password
+                            });
+
+                            if (response.status === 201) {
+                                await Swal.fire({
+                                    icon: 'success',
+                                    title: 'Account Created!',
+                                    text: 'You can now sign in with your new account.',
+                                    timer: 2000,
+                                    showConfirmButton: false
+                                });
+                                
+                                // Switch to login tab
+                                switchTab('login');
+                                usernameInput.value = username;
+                                passwordInput.value = '';
+                                
+                                // Reset form
+                                registerForm.reset();
+                            }
+                        } catch (error) {
+                            console.error('Registration error:', error);
+                            let errorMsg = 'Registration failed. Please try again.';
+                            
+                            if (error.response && error.response.data && error.response.data.message) {
+                                errorMsg = error.response.data.message;
+                            }
+                            
+                            showError(errorMsg);
+                        } finally {
+                            registerButton.disabled = false;
+                            registerButton.innerHTML = '<i class="fas fa-user-plus mr-2"></i><span>Create Account</span>';
+                        }
+                    });
+                }
+
                 // Author: Sanket - Error message helpers
                 function showError(message) {
                     errorMessage.textContent = message;
@@ -416,6 +432,7 @@
                 // Clear error on input
                 usernameInput.addEventListener('input', hideError);
                 passwordInput.addEventListener('input', hideError);
+                if (regUsernameInput) regUsernameInput.addEventListener('input', hideError);
             });
         </script>
     </body>

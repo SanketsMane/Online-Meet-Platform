@@ -417,7 +417,8 @@ module.exports = {
          * https://docs.kidokool.com/kidokool-sfu/host-protection/
          */
         host: {
-            protected: process.env.HOST_PROTECTED === 'true',
+            // Author: Sanket - Enable host protection for admin authentication
+            protected: process.env.HOST_PROTECTED !== 'false',
             user_auth: process.env.HOST_USER_AUTH === 'true',
 
             maxAttempts: process.env.HOST_MAX_LOGIN_ATTEMPTS || 5,
@@ -448,24 +449,13 @@ module.exports = {
                       };
                   })
                 : [
+                      // Author: Sanket - Single admin user configuration
                       {
-                          username: 'username',
-                          password: 'password',
-                          displayname: 'username displayname',
+                          username: 'bksun170882@gmail.com',
+                          password: 'Kidokool@3030',
+                          displayname: 'Admin',
                           allowed_rooms: ['*'],
                       },
-                      {
-                          username: 'username2',
-                          password: 'password2',
-                          displayname: 'username2 displayname',
-                          allowed_rooms: ['room1', 'room2'],
-                      },
-                      {
-                          username: 'username3',
-                          password: 'password3',
-                          displayname: 'username3 displayname',
-                      },
-                      //...
                   ],
 
             presenters: {
@@ -1014,12 +1004,12 @@ module.exports = {
                 name: process.env.APP_NAME || 'tawktoo',
                 title:
                     process.env.APP_TITLE ||
-                    '<h1>tawktoo</h1> Free browser based Real-time video calls.<br />Simple, Secure, Fast.',
+                    'Premium video meetings. <br />Now free for everyone.',
                 description:
                     process.env.APP_DESCRIPTION ||
-                    'tawktoo powered by WebRTC and mediasoup, Real-time Simple Secure Fast video calls, messaging and screen sharing capabilities.',
+                    'We re-engineered the service we built for secure business meetings, tawktoo, to make it free and available for all.',
                 joinDescription: process.env.JOIN_DESCRIPTION || 'Pick a room name.<br />How about this one?',
-                joinButtonLabel: process.env.JOIN_BUTTON_LABEL || 'JOIN ROOM',
+                joinButtonLabel: process.env.JOIN_BUTTON_LABEL || 'Join',
                 customizeButtonLabel: process.env.CUSTOMIZE_BUTTON_LABEL || 'CUSTOMIZE ROOM',
                 joinLastLabel: process.env.JOIN_LAST_LABEL || 'Your recent room:',
             },

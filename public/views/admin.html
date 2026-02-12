@@ -16,6 +16,7 @@
     <link rel="stylesheet" href="/css/landing.css">
     
     <!-- Scripts -->
+    <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
     <script defer src="../js/Brand.js"></script>
     <script defer src="../js/Theme.js"></script>
     <script src="https://cdn.jsdelivr.net/npm/axios/dist/axios.min.js"></script>
@@ -24,10 +25,10 @@
     <!-- Author: Sanket - Premium production-grade admin styles -->
     <style>
         :root {
-            --sidebar-width: 260px;
-            --sidebar-collapsed-width: 80px;
+            --sidebar-width: 250px;
+            --sidebar-collapsed-width: 70px;
             --sidebar-bg: rgba(255, 255, 255, 0.05);
-            --header-height: 70px;
+            --header-height: 60px;
             --transition-speed: 0.3s;
             --primary-gradient: linear-gradient(135deg, #0270d7 0%, #0056b3 100%);
             --glass-bg: rgba(255, 255, 255, 0.03);
@@ -38,6 +39,13 @@
             --sidebar-bg: #f8f9fa;
             --glass-bg: #ffffff;
             --active-item-bg: rgba(2, 112, 215, 0.05);
+        }
+
+        @media (max-width: 768px) {
+            :root {
+                --sidebar-width: 0px; 
+                --sidebar-collapsed-width: 0px;
+            }
         }
 
         body {
@@ -60,11 +68,21 @@
             left: 0;
             top: 0;
             z-index: 1001;
-            transition: width var(--transition-speed) cubic-bezier(0.4, 0, 0.2, 1);
+            transition: transform var(--transition-speed) cubic-bezier(0.4, 0, 0.2, 1), width var(--transition-speed);
             backdrop-filter: blur(20px);
             display: flex;
             flex-direction: column;
             overflow: hidden;
+        }
+
+        @media (max-width: 768px) {
+            .sidebar {
+                width: 250px !important;
+                transform: translateX(-100%);
+            }
+            .sidebar.mobile-open {
+                transform: translateX(0);
+            }
         }
 
         .sidebar.collapsed {
@@ -157,10 +175,17 @@
             margin-left: var(--sidebar-width);
             transition: margin-left var(--transition-speed) cubic-bezier(0.4, 0, 0.2, 1);
             position: relative;
+            width: 100%;
         }
 
         .main-content.expanded {
             margin-left: var(--sidebar-collapsed-width);
+        }
+
+        @media (max-width: 768px) {
+            .main-content, .main-content.expanded {
+                margin-left: 0 !important;
+            }
         }
 
         /* Navbar Styles */
@@ -220,9 +245,15 @@
 
         /* Module Sections */
         .module-container {
-            padding: 40px;
-            max-width: 1400px;
+            padding: 24px;
+            max-width: 100%;
             margin: 0 auto;
+        }
+
+        @media (max-width: 768px) {
+            .module-container {
+                padding: 16px;
+            }
         }
 
         .module-header {
@@ -233,24 +264,24 @@
         }
 
         .module-info h2 {
-            font-size: 28px;
+            font-size: 24px;
             font-weight: 600;
             color: var(--heading-color);
-            margin: 0 0 6px 0;
+            margin: 0 0 4px 0;
         }
 
         .module-info p {
             color: var(--text-color);
             margin: 0;
-            font-size: 15px;
+            font-size: 14px;
         }
 
         /* Stats Grid */
         .stats-grid {
             display: grid;
-            grid-template-columns: repeat(auto-fit, minmax(260px, 1fr));
-            gap: 24px;
-            margin-bottom: 40px;
+            grid-template-columns: repeat(auto-fit, minmax(240px, 1fr));
+            gap: 20px;
+            margin-bottom: 30px;
         }
 
         .stat-card {
@@ -291,15 +322,15 @@
         }
 
         .stat-value {
-            font-size: 32px;
+            font-size: 28px;
             font-weight: 600;
             color: var(--heading-color);
         }
 
         .stat-icon-bg {
-            width: 50px;
-            height: 50px;
-            border-radius: 12px;
+            width: 42px;
+            height: 42px;
+            border-radius: 10px;
             background: var(--active-item-bg);
             display: flex;
             align-items: center;
@@ -315,9 +346,16 @@
         .content-card {
             background: var(--glass-bg);
             border: 1px solid var(--divider-color);
-            border-radius: 16px;
-            padding: 28px;
+            border-radius: 12px;
+            padding: 24px;
             box-shadow: 0 4px 20px rgba(0, 0, 0, 0.05);
+        }
+
+        @media (max-width: 768px) {
+            .content-card {
+                padding: 16px;
+                border-radius: 8px;
+            }
         }
 
         .table-responsive {
@@ -511,42 +549,106 @@
             cursor: pointer;
             color: var(--text-color);
         }
+        .flex { display: flex; }
+        .flex-col { flex-direction: column; }
+        .items-center { align-items: center; }
+        .justify-center { justify-content: center; }
+        .justify-between { justify-content: space-between; }
+        .gap-3 { gap: 12px; }
+        .gap-4 { gap: 16px; }
+        .flex-1 { flex: 1; }
+        .flex-2 { flex: 2; }
+        .mt-4 { margin-top: 16px; }
+        .w-full { width: 100%; }
+        .relative { position: relative; }
+        .absolute { position: absolute; }
+        .inset-y-0 { top: 0; bottom: 0; }
+        .left-0 { left: 0; }
+        .pl-3 { padding-left: 12px; }
+        .pl-10 { padding-left: 40px; }
+        .pr-10 { padding-right: 40px; }
+        .py-3 { padding-top: 12px; padding-bottom: 12px; }
+        .py-3\.5 { padding-top: 14px; padding-bottom: 14px; }
+        .px-4 { padding-left: 16px; padding-right: 16px; }
+        .rounded-lg { border-radius: 8px; }
+        .rounded-xl { border-radius: 12px; }
+        .mb-2 { margin-bottom: 8px; }
+        .text-sm { font-size: 14px; }
+        .font-medium { font-weight: 500; }
+        .font-semibold { font-weight: 600; }
+        /* Mobile Overlay */
+        .mobile-overlay {
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 100vw;
+            height: 100vh;
+            background: rgba(0, 0, 0, 0.5);
+            z-index: 1000;
+            opacity: 0;
+            pointer-events: none;
+            transition: opacity 0.3s;
+        }
+
+        .mobile-overlay.show {
+            opacity: 1;
+            pointer-events: auto;
+        }
     </style>
 </head>
 <body class="dark">
     
     <!-- Redesigned Login Section -->
-    <div id="loginSection" class="login-wrapper">
-        <div class="login-card">
-            <div class="login-logo-box">
-                <img src="../images/logo.svg" alt="Kidokool" />
-            </div>
-            <div class="login-titles">
-                <h2>Admin Hub</h2>
-                <p>Welcome back! Please enter your details.</p>
-            </div>
-            <div id="loginError" class="badge badge-banned hidden" style="width: 100%; text-align: center; margin-bottom: 20px; padding: 12px; box-sizing: border-box;"></div>
-            <form id="loginForm">
-                <div class="form-control">
-                    <label>Username</label>
-                    <div class="input-group">
-                        <i class="fas fa-user-shield"></i>
-                        <input type="text" id="username" placeholder="Admin username" required />
+    <div id="loginSection" class="fixed inset-0 z-[2000] flex items-center justify-center bg-gray-50 dark:bg-gray-900 overflow-hidden">
+        <!-- Background Decoration -->
+        <div class="absolute top-0 left-0 w-full h-full overflow-hidden pointer-events-none z-0">
+            <div class="absolute top-0 right-0 -mr-20 -mt-20 w-96 h-96 rounded-full bg-blue-400/20 dark:bg-blue-900/20 blur-3xl"></div>
+            <div class="absolute bottom-0 left-0 -ml-20 -mb-20 w-80 h-80 rounded-full bg-purple-400/20 dark:bg-purple-900/20 blur-3xl"></div>
+        </div>
+
+        <div class="relative z-10 w-full max-w-md px-6">
+            <div class="bg-white/70 dark:bg-gray-900/60 backdrop-blur-xl border border-white/20 dark:border-gray-800 shadow-2xl rounded-2xl p-8 md:p-10 animate__animated animate__fadeInUp">
+                <!-- Header -->
+                <div class="text-center mb-8">
+                    <div class="w-16 h-16 mx-auto mb-4 bg-gradient-to-br from-blue-600 to-blue-700 rounded-2xl flex items-center justify-center shadow-lg shadow-blue-500/20">
+                        <img src="../images/logo.svg" alt="Kidokool" class="w-8 h-8 brightness-0 invert" />
                     </div>
+                    <h2 class="text-2xl font-bold text-gray-900 dark:text-white mb-2">Admin Hub</h2>
+                    <p class="text-gray-500 dark:text-gray-400 text-sm">Welcome back! Please enter your details.</p>
                 </div>
-                <div class="form-control">
-                    <label>Password</label>
-                    <div class="input-group">
-                        <i class="fas fa-lock"></i>
-                        <input type="password" id="password" placeholder="••••••••" required />
-                        <i class="fas fa-eye password-toggle" id="toggleLoginPassword"></i>
+
+                <div id="loginError" class="hidden mb-6 p-3 rounded-lg bg-red-50 dark:bg-red-900/20 border border-red-200 dark:border-red-800 text-red-600 dark:text-red-400 text-sm font-medium text-center"></div>
+
+                <form id="loginForm" class="space-y-6">
+                    <div>
+                        <label class="block text-sm font-medium text-gray-700 dark:text-gray-300 mb-2">Username</label>
+                        <div class="relative">
+                            <div class="absolute inset-y-0 left-0 pl-3 flex items-center pointer-events-none">
+                                <i class="fas fa-user-shield text-gray-400"></i>
+                            </div>
+                            <input type="text" id="username" placeholder="Admin username" required 
+                                class="w-full pl-10 pr-4 py-3 rounded-lg bg-gray-50 dark:bg-gray-800/50 border border-gray-200 dark:border-gray-700 text-gray-900 dark:text-white placeholder-gray-400 focus:ring-2 focus:ring-blue-500/20 focus:border-blue-600 outline-none transition-all duration-200 sm:text-sm" />
+                        </div>
                     </div>
-                </div>
-                <button type="submit" id="loginBtn" class="btn btn-primary" style="width: 100%;">
-                    <span>Sign In</span>
-                    <i class="fas fa-arrow-right"></i>
-                </button>
-            </form>
+                    
+                    <div>
+                        <label class="block text-sm font-medium text-gray-700 dark:text-gray-300 mb-2">Password</label>
+                        <div class="relative">
+                            <div class="absolute inset-y-0 left-0 pl-3 flex items-center pointer-events-none">
+                                <i class="fas fa-lock text-gray-400"></i>
+                            </div>
+                            <input type="password" id="password" placeholder="••••••••" required 
+                                class="w-full pl-10 pr-10 py-3 rounded-lg bg-gray-50 dark:bg-gray-800/50 border border-gray-200 dark:border-gray-700 text-gray-900 dark:text-white placeholder-gray-400 focus:ring-2 focus:ring-blue-500/20 focus:border-blue-600 outline-none transition-all duration-200 sm:text-sm" />
+                            <i class="fas fa-eye absolute right-3 top-1/2 -translate-y-1/2 cursor-pointer text-gray-400 hover:text-gray-600 dark:hover:text-gray-200 transition-colors" id="toggleLoginPassword"></i>
+                        </div>
+                    </div>
+
+                    <button type="submit" id="loginBtn" class="w-full flex justify-center items-center py-3.5 px-4 border border-transparent rounded-xl shadow-lg text-sm font-semibold text-white bg-blue-600 hover:bg-blue-700 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-blue-500 transition-all duration-200 transform hover:-translate-y-0.5">
+                        <span>Sign In</span>
+                        <i class="fas fa-arrow-right ml-2 opacity-80"></i>
+                    </button>
+                </form>
+            </div>
         </div>
     </div>
 
@@ -565,6 +667,10 @@
                 <i class="fas fa-users-cog"></i>
                 <span class="nav-text">Developers</span>
             </div>
+            <div class="nav-item" data-module="apikeys">
+                <i class="fas fa-key"></i>
+                <span class="nav-text">API & Keys</span>
+            </div>
             <div class="nav-item" data-module="rooms">
                 <i class="fas fa-video"></i>
                 <span class="nav-text">Active Rooms</span>
@@ -572,6 +678,10 @@
             <div class="nav-item" data-module="feedbacks">
                 <i class="fas fa-star"></i>
                 <span class="nav-text">Feedback</span>
+            </div>
+            <div class="nav-item" data-module="audit">
+                <i class="fas fa-shield-halved"></i>
+                <span class="nav-text">Audit Logs</span>
             </div>
             <div class="nav-item" data-module="settings">
                 <i class="fas fa-sliders-h"></i>
@@ -585,6 +695,7 @@
             </div>
         </div>
     </aside>
+    <div id="mobileOverlay" class="mobile-overlay"></div>
 
     <!-- Main Content -->
     <main id="mainContent" class="main-content">
@@ -650,6 +761,17 @@
                     </div>
                 </div>
 
+                <!-- Real-Time Analytics Graph -->
+                <div class="content-card mb-8" style="margin-bottom: 30px;">
+                    <div class="flex justify-between items-center mb-4">
+                        <h3 style="margin: 0; color: var(--heading-color);">Live System Performance</h3>
+                        <span class="badge badge-active" id="liveIndicator"><i class="fas fa-circle" style="font-size: 8px;"></i> LIVE</span>
+                    </div>
+                    <div style="height: 300px; width: 100%;">
+                        <canvas id="systemChart"></canvas>
+                    </div>
+                </div>
+
                 <div class="content-card">
                     <h3 style="margin-top: 0; color: var(--heading-color);">Quick Actions</h3>
                     <div style="display: flex; gap: 16px; margin-top: 20px;">
@@ -692,14 +814,70 @@
                 </div>
             </section>
 
-            <!-- Active Rooms Module -->
+            <!-- API Keys Module -->
+            <section id="module-apikeys" class="module-section hidden">
+                <div class="module-header">
+                    <div class="module-info">
+                        <h2>API Key Management</h2>
+                        <p>Monitor API usage, quotas, and manage developer keys.</p>
+                    </div>
+                </div>
+                
+                <div class="grid grid-cols-1 gap-6 mb-8">
+                    <div class="content-card">
+                        <h3 class="mb-4 font-bold">Active API Keys</h3>
+                        <div class="table-responsive">
+                            <table class="data-table">
+                                <thead>
+                                    <tr>
+                                        <th>Prefix</th>
+                                        <th>Owner (Tenant)</th>
+                                        <th>Usage / Quota</th>
+                                        <th>Last Used</th>
+                                        <th>Status</th>
+                                        <th>Actions</th>
+                                    </tr>
+                                </thead>
+                                <tbody id="apiKeysTableBody"></tbody>
+                            </table>
+                        </div>
+                    </div>
+                    
+                    <div class="content-card">
+                        <div class="flex justify-between items-center mb-4">
+                            <h3 class="font-bold">Webhook Delivery Logs</h3>
+                            <button class="btn btn-outline btn-sm" onclick="loadWebhookLogs()">
+                                <i class="fas fa-sync-alt"></i> Refresh
+                            </button>
+                        </div>
+                        <div class="table-responsive">
+                            <table class="data-table">
+                                <thead>
+                                    <tr>
+                                        <th>Time</th>
+                                        <th>Event</th>
+                                        <th>Target Status</th>
+                                        <th>Webhook ID</th>
+                                        <th>Payload Size</th>
+                                    </tr>
+                                </thead>
+                                <tbody id="webhookLogsTableBody"></tbody>
+                            </table>
+                        </div>
+                    </div>
+                </div>
+            </section>
+
             <section id="module-rooms" class="module-section hidden">
                 <div class="module-header">
                     <div class="module-info">
                         <h2>Active Meetings</h2>
                         <p>Live overview of ongoing sessions across the platform.</p>
                     </div>
-                    <button class="btn btn-primary btn-sm" onclick="loadActiveRooms()">
+                    <button class="btn btn-primary btn-sm" onclick="showBroadcastModal()">
+                        <i class="fas fa-bullhorn"></i> Broadcast
+                    </button>
+                    <button class="btn btn-outline btn-sm" onclick="loadActiveRooms()">
                         <i class="fas fa-sync-alt"></i> Refresh
                     </button>
                 </div>
@@ -724,6 +902,22 @@
                 </div>
             </section>
 
+             <!-- Peek Modal -->
+            <div id="peekModal" class="fixed inset-0 z-[3000] hidden flex items-center justify-center bg-black/80 backdrop-blur-sm">
+                <div class="bg-white dark:bg-gray-900 w-full max-w-6xl h-[80vh] rounded-2xl overflow-hidden flex flex-col shadow-2xl border border-gray-700">
+                    <div class="flex justify-between items-center p-4 border-b border-gray-700 bg-gray-800">
+                        <h3 class="text-white font-semibold flex items-center gap-2"><i class="fas fa-eye"></i> Peeking Room: <span id="peekRoomId" class="font-mono text-blue-400"></span></h3>
+                        <button onclick="closePeek()" class="text-gray-400 hover:text-white transition-colors"><i class="fas fa-times text-xl"></i></button>
+                    </div>
+                    <div class="flex-1 bg-black relative">
+                        <iframe id="peekFrame" src="about:blank" class="w-full h-full border-0"></iframe>
+                        <div class="absolute inset-0 pointer-events-none flex items-center justify-center text-white/20 text-4xl font-bold uppercase tracking-widest">
+                            Ghost Mode Active
+                        </div>
+                    </div>
+                </div>
+            </div>
+
             <!-- Feedbacks Module -->
             <section id="module-feedbacks" class="module-section hidden">
                 <div class="module-header">
@@ -747,6 +941,69 @@
                             <tbody id="feedbackTableBody">
                                 <tr><td colspan="5" style="text-align: center; padding: 50px;">Loading feedback...</td></tr>
                             </tbody>
+                        </table>
+                    </div>
+                </div>
+            </section>
+
+            <!-- Audit Logs Module -->
+            <section id="module-audit" class="module-section hidden">
+                <div class="module-header">
+                    <div class="module-info">
+                        <h2>Security Audit Logs</h2>
+                        <p>Track all admin activities and system access logs for compliance.</p>
+                    </div>
+                    <button class="btn btn-outline btn-sm" onclick="loadAuditLogs()">
+                        <i class="fas fa-sync-alt"></i> Refresh
+                    </button>
+                </div>
+
+                <div class="content-card">
+                    <div class="table-responsive">
+                        <table class="data-table">
+                            <thead>
+                                <tr>
+                                    <th>Timestamp</th>
+                                    <th>Admin</th>
+                                    <th>Action</th>
+                                    <th>Target</th>
+                                    <th>IP Address</th>
+                                    <th>Details</th>
+                                </tr>
+                            </thead>
+                            <tbody id="auditTableBody">
+                                <tr><td colspan="6" style="text-align: center; padding: 40px;">Fetching logs...</td></tr>
+                            </tbody>
+                        </table>
+                    </div>
+                </div>
+            </section>
+
+            <!-- Audit Logs Module -->
+            <section id="module-audit" class="module-section hidden">
+                <div class="module-header">
+                    <div class="module-info">
+                        <h2>Audit Logs</h2>
+                        <p>Track admin activities and system changes.</p>
+                    </div>
+                    <button class="btn btn-outline btn-sm" onclick="loadAuditLogs()">
+                        <i class="fas fa-sync-alt"></i> Refresh
+                    </button>
+                </div>
+                <div class="content-card">
+                    <div class="table-responsive">
+                        <table class="data-table">
+                            <thead>
+                                <tr>
+                                    <th>Time</th>
+                                    <th>Admin</th>
+                                    <th>Action</th>
+                                    <th>Target</th>
+                                    <th>IP</th>
+                                    <th>Details</th>
+                                </tr>
+                            </thead>
+                            <tbody id="auditTableBody"></tbody>
                         </table>
                     </div>
                 </div>
@@ -818,6 +1075,39 @@
                                     </p>
                                 </div>
                             </div>
+                            <div>
+                                <h4 style="color: var(--link-color); border-bottom: 2px solid var(--divider-color); padding-bottom: 12px; margin-bottom: 24px;">
+                                    <i class="fas fa-paint-brush"></i> White-Labeling & Branding
+                                </h4>
+                                <div class="form-control">
+                                    <label>Platform Name</label>
+                                    <div class="input-group">
+                                        <i class="fas fa-font"></i>
+                                        <input type="text" id="setting_app_name" placeholder="e.g. MiroTalk SFU" />
+                                    </div>
+                                </div>
+                                <div class="form-control">
+                                    <label>Brand Primary Color</label>
+                                    <div class="input-group">
+                                        <input type="color" id="setting_brand_color_picker" style="width: 40px; height: 35px; padding: 0; border: none; background: transparent;" />
+                                        <input type="text" id="setting_brand_color" placeholder="#0270d7" />
+                                    </div>
+                                </div>
+                                <div class="form-control">
+                                    <label>Logo URL</label>
+                                    <div class="input-group">
+                                        <i class="fas fa-image"></i>
+                                        <input type="text" id="setting_logo_url" placeholder="https://..." />
+                                    </div>
+                                </div>
+                                <div class="form-control">
+                                    <label>Favicon URL</label>
+                                    <div class="input-group">
+                                        <i class="fas fa-globe"></i>
+                                        <input type="text" id="setting_favicon_url" placeholder="https://..." />
+                                    </div>
+                                </div>
+                            </div>
                         </div>
                         
                         <div style="margin-top: 40px; text-align: right;">
@@ -829,12 +1119,84 @@
                 </div>
             </section>
 
+            <!-- Footer Control Module -->
+            <section id="module-footer" class="module-section hidden">
+                <div class="module-header">
+                    <div class="module-info">
+                        <h2>Footer Control</h2>
+                        <p>Manage public footer information, links, and contact details.</p>
+                    </div>
+                </div>
+                <div class="content-card">
+                    <form id="footerForm">
+                        <div style="display: grid; grid-template-columns: repeat(auto-fit, minmax(300px, 1fr)); gap: 40px;">
+                            <div>
+                                <h4 style="color: var(--link-color); border-bottom: 2px solid var(--divider-color); padding-bottom: 12px; margin-bottom: 24px;">
+                                    <i class="fas fa-info-circle"></i> Branding & Contact
+                                </h4>
+                                <div class="form-control">
+                                    <label>Copyright Text</label>
+                                    <div class="input-group">
+                                        <i class="fas fa-copyright"></i>
+                                        <input type="text" id="footer_copyright" placeholder="© 2026 tawktoo" required />
+                                    </div>
+                                </div>
+                                <div class="form-control" style="margin-top: 20px;">
+                                    <label>Contact Email Address</label>
+                                    <div class="input-group">
+                                        <i class="fas fa-envelope"></i>
+                                        <input type="email" id="footer_contactEmail" placeholder="contact@example.com" required />
+                                    </div>
+                                </div>
+                            </div>
+                            <div>
+                                <h4 style="color: var(--link-color); border-bottom: 2px solid var(--divider-color); padding-bottom: 12px; margin-bottom: 24px;">
+                                    <i class="fas fa-link"></i> Navigation Links
+                                </h4>
+                                <div id="footer_links_container" style="display: flex; flex-direction: column; gap: 12px;">
+                                    <!-- Link rows will be injected here -->
+                                </div>
+                                <button type="button" onclick="addFooterLinkRow()" class="btn btn-outline" style="margin-top: 16px; font-size: 13px; padding: 10px 18px; width: 100%;">
+                                    <i class="fas fa-plus"></i> Add New Link
+                                </button>
+                            </div>
+                        </div>
+                        
+                        <div style="margin-top: 40px; text-align: right; border-top: 1px solid var(--divider-color); padding-top: 30px;">
+                            <button type="submit" id="saveFooterBtn" class="btn btn-primary" style="display: inline-flex;">
+                                <i class="fas fa-save"></i> Update Footer
+                            </button>
+                        </div>
+                    </form>
+                </div>
+            </section>
+
         </div>
     </main>
 
     <script>
         const API_BASE = '/api/v1/admin';
-        let adminToken = localStorage.getItem('admin_token');
+        let adminToken = window.sessionStorage.peer_token;
+
+        // Author: Sanket - Global Axios Interceptor for 401 Handling
+        axios.interceptors.response.use(
+            response => response,
+            error => {
+                if (error.response && error.response.status === 401) {
+                    delete window.sessionStorage.peer_token;
+                    adminToken = null;
+                    showLogin();
+                    Swal.fire({
+                        icon: 'warning',
+                        title: 'Session Expired',
+                        text: 'Please login again to continue.',
+                        timer: 2000,
+                        showConfirmButton: false
+                    });
+                }
+                return Promise.reject(error);
+            }
+        );
         
         // --- Initialization & UI Helpers ---
         
@@ -855,8 +1217,19 @@
             const toggle = document.getElementById('sidebarToggle');
             
             toggle.addEventListener('click', () => {
-                sidebar.classList.toggle('collapsed');
-                mainContent.classList.toggle('expanded');
+                if (window.innerWidth <= 768) {
+                    sidebar.classList.toggle('mobile-open');
+                    document.getElementById('mobileOverlay').classList.toggle('show');
+                } else {
+                    sidebar.classList.toggle('collapsed');
+                    mainContent.classList.toggle('expanded');
+                }
+            });
+
+            // Close sidebar when clicking overlay on mobile
+            document.getElementById('mobileOverlay').addEventListener('click', () => {
+                sidebar.classList.remove('mobile-open');
+                document.getElementById('mobileOverlay').classList.remove('show');
             });
 
             // Module switching
@@ -889,9 +1262,12 @@
             const titleMap = {
                 dashboard: 'Overview Dashboard',
                 tenants: 'Developer Management',
+                apikeys: 'API & Webhook Management',
                 rooms: 'Active Meetings',
                 feedbacks: 'User Feedback',
-                settings: 'System Configuration'
+                audit: 'Security Audit Logs',
+                settings: 'System Configuration',
+                footer: 'Footer Control'
             };
             document.getElementById('currentModuleTitle').textContent = titleMap[moduleId] || 'Admin';
             
@@ -902,9 +1278,12 @@
             // Trigger Data Load
             if (moduleId === 'dashboard') loadStats();
             if (moduleId === 'tenants') loadTenants();
+            if (moduleId === 'apikeys') { loadApiKeys(); loadWebhookLogs(); }
             if (moduleId === 'rooms') loadActiveRooms();
             if (moduleId === 'feedbacks') loadFeedbacks();
+            if (moduleId === 'audit') loadAuditLogs();
             if (moduleId === 'settings') loadSettings();
+            if (moduleId === 'footer') loadFooterSettings();
         }
 
         function showLogin() {
@@ -941,7 +1320,7 @@
                 const res = await axios.post('/login', { username, password });
                 if (res.data && res.data.message) {
                     adminToken = res.data.message;
-                    localStorage.setItem('admin_token', adminToken);
+                    window.sessionStorage.peer_token = adminToken;
                     localStorage.setItem('admin_name', res.data.displayname || username);
                     
                     Swal.fire({
@@ -971,7 +1350,98 @@
                 document.getElementById('stat-rooms').textContent = s.activeRooms || 0;
                 document.getElementById('stat-feedbacks').textContent = s.feedbacks || 0;
                 document.getElementById('stat-keys').textContent = s.apiKeys || 0;
+                
+                // Initialize Chart if not present
+                if (!window.systemChart) initSystemChart();
             } catch (e) { console.error('Stats error:', e); }
+        }
+
+        let chartInstance = null;
+        function initSystemChart() {
+            const ctx = document.getElementById('systemChart').getContext('2d');
+            
+            // Common config
+            const commonOptions = {
+                responsive: true,
+                maintainAspectRatio: false,
+                interaction: { intersect: false, mode: 'index' },
+                plugins: { legend: { labels: { color: document.body.classList.contains('dark') ? '#ccc' : '#333' } } },
+                scales: {
+                    y: { 
+                        beginAtZero: true, 
+                        max: 100, 
+                        grid: { color: document.body.classList.contains('dark') ? 'rgba(255,255,255,0.1)' : 'rgba(0,0,0,0.1)' },
+                        ticks: { color: document.body.classList.contains('dark') ? '#aaa' : '#666' }
+                    },
+                    x: {
+                        grid: { display: false },
+                        ticks: { color: document.body.classList.contains('dark') ? '#aaa' : '#666' }
+                    }
+                }
+            };
+
+            chartInstance = new Chart(ctx, {
+                type: 'line',
+                data: {
+                    labels: Array(20).fill(''),
+                    datasets: [
+                        {
+                            label: 'CPU Usage (%)',
+                            data: Array(20).fill(0),
+                            borderColor: '#0270d7',
+                            backgroundColor: 'rgba(2, 112, 215, 0.1)',
+                            borderWidth: 2,
+                            tension: 0.4,
+                            fill: true
+                        },
+                        {
+                            label: 'Memory Usage (%)',
+                            data: Array(20).fill(0),
+                            borderColor: '#8e44ad',
+                            backgroundColor: 'rgba(142, 68, 173, 0.1)',
+                            borderWidth: 2,
+                            tension: 0.4,
+                            fill: true
+                        }
+                    ]
+                },
+                options: commonOptions
+            });
+
+            startLiveUpdates();
+        }
+
+        let updateInterval;
+        function startLiveUpdates() {
+            if (updateInterval) clearInterval(updateInterval);
+            
+            updateInterval = setInterval(async () => {
+                if (document.hidden || !document.getElementById('systemChart')) return;
+                
+                try {
+                    const res = await axios.get('/api/v1/admin/stats/system', {
+                        headers: { 'Authorization': `Bearer ${adminToken}` }
+                    });
+                    
+                    const now = new Date().toLocaleTimeString();
+                    const cpu = parseFloat(res.data.cpu);
+                    const mem = parseFloat(res.data.memory.usagePercent);
+
+                    const data = chartInstance.data;
+                    
+                    if (data.labels.length > 20) {
+                        data.labels.shift();
+                        data.datasets[0].data.shift();
+                        data.datasets[1].data.shift();
+                    }
+
+                    data.labels.push(now);
+                    data.datasets[0].data.push(cpu);
+                    data.datasets[1].data.push(mem);
+                    
+                    chartInstance.update('none'); // Update without full animation
+                } catch (e) { console.error('Live stats fetch error', e); }
+            }, 2000); // 2 second refresh
         }
 
         async function loadTenants() {
@@ -1038,14 +1508,75 @@
                         <td>${r.locked ? '🔒' : '🔓'} ${r.locked ? 'Private' : 'Public'}</td>
                         <td><span class="badge badge-active">Live</span></td>
                         <td>${new Date(r.createdAt).toLocaleTimeString()}</td>
-                        <td>
-                            <button class="btn btn-sm btn-outline" style="color: #dc3545; border-color: rgba(220,53,69,0.3)" onclick="kickRoom('${r.id}')">
-                                <i class="fas fa-door-closed"></i> Close
+                        <td class="flex gap-2">
+                             <button class="btn btn-sm btn-outline" style="padding: 6px 12px;" onclick="peekRoom('${r.id}')" title="Silent Join">
+                                <i class="fas fa-eye"></i>
+                            </button>
+                            <button class="btn btn-sm btn-outline" style="color: #dc3545; border-color: rgba(220,53,69,0.3)" onclick="kickRoom('${r.id}')" title="Close Room">
+                                <i class="fas fa-door-closed"></i>
                             </button>
                         </td>
                     </tr>
                 `).join('');
             } catch (e) { console.error('Rooms Fetch error:', e); }
+        }
+
+        function peekRoom(roomId) {
+            document.getElementById('peekRoomId').textContent = roomId;
+            const frame = document.getElementById('peekFrame');
+            // Join as a hidden peer/viewer if supported, or just join normally but muted
+            const viewerUrl = `/join/${roomId}?isAdminPeek=true&name=AdminGhost`; 
+            frame.src = viewerUrl;
+            document.getElementById('peekModal').classList.remove('hidden');
+        }
+
+        async function kickRoom(id) {
+            const { isConfirmed } = await Swal.fire({
+                title: 'Close Room?',
+                text: 'All participants will be disconnected immediately.',
+                icon: 'warning',
+                showCancelButton: true,
+                confirmButtonColor: '#d33',
+                confirmButtonText: 'Yes, Close it'
+            });
+
+            if (isConfirmed) {
+                try {
+                    await axios.post(`/api/v1/admin/rooms/${id}/kick`, {}, {
+                        headers: { 'Authorization': `Bearer ${adminToken}` }
+                    });
+                    Swal.fire('Closed', 'Room has been terminated.', 'success');
+                    loadActiveRooms();
+                } catch (e) { Swal.fire('Error', 'Failed to close room', 'error'); }
+            }
+        }
+
+        function closePeek() {
+             document.getElementById('peekModal').classList.add('hidden');
+             document.getElementById('peekFrame').src = 'about:blank';
+        }
+
+        async function showBroadcastModal() {
+            const { value: message } = await Swal.fire({
+                title: 'System Broadcast',
+                input: 'textarea',
+                inputLabel: 'Message to all active participants',
+                inputPlaceholder: 'e.g. Server maintenance in 10 minutes...',
+                showCancelButton: true,
+                confirmButtonText: 'Send Broadcast',
+                confirmButtonColor: '#d33'
+            });
+
+            if (message) {
+                try {
+                    await axios.post(`${API_BASE}/broadcast`, { message }, {
+                        headers: { 'Authorization': `Bearer ${adminToken}` }
+                    });
+                    Swal.fire('Sent!', 'Broadcast queued for all rooms.', 'success');
+                } catch (e) {
+                    Swal.fire('Error', 'Failed to send broadcast', 'error');
+                }
+            }
         }
 
         async function loadFeedbacks() {
@@ -1066,6 +1597,121 @@
             } catch (e) { console.error('Feedback error:', e); }
         }
 
+        async function loadAuditLogs() {
+            try {
+                const res = await axios.get('/api/v1/admin/audit-logs', {
+                    headers: { 'Authorization': `Bearer ${adminToken}` }
+                });
+                const tbody = document.getElementById('auditTableBody');
+                if (!res.data.length) {
+                    tbody.innerHTML = '<tr><td colspan="6" style="text-align: center; padding: 40px;">No audit logs found.</td></tr>';
+                    return;
+                }
+                tbody.innerHTML = res.data.map(l => `
+                    <tr>
+                        <td>${new Date(l.createdAt).toLocaleString()}</td>
+                        <td><span class="badge" style="background: rgba(255,255,255,0.05)">${l.admin_id}</span></td>
+                        <td><strong style="color: ${getActionColor(l.action)}">${l.action}</strong></td>
+                        <td>${l.target || '—'}</td>
+                        <td style="font-family: monospace; font-size: 11px;">${l.ip_address}</td>
+                        <td style="max-width: 200px; overflow: hidden; text-overflow: ellipsis; white-space: nowrap;" title="${l.details}">
+                            ${l.details || '—'}
+                        </td>
+                    </tr>
+                `).join('');
+            } catch (e) { 
+                console.error('Audit Logs error:', e); 
+                document.getElementById('auditTableBody').innerHTML = '<tr><td colspan="6" style="text-align: center; color: #dc3545">Error loading logs.</td></tr>';
+            }
+        }
+
+        async function loadApiKeys() {
+            try {
+                const res = await axios.get('/api/v1/admin/api-keys', {
+                    headers: { 'Authorization': `Bearer ${adminToken}` }
+                });
+                const tbody = document.getElementById('apiKeysTableBody');
+                tbody.innerHTML = res.data.map(k => `
+                    <tr>
+                        <td style="font-family: monospace;">${k.prefix}...</td>
+                        <td>
+                            <div class="font-medium">${k.Tenant?.name || 'Unknown'}</div>
+                            <div class="text-xs text-gray-400">${k.Tenant?.email || ''}</div>
+                        </td>
+                        <td>
+                            <div class="w-full bg-gray-700 h-1.5 rounded-full overflow-hidden mb-1">
+                                <div class="bg-blue-500 h-full" style="width: ${(k.current_usage / k.quota * 100)}%"></div>
+                            </div>
+                            <span class="text-xs">${k.current_usage} / ${k.quota}</span>
+                        </td>
+                        <td>${k.last_used_at ? new Date(k.last_used_at).toLocaleDateString() : 'Never'}</td>
+                        <td><span class="badge ${k.is_active ? 'badge-active' : 'badge-banned'}">${k.is_active ? 'Active' : 'Revoked'}</span></td>
+                        <td>
+                            ${k.is_active ? `
+                                <button class="btn btn-sm btn-outline" style="color: #dc3545; border-color: rgba(220,53,69,0.3)" onclick="revokeKey('${k.id}')">
+                                    <i class="fas fa-ban"></i> Revoke
+                                </button>
+                            ` : '—'}
+                        </td>
+                    </tr>
+                `).join('');
+            } catch (e) { console.error('API Keys error:', e); }
+        }
+
+        async function revokeKey(id) {
+            const { isConfirmed } = await Swal.fire({
+                title: 'Revoke API Key?',
+                text: 'This will immediately disable all integrations using this key.',
+                icon: 'warning',
+                showCancelButton: true,
+                confirmButtonColor: '#d33',
+                confirmButtonText: 'Yes, Revoke it'
+            });
+
+            if (isConfirmed) {
+                try {
+                    await axios.post(`/api/v1/admin/api-keys/${id}/revoke`, {}, {
+                        headers: { 'Authorization': `Bearer ${adminToken}` }
+                    });
+                    Swal.fire('Revoked', 'Key has been disabled.', 'success');
+                    loadApiKeys();
+                } catch (e) { Swal.fire('Error', 'Revocation failed', 'error'); }
+            }
+        }
+
+        async function loadWebhookLogs() {
+            try {
+                const res = await axios.get('/api/v1/admin/webhooks/logs', {
+                    headers: { 'Authorization': `Bearer ${adminToken}` }
+                });
+                const tbody = document.getElementById('webhookLogsTableBody');
+                if (!res.data.length) {
+                    tbody.innerHTML = '<tr><td colspan="5" style="text-align: center; padding: 20px;">No logs recorded yet.</td></tr>';
+                    return;
+                }
+                tbody.innerHTML = res.data.map(l => `
+                    <tr>
+                        <td style="font-size: 11px;">${new Date(l.timestamp).toLocaleString()}</td>
+                        <td><span class="badge badge-info">${l.event}</span></td>
+                        <td>
+                            <span class="font-medium ${l.response_status < 300 ? 'text-green-500' : 'text-red-500'}">
+                                ${l.response_status || 'Failed'}
+                            </span>
+                        </td>
+                        <td style="font-size: 10px; font-family: monospace;">${l.webhook_id}</td>
+                        <td class="text-xs">${JSON.stringify(l.payload).length} bytes</td>
+                    </tr>
+                `).join('');
+            } catch (e) { console.error('Webhook Logs error:', e); }
+        }
+
+        function getActionColor(action) {
+            if (action.includes('SAVE') || action.includes('UPDATE')) return '#2ecc71';
+            if (action.includes('DELETE') || action.includes('REVOKE') || action.includes('KICK')) return '#dc3545';
+            if (action.includes('BROADCAST')) return '#f1c40f';
+            return 'var(--heading-color)';
+        }
+
         async function loadSettings() {
             try {
                 const res = await axios.get(`${API_BASE}/settings`, {
@@ -1075,8 +1721,52 @@
                 for (let [k, v] of Object.entries(s)) {
                     const el = document.getElementById(`setting_${k}`);
                     if (el) el.value = v;
+                    
+                    // Sync color picker with text input
+                    if (k === 'brand_color') {
+                        const picker = document.getElementById('setting_brand_color_picker');
+                        const text = document.getElementById('setting_brand_color');
+                        if (picker) picker.value = v || '#0270d7';
+                        if (text) text.value = v || '#0270d7';
+                    }
                 }
+                applyBranding(s);
             } catch (e) { console.error('Settings error:', e); }
+        }
+
+        function applyBranding(s) {
+            if (s.app_name) {
+                document.title = `${s.app_name} | Admin Hub`;
+                document.querySelectorAll('.sidebar-brand').forEach(el => el.textContent = `${s.app_name} Hub`);
+            }
+            if (s.brand_color) {
+                document.documentElement.style.setProperty('--link-color', s.brand_color);
+                document.documentElement.style.setProperty('--link-color-rgb', s.brand_color); // Simplified
+            }
+            if (s.logo_url) {
+                document.querySelectorAll('.sidebar-logo, .nav-left img').forEach(img => img.src = s.logo_url);
+            }
+            if (s.favicon_url) {
+                let link = document.querySelector("link[rel~='icon']");
+                if (!link) {
+                    link = document.createElement('link');
+                    link.rel = 'icon';
+                    document.getElementsByTagName('head')[0].appendChild(link);
+                }
+                link.href = s.favicon_url;
+            }
+        }
+
+        // Color sync listeners
+        if (document.getElementById('setting_brand_color_picker')) {
+            document.getElementById('setting_brand_color_picker').addEventListener('input', (e) => {
+                document.getElementById('setting_brand_color').value = e.target.value;
+            });
+            document.getElementById('setting_brand_color').addEventListener('input', (e) => {
+                if (/^#[0-9A-F]{6}$/i.test(e.target.value)) {
+                    document.getElementById('setting_brand_color_picker').value = e.target.value;
+                }
+            });
         }
 
         document.getElementById('settingsForm').addEventListener('submit', async (e) => {
@@ -1090,18 +1780,97 @@
                 CHATGPT_API_KEY: document.getElementById('setting_CHATGPT_API_KEY').value,
                 CHATGPT_MODEL: document.getElementById('setting_CHATGPT_MODEL').value,
                 CHATGPT_MAX_TOKENS: parseInt(document.getElementById('setting_CHATGPT_MAX_TOKENS').value),
-                CHATGPT_TEMPERATURE: parseFloat(document.getElementById('setting_CHATGPT_TEMPERATURE').value)
+                CHATGPT_TEMPERATURE: parseFloat(document.getElementById('setting_CHATGPT_TEMPERATURE').value),
+                // Branding
+                app_name: document.getElementById('setting_app_name').value,
+                brand_color: document.getElementById('setting_brand_color').value,
+                logo_url: document.getElementById('setting_logo_url').value,
+                favicon_url: document.getElementById('setting_favicon_url').value
             };
 
             try {
                 await axios.put(`${API_BASE}/settings`, payload, {
                     headers: { 'Authorization': `Bearer ${adminToken}` }
                 });
+                applyBranding(payload);
                 Swal.fire({ icon: 'success', title: 'Propagated', text: 'System settings synced successfully', timer: 1500, showConfirmButton: false });
             } catch (e) { Swal.fire('Error', 'Communication failure with core service', 'error'); }
             finally {
                 btn.disabled = false;
                 btn.innerHTML = '<i class="fas fa-save"></i> Save Configuration';
+            }
+        });
+
+        function addFooterLinkRow(label = '', url = '') {
+            const container = document.getElementById('footer_links_container');
+            const row = document.createElement('div');
+            row.style.cssText = 'display: flex; align-items: center; gap: 12px;';
+            row.className = 'footer-link-row animate__animated animate__fadeIn';
+            row.innerHTML = `
+                <div class="input-group" style="flex: 1;">
+                    <i class="fas fa-tag"></i>
+                    <input type="text" class="link-label" placeholder="Label (e.g. Home)" value="${label}" required />
+                </div>
+                <div class="input-group" style="flex: 2;">
+                    <i class="fas fa-link"></i>
+                    <input type="text" class="link-url" placeholder="URL (e.g. /)" value="${url}" required />
+                </div>
+                <button type="button" onclick="this.parentElement.remove()" class="btn btn-outline" style="color: #dc3545; border-color: rgba(220,53,69,0.2); padding: 12px; min-width: 44px;">
+                    <i class="fas fa-trash"></i>
+                </button>
+            `;
+            container.appendChild(row);
+        }
+
+        async function loadFooterSettings() {
+            try {
+                const res = await axios.get(`${API_BASE}/settings`, {
+                    headers: { 'Authorization': `Bearer ${adminToken}` }
+                });
+                const footConfig = res.data.FOOTER_CONFIG;
+                if (footConfig) {
+                    document.getElementById('footer_copyright').value = footConfig.copyright || '';
+                    document.getElementById('footer_contactEmail').value = footConfig.contactEmail || '';
+                    
+                    const container = document.getElementById('footer_links_container');
+                    container.innerHTML = '';
+                    if (footConfig.links && Array.isArray(footConfig.links)) {
+                        footConfig.links.forEach(link => addFooterLinkRow(link.label, link.url));
+                    }
+                }
+            } catch (e) { console.error('Footer settings load error:', e); }
+        }
+
+        document.getElementById('footerForm').addEventListener('submit', async (e) => {
+            e.preventDefault();
+            const btn = document.getElementById('saveFooterBtn');
+            btn.disabled = true;
+            btn.innerHTML = '<i class="fas fa-spinner fa-spin"></i> Updating...';
+
+            try {
+                const linkRows = document.querySelectorAll('.footer-link-row');
+                const links = Array.from(linkRows).map(row => ({
+                    label: row.querySelector('.link-label').value,
+                    url: row.querySelector('.link-url').value
+                }));
+
+                const payload = {
+                    FOOTER_CONFIG: {
+                        copyright: document.getElementById('footer_copyright').value,
+                        contactEmail: document.getElementById('footer_contactEmail').value,
+                        links: links
+                    }
+                };
+                await axios.put(`${API_BASE}/settings`, payload, {
+                    headers: { 'Authorization': `Bearer ${adminToken}` }
+                });
+                Swal.fire({ icon: 'success', title: 'Footer Updated', text: 'Changes are now live!', timer: 1500, showConfirmButton: false });
+            } catch (e) { 
+                console.error(e);
+                Swal.fire('Error', 'Failed to update footer', 'error'); 
+            } finally {
+                btn.disabled = false;
+                btn.innerHTML = '<i class="fas fa-save"></i> Update Footer';
             }
         });
 
@@ -1123,9 +1892,26 @@
         });
 
         function logout() {
-            localStorage.removeItem('admin_token');
+            delete window.sessionStorage.peer_token;
             localStorage.removeItem('admin_name');
-            location.reload();
+            showLogin();
+        }
+    </script>
+    <!-- Tailwind for utilities -->
+    <script src="https://cdn.tailwindcss.com"></script>
+    <script>
+        tailwind.config = {
+            darkMode: 'class',
+            theme: {
+                extend: {
+                    colors: {
+                        gray: {
+                            900: '#15181d',
+                            800: '#1d2026',
+                        }
+                    }
+                }
+            }
         }
     </script>
 </body>

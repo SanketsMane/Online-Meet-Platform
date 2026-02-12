@@ -70,6 +70,14 @@ const ApiKey = sequelize.define('ApiKey', {
         type: DataTypes.BOOLEAN,
         defaultValue: true,
     },
+    quota: {
+        type: DataTypes.INTEGER,
+        defaultValue: 1000,
+    },
+    current_usage: {
+        type: DataTypes.INTEGER,
+        defaultValue: 0,
+    },
 });
 
 const Webhook = sequelize.define('Webhook', {
@@ -147,6 +155,56 @@ const Feedback = sequelize.define('Feedback', {
     },
 });
 
+const GlobalSetting = sequelize.define('GlobalSetting', {
+    key: {
+        type: DataTypes.STRING,
+        primaryKey: true,
+    },
+    value: {
+        type: DataTypes.TEXT,
+        allowNull: false,
+    },
+}, {
+    timestamps: true,
+});
+
+const User = sequelize.define('User', {
+    id: {
+        type: DataTypes.UUID,
+        defaultValue: DataTypes.UUIDV4,
+        primaryKey: true,
+    },
+    username: {
+        type: DataTypes.STRING,
+        allowNull: false,
+        unique: true,
+    },
+    password_hash: {
+        type: DataTypes.STRING,
+        allowNull: false,
+    },
+    displayname: {
+        type: DataTypes.STRING,
+        allowNull: false,
+    },
+    allowed_rooms: {
+        type: DataTypes.JSON,
+        defaultValue: ['*'],
+    },
+    role: {
+        type: DataTypes.STRING,
+        defaultValue: 'host',
+    },
+    status: {
+        type: DataTypes.STRING,
+        defaultValue: 'active',
+    },
+});
+
+User.prototype.checkPassword = async function (password) {
+    return await bcrypt.compare(password, this.password_hash);
+};
+
 // Associations
 Tenant.hasMany(ApiKey, { foreignKey: 'tenant_id' });
 ApiKey.belongsTo(Tenant, { foreignKey: 'tenant_id' });
@@ -165,15 +223,62 @@ Tenant.prototype.checkPassword = async function (password) {
     return await bcrypt.compare(password, this.password_hash);
 };
 
-const GlobalSetting = sequelize.define('GlobalSetting', {
-    key: {
-        type: DataTypes.STRING,
+const AuditLog = sequelize.define('AuditLog', {
+    id: {
+        type: DataTypes.UUID,
+        defaultValue: DataTypes.UUIDV4,
         primaryKey: true,
     },
-    value: {
+    admin_id: {
+        type: DataTypes.STRING,
+        allowNull: false,
+    },
+    action: {
+        type: DataTypes.STRING,
+        allowNull: false,
+    },
+    target: {
+        type: DataTypes.STRING,
+        allowNull: true,
+    },
+    details: {
         type: DataTypes.TEXT,
+        allowNull: true,
+    },
+    ip_address: {
+        type: DataTypes.STRING,
         allowNull: true,
     },
 });
 
-module.exports = { Tenant, ApiKey, Webhook, UsageLog, Feedback, GlobalSetting };
+const WebhookLog = sequelize.define('WebhookLog', {
+    id: {
+        type: DataTypes.UUID,
+        defaultValue: DataTypes.UUIDV4,
+        primaryKey: true,
+    },
+    webhook_id: {
+        type: DataTypes.UUID,
+        allowNull: false,
+    },
+    event: {
+        type: DataTypes.STRING,
+        allowNull: false,
+    },
+    payload: {
+        type: DataTypes.JSON,
+        allowNull: false,
+    },
+    response_status: {
+        type: DataTypes.INTEGER,
+    },
+    response_body: {
+        type: DataTypes.TEXT,
+    },
+    timestamp: {
+        type: DataTypes.DATE,
+        defaultValue: DataTypes.NOW,
+    },
+});
+
+module.exports = { Tenant, ApiKey, Webhook, UsageLog, Feedback, GlobalSetting, User, AuditLog, WebhookLog };

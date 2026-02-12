@@ -1,969 +1,614 @@
-<!DOCTYPE html>
-<html lang="en">
-<head>
-    <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>tawktoo - Developer Portal</title>
-    <link rel="shortcut icon" href="../images/logo.svg" />
-    
-    <!-- Fonts and Icons -->
-    <link rel="stylesheet" href="https://fonts.googleapis.com/css?family=IBM+Plex+Sans:400,600" />
-    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.2/css/all.min.css" />
-    <link rel="stylesheet" href="/css/landing.css">
-    
-    <!-- Scripts -->
-    <script defer src="../js/Brand.js"></script>
-    <script defer src="../js/Theme.js"></script>
-    <script src="https://cdn.jsdelivr.net/npm/axios/dist/axios.min.js"></script>
-    <script defer src="https://cdn.jsdelivr.net/npm/sweetalert2@11.4.8"></script>
-
-    <!-- Author: Sanket - Professional developer portal styles -->
-    <style>
-        body {
-            background: var(--bg-color);
-            font-family: 'IBM Plex Sans', sans-serif;
-            margin: 0;
-            padding: 0;
-        }
-
-        /* Header Styles */
-        .site-header {
-            position: sticky;
-            top: 0;
-            z-index: 1000;
-            background: var(--bg-color);
-            border-bottom: 1px solid var(--divider-color);
-            backdrop-filter: blur(10px);
-        }
-
-        /* Author: Sanket - Remove the diagonal crossover design overlay */
-        .site-header::before {
-            display: none !important;
-        }
-
-        .site-header-inner {
-            display: flex;
-            align-items: center;
-            justify-content: space-between;
-            padding: 16px 0;
-            max-width: 1200px;
-            margin: 0 auto;
-            padding-left: 24px;
-            padding-right: 24px;
-        }
-
-        .header-brand {
-            display: flex;
-            align-items: center;
-            gap: 16px;
-        }
-
-        .header-logo {
-            width: 40px;
-            height: 40px;
-        }
-
-        .header-title {
-            font-size: 20px;
-            font-weight: 600;
-            color: var(--heading-color);
-            margin: 0;
-        }
-
-        .header-nav {
-            display: flex;
-            align-items: center;
-            gap: 16px;
-        }
-
-        .nav-link {
-            color: var(--text-color);
-            text-decoration: none;
-            font-weight: 500;
-            padding: 8px 16px;
-            border-radius: 6px;
-            transition: all 0.2s ease;
-            display: flex;
-            align-items: center;
-            gap: 6px;
-        }
-
-        .nav-link:hover {
-            background: var(--divider-color);
-            color: var(--heading-color);
-        }
-
-        .theme-toggle {
-            background: transparent !important;
-            border: 1px solid var(--divider-color) !important;
-            color: var(--heading-color) !important;
-            padding: 8px 12px !important;
-            border-radius: 6px !important;
-            cursor: pointer;
-            transition: all 0.2s ease;
-        }
-
-        .theme-toggle:hover {
-            background: var(--divider-color) !important;
-        }
-
-        /* Auth Container */
-        .auth-container {
-            min-height: calc(100vh - 80px);
-            display: flex;
-            align-items: center;
-            justify-content: center;
-            padding: 40px 16px;
-        }
-
-        .auth-card {
-            max-width: 500px;
-            width: 100%;
-            background: rgba(255, 255, 255, 0.05);
-            border: 1px solid var(--divider-color);
-            border-radius: 16px;
-            overflow: hidden;
-            box-shadow: 0 20px 60px rgba(0, 0, 0, 0.3);
-            backdrop-filter: blur(10px);
-        }
-
-        [data-theme='light'] .auth-card {
-            background: #ffffff;
-            box-shadow: 0 10px 40px rgba(0, 0, 0, 0.1);
-        }
-
-        .auth-tabs {
-            display: flex;
-            border-bottom: 1px solid var(--divider-color);
-        }
-
-        .auth-tab {
-            flex: 1;
-            padding: 20px;
-            background: transparent;
-            border: none;
-            color: var(--text-color);
-            font-size: 16px;
-            font-weight: 600;
-            cursor: pointer;
-            transition: all 0.2s ease;
-            position: relative;
-        }
-
-        .auth-tab.active {
-            color: var(--link-color);
-        }
-
-        .auth-tab.active::after {
-            content: '';
-            position: absolute;
-            bottom: 0;
-            left: 0;
-            right: 0;
-            height: 2px;
-            background: var(--link-color);
-        }
-
-        .auth-content {
-            padding: 40px;
-        }
-
-        .tab-panel {
-            display: none;
-        }
-
-        .tab-panel.active {
-            display: block;
-        }
-
-        .auth-title {
-            font-size: 24px;
-            font-weight: 600;
-            color: var(--heading-color);
-            margin: 0 0 8px 0;
-        }
-
-        .auth-subtitle {
-            font-size: 14px;
-            color: var(--text-color);
-            margin: 0 0 32px 0;
-        }
-
-        /* Dashboard Container */
-        .dashboard-container {
-            max-width: 1200px;
-            margin: 0 auto;
-            padding: 40px 24px;
-        }
-
-        .welcome-section {
-            margin-bottom: 40px;
-        }
-
-        .welcome-title {
-            font-size: 32px;
-            font-weight: 600;
-            color: var(--heading-color);
-            margin: 0 0 8px 0;
-        }
-
-        .welcome-subtitle {
-            font-size: 16px;
-            color: var(--text-color);
-            margin: 0;
-        }
-
-        .dashboard-grid {
-            display: grid;
-            grid-template-columns: 2fr 1fr;
-            gap: 24px;
-        }
-
-        .section-card {
-            background: rgba(255, 255, 255, 0.04);
-            border: 1px solid var(--divider-color);
-            border-radius: 12px;
-            padding: 24px;
-            backdrop-filter: blur(10px);
-        }
-
-        [data-theme='light'] .section-card {
-            background: #ffffff;
-            box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1);
-        }
-
-        .section-header {
-            display: flex;
-            justify-content: space-between;
-            align-items: center;
-            margin-bottom: 24px;
-        }
-
-        .section-title {
-            font-size: 20px;
-            font-weight: 600;
-            color: var(--heading-color);
-            margin: 0;
-        }
-
-        .btn-primary {
-            padding: 10px 20px;
-            font-size: 14px;
-            font-weight: 600;
-            color: #ffffff;
-            background: linear-gradient(135deg, #0270d7 0%, #0056b3 100%);
-            border: none;
-            border-radius: 8px;
-            cursor: pointer;
-            transition: all 0.2s ease;
-            display: inline-flex;
-            align-items: center;
-            gap: 8px;
-        }
-
-        .btn-primary:hover {
-            transform: translateY(-2px);
-            box-shadow: 0 8px 20px rgba(2, 112, 215, 0.3);
-        }
-
-        /* API Key Card */
-        .api-key-card {
-            background: rgba(102, 126, 234, 0.08);
-            border: 1px solid var(--divider-color);
-            border-radius: 12px;
-            padding: 20px;
-            margin-bottom: 16px;
-        }
-
-        .key-header {
-            display: flex;
-            justify-content: space-between;
-            align-items: center;
-            margin-bottom: 12px;
-        }
-
-        .key-name {
-            font-size: 16px;
-            font-weight: 600;
-            color: var(--heading-color);
-        }
-
-        .key-status {
-            padding: 4px 12px;
-            border-radius: 12px;
-            font-size: 12px;
-            font-weight: 600;
-            text-transform: uppercase;
-        }
-
-        .status-active {
-            background: rgba(17, 153, 142, 0.2);
-            color: #38ef7d;
-        }
-
-        .status-inactive {
-            background: rgba(220, 53, 69, 0.2);
-            color: #dc3545;
-        }
-
-        .key-info {
-            display: flex;
-            align-items: center;
-            gap: 12px;
-            margin-bottom: 12px;
-        }
-
-        .key-prefix {
-            font-family: 'Courier New', monospace;
-            font-size: 14px;
-            color: var(--text-color);
-            background: var(--divider-color);
-            padding: 6px 12px;
-            border-radius: 6px;
-        }
-
-        .btn-copy {
-            padding: 6px 12px;
-            background: rgba(2, 112, 215, 0.2);
-            color: var(--link-color);
-            border: none;
-            border-radius: 6px;
-            cursor: pointer;
-            font-size: 12px;
-            font-weight: 500;
-            transition: all 0.2s ease;
-        }
-
-        .btn-copy:hover {
-            background: var(--link-color);
-            color: white;
-        }
-
-        /* Form Styles */
-        .form-group {
-            margin-bottom: 20px;
-        }
-
-        .form-label {
-            display: block;
-            font-size: 14px;
-            font-weight: 500;
-            color: var(--heading-color);
-            margin-bottom: 8px;
-        }
-
-        .form-input-wrapper {
-            position: relative;
-        }
-
-        .form-input-icon {
-            position: absolute;
-            left: 16px;
-            top: 50%;
-            transform: translateY(-50%);
-            color: var(--text-color);
-        }
-
-        .form-input {
-            width: 100%;
-            padding: 12px 16px 12px 48px;
-            font-size: 14px;
-            color: var(--heading-color);
-            background: var(--input-bg);
-            border: 1px solid var(--input-border);
-            border-radius: 8px;
-            transition: all 0.2s ease;
-            font-family: 'IBM Plex Sans', sans-serif;
-        }
-
-        .form-input:focus {
-            outline: none;
-            border-color: var(--link-color);
-            box-shadow: 0 0 0 3px rgba(2, 112, 215, 0.1);
-        }
-
-        .btn-submit {
-            width: 100%;
-            padding: 12px 24px;
-            font-size: 14px;
-            font-weight: 600;
-            color: #ffffff;
-            background: linear-gradient(135deg, #0270d7 0%, #0056b3 100%);
-            border: none;
-            border-radius: 8px;
-            cursor: pointer;
-            transition: all 0.2s ease;
-        }
-
-        .btn-submit:hover {
-            transform: translateY(-2px);
-            box-shadow: 0 8px 20px rgba(2, 112, 215, 0.3);
-        }
-
-        .btn-submit:disabled {
-            opacity: 0.6;
-            cursor: not-allowed;
-            transform: none;
-        }
-
-        .error-message {
-            background: rgba(220, 53, 69, 0.1);
-            border: 1px solid rgba(220, 53, 69, 0.3);
-            color: #dc3545;
-            padding: 12px 16px;
-            border-radius: 8px;
-            font-size: 14px;
-            margin-bottom: 20px;
-            display: none;
-        }
-
-        .error-message.show {
-            display: block;
-        }
-
-        .hidden {
-            display: none !important;
-        }
-
-        .logout-btn {
-            background: rgba(220, 53, 69, 0.2);
-            color: #dc3545;
-            padding: 8px 16px;
-            border-radius: 6px;
-            border: none;
-            cursor: pointer;
-            font-weight: 500;
-            transition: all 0.2s ease;
-        }
-
-        .logout-btn:hover {
-            background: #dc3545;
-            color: white;
-        }
-
-        .quick-start {
-            background: rgba(102, 126, 234, 0.08);
-            border: 1px solid var(--divider-color);
-            border-radius: 12px;
-            padding: 20px;
-            margin-bottom: 16px;
-        }
-
-        .quick-start h4 {
-            color: var(--heading-color);
-            margin: 0 0 12px 0;
-            font-size: 16px;
-        }
-
-        .quick-start p {
-            color: var(--text-color);
-            font-size: 14px;
-            line-height: 1.6;
-            margin: 0;
-        }
-
-        .quick-start code {
-            background: var(--divider-color);
-            padding: 2px 6px;
-            border-radius: 4px;
-            font-family: 'Courier New', monospace;
-            font-size: 13px;
-        }
-
-        @media (max-width: 968px) {
-            .dashboard-grid {
-                grid-template-columns: 1fr;
-            }
-        }
-
-        @media (max-width: 480px) {
-            .auth-content {
-                padding: 24px;
-            }
-        }
-    </style>
-</head>
-<body>
-    <!-- Author: Sanket - Professional header with navigation -->
-    <header class="site-header">
-        <div class="site-header-inner">
-            <div class="header-brand">
-                <a href="/">
-                    <img src="../images/logo.svg" alt="tawktoo" class="header-logo" />
-                </a>
-                <h1 class="header-title">Developer Portal</h1>
-            </div>
-            <nav class="header-nav">
-                <a href="/" class="nav-link">
-                    <i class="fas fa-home"></i> Home
-                </a>
-                <button id="logoutBtn" class="logout-btn hidden" onclick="logout()">
-                    <i class="fas fa-sign-out-alt"></i> Logout
-                </button>
-                <button id="themeToggle" class="theme-toggle">
-                    <i class="fas fa-sun"></i>
-                </button>
-            </nav>
-        </div>
-    </header>
-
-    <!-- Author: Sanket - Auth Section with Tabs -->
-    <div id="authSection" class="auth-container">
-        <div class="auth-card">
-            <div class="auth-tabs">
-                <button class="auth-tab active" onclick="switchTab('login')">Login</button>
-                <button class="auth-tab" onclick="switchTab('register')">Register</button>
-            </div>
-
-            <div class="auth-content">
-                <!-- Login Tab -->
-                <div id="loginPanel" class="tab-panel active">
-                    <h2 class="auth-title">Welcome Back</h2>
-                    <p class="auth-subtitle">Sign in to manage your API keys</p>
-
-                    <div id="loginError" class="error-message"></div>
-
-                    <form id="loginForm">
-                        <div class="form-group">
-                            <label class="form-label">Email</label>
-                            <div class="form-input-wrapper">
-                                <i class="fas fa-envelope form-input-icon"></i>
-                                <input type="email" id="loginEmail" class="form-input" placeholder="your@email.com" required />
-                            </div>
-                        </div>
-
-                        <div class="form-group">
-                            <label class="form-label">Password</label>
-                            <div class="form-input-wrapper">
-                                <i class="fas fa-lock form-input-icon"></i>
-                                <input type="password" id="loginPassword" class="form-input" placeholder="Enter password" required />
-                            </div>
-                        </div>
-
-                        <button type="submit" id="loginBtn" class="btn-submit">
-                            Sign In
-                        </button>
-                    </form>
-                </div>
-
-                <!-- Register Tab -->
-                <div id="registerPanel" class="tab-panel">
-                    <h2 class="auth-title">Create Account</h2>
-                    <p class="auth-subtitle">Start integrating tawktoo into your apps</p>
-
-                    <div id="registerError" class="error-message"></div>
-
-                    <form id="registerForm">
-                        <div class="form-group">
-                            <label class="form-label">Company Name</label>
-                            <div class="form-input-wrapper">
-                                <i class="fas fa-building form-input-icon"></i>
-                                <input type="text" id="regName" class="form-input" placeholder="Your Company" required />
-                            </div>
-                        </div>
-
-                        <div class="form-group">
-                            <label class="form-label">Email</label>
-                            <div class="form-input-wrapper">
-                                <i class="fas fa-envelope form-input-icon"></i>
-                                <input type="email" id="regEmail" class="form-input" placeholder="your@email.com" required />
-                            </div>
-                        </div>
-
-                        <div class="form-group">
-                            <label class="form-label">Password</label>
-                            <div class="form-input-wrapper">
-                                <i class="fas fa-lock form-input-icon"></i>
-                                <input type="password" id="regPassword" class="form-input" placeholder="Create password" required />
-                            </div>
-                        </div>
-
-                        <button type="submit" id="registerBtn" class="btn-submit">
-                            Create Account
-                        </button>
-                    </form>
-                </div>
-            </div>
-        </div>
-    </div>
-
-    <!-- Author: Sanket - Dashboard Section -->
-    <div id="dashboardSection" class="dashboard-container hidden">
-        <div class="welcome-section">
-            <h1 class="welcome-title">Welcome, <span id="userName">Developer</span>!</h1>
-            <p class="welcome-subtitle">Manage your API keys and integrate tawktoo into your applications</p>
-        </div>
-
-        <div class="dashboard-grid">
-            <!-- API Keys Section -->
-            <div class="section-card">
-                <div class="section-header">
-                    <h2 class="section-title">Your API Keys</h2>
-                    <button class="btn-primary" onclick="generateKey()">
-                        <i class="fas fa-plus"></i> Generate New Key
-                    </button>
-                </div>
-                <div id="keysList">
-                    <p style="color: var(--text-color); text-align: center; padding: 40px;">Loading...</p>
-                </div>
-            </div>
-
-            <!-- Quick Start Section -->
-            <div class="section-card">
-                <h2 class="section-title" style="margin-bottom: 20px;">Quick Start</h2>
-                
-                <div class="quick-start">
-                    <h4><i class="fas fa-rocket"></i> Getting Started</h4>
-                    <p>Generate an API key and use it to create meetings programmatically.</p>
-                </div>
-
-                <div class="quick-start">
-                    <h4><i class="fas fa-code"></i> API Endpoint</h4>
-                    <p>Base URL: <code id="apiBaseUrl">/api/v1</code></p>
-                </div>
-
-                <script>
-                    document.getElementById('apiBaseUrl').textContent = window.location.origin + '/api/v1';
-                </script>
-
-                <div class="quick-start">
-                    <h4><i class="fas fa-book"></i> Example Request</h4>
-                    <p>Create a meeting:</p>
-                    <p><code>POST /api/v1/meeting</code></p>
-                    <p style="margin-top: 8px;">Header: <code>x-api-key: YOUR_API_KEY</code></p>
-                </div>
-            </div>
-
-            <!-- Analytics Section -->
-            <div class="section-card" style="grid-column: span 2;">
-                <div class="section-header">
-                    <h2 class="section-title">Usage Analytics (Last 7 Days)</h2>
-                </div>
-                <!-- Author: Sanket - Usage chart container -->
-                <div style="height: 300px; width: 100%;">
-                    <canvas id="usageChart"></canvas>
-                </div>
-            </div>
-        </div>
-    </div>
-
-    <!-- Chart.js -->
-    <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
-
-    <!-- Author: Sanket - Developer portal functionality -->
-    <script>
-        const API_URL = '/api/v1';
-        let token = localStorage.getItem('dev_token');
-
-        // Author: Sanket - Tab switching
-        function switchTab(tab) {
-            const tabs = document.querySelectorAll('.auth-tab');
-            const panels = document.querySelectorAll('.tab-panel');
-            
-            tabs.forEach(t => t.classList.remove('active'));
-            panels.forEach(p => p.classList.remove('active'));
-            
-            if (tab === 'login') {
-                tabs[0].classList.add('active');
-                document.getElementById('loginPanel').classList.add('active');
-            } else {
-                tabs[1].classList.add('active');
-                document.getElementById('registerPanel').classList.add('active');
-            }
-        }
-
-        // Author: Sanket - Login form handler
-        document.getElementById('loginForm').addEventListener('submit', async function(e) {
-            e.preventDefault();
-            
-            const email = document.getElementById('loginEmail').value.trim();
-            const password = document.getElementById('loginPassword').value;
-            const loginBtn = document.getElementById('loginBtn');
-
-            loginBtn.disabled = true;
-            loginBtn.textContent = 'Signing in...';
-            hideError('loginError');
-
-            try {
-                const res = await axios.post(`${API_URL}/auth/login`, {
-                    email,
-                    password
-                });
-
-                if (res.data && res.data.token) {
-                    token = res.data.token;
-                    localStorage.setItem('dev_token', token);
-                    localStorage.setItem('dev_name', res.data.name || email);
-                    
-                    // Author: Sanket - Show success then load dashboard
-                    Swal.fire({
-                        icon: 'success',
-                        title: 'Login Successful!',
-                        text: 'Welcome back!',
-                        timer: 1500,
-                        showConfirmButton: false
-                    }).then(() => {
-                        showDashboard();
-                    });
-                } else {
-                    showError('loginError', 'Invalid response from server');
-                }
-            } catch (error) {
-                console.error('Login error:', error);
-                let errorMsg = 'Login failed. Please check your credentials.';
-                
-                if (error.response && error.response.data && error.response.data.message) {
-                    errorMsg = error.response.data.message;
-                }
-                
-                showError('loginError', errorMsg);
-            } finally {
-                loginBtn.disabled = false;
-                loginBtn.textContent = 'Sign In';
-            }
-        });
-
-        // Author: Sanket - Register form handler
-        document.getElementById('registerForm').addEventListener('submit', async function(e) {
-            e.preventDefault();
-            
-            const name = document.getElementById('regName').value.trim();
-            const email = document.getElementById('regEmail').value.trim();
-            const password = document.getElementById('regPassword').value;
-            const registerBtn = document.getElementById('registerBtn');
-
-            registerBtn.disabled = true;
-            registerBtn.textContent = 'Creating account...';
-            hideError('registerError');
-
-            try {
-                const res = await axios.post(`${API_URL}/auth/register`, {
-                    name,
-                    email,
-                    password
-                });
-
-                if (res.data) {
-                    await Swal.fire({
-                        icon: 'success',
-                        title: 'Registration Successful!',
-                        text: 'Please login with your credentials',
-                        confirmButtonText: 'OK'
-                    });
-
-                    switchTab('login');
-                    document.getElementById('loginEmail').value = email;
-                }
-            } catch (error) {
-                console.error('Registration error:', error);
-                let errorMsg = 'Registration failed. Please try again.';
-                
-                if (error.response && error.response.data && error.response.data.message) {
-                    errorMsg = error.response.data.message;
-                }
-                
-                showError('registerError', errorMsg);
-            } finally {
-                registerBtn.disabled = false;
-                registerBtn.textContent = 'Create Account';
-            }
-        });
-
-        // Author: Sanket - Show dashboard
-        function showDashboard() {
-            document.getElementById('authSection').classList.add('hidden');
-            document.getElementById('dashboardSection').classList.remove('hidden');
-            document.getElementById('logoutBtn').classList.remove('hidden');
-            
-            const userName = localStorage.getItem('dev_name') || 'Developer';
-            document.getElementById('userName').textContent = userName;
-            
-            loadKeys();
-            loadUsageStats();
-        }
-
-        // Author: Sanket - Load usage stats and render chart
-        let usageChart = null;
-        async function loadUsageStats() {
-            try {
-                const res = await axios.get(`${API_URL}/stats/usage`, {
-                    headers: { 'Authorization': `Bearer ${token}` }
-                });
-
-                const data = res.data;
-                const ctx = document.getElementById('usageChart').getContext('2d');
-                
-                // Author: Sanket - Prepare labels and values for the chart
-                const labels = data.map(d => d.date);
-                const values = data.map(d => d.count);
-
-                if (usageChart) usageChart.destroy();
-
-                usageChart = new Chart(ctx, {
-                    type: 'line',
-                    data: {
-                        labels: labels.length ? labels : ['No Data'],
-                        datasets: [{
-                            label: 'Meetings Created',
-                            data: values.length ? values : [0],
-                            borderColor: '#0270d7',
-                            backgroundColor: 'rgba(2, 112, 215, 0.1)',
-                            borderWidth: 2,
-                            tension: 0.4,
-                            fill: true
-                        }]
-                    },
-                    options: {
-                        responsive: true,
-                        maintainAspectRatio: false,
-                        plugins: {
-                            legend: {
-                                display: false
-                            }
-                        },
-                        scales: {
-                            y: {
-                                beginAtZero: true,
-                                grid: { color: 'rgba(255, 255, 255, 0.05)' },
-                                ticks: { color: '#9ca3af', precision: 0 }
-                            },
-                            x: {
-                                grid: { color: 'rgba(255, 255, 255, 0.05)' },
-                                ticks: { color: '#9ca3af' }
+<!doctype html>
+<html lang="en" class="no-js">
+    <head>
+        <!-- Title and Icon -->
+        <title>tawktoo - Developer Portal</title>
+        <link rel="shortcut icon" href="../images/logo.svg" />
+        <link rel="apple-touch-icon" href="../images/logo.svg" />
+
+        <!-- Meta Information -->
+        <meta charset="utf-8" />
+        <meta http-equiv="X-UA-Compatible" content="IE=edge" />
+        <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+        <meta name="description" content="tawktoo Developer Portal - Build video experiences" />
+
+        <!-- StyleSheet -->
+        <link rel="stylesheet" href="https://fonts.googleapis.com/css?family=IBM+Plex+Sans:400,600" />
+        <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.2/css/all.min.css" />
+        <link rel="stylesheet" type="text/css" href="../css/landing.css" />
+
+        <!-- Tailwind and Font Awesome -->
+        <script src="https://cdn.tailwindcss.com"></script>
+        <script>
+            tailwind.config = {
+                darkMode: 'class',
+                theme: {
+                    extend: {
+                        colors: {
+                            gray: {
+                                900: '#15181d',
+                                800: '#1d2026',
                             }
                         }
                     }
-                });
-            } catch (error) {
-                console.error('Failed to load usage stats:', error);
+                }
             }
-        }
+        </script>
+        <script src="https://kit.fontawesome.com/7433d3320f.js" crossorigin="anonymous"></script>
 
-        // Author: Sanket - Load API keys
-        async function loadKeys() {
-            try {
-                const res = await axios.get(`${API_URL}/keys`, {
-                    headers: { 'Authorization': `Bearer ${token}` }
-                });
+        <!-- Scripts -->
+        <script defer src="../js/Brand.js"></script>
+        <script defer src="../js/Theme.js"></script>
+        <script src="https://cdn.jsdelivr.net/npm/xss/dist/xss.min.js"></script>
+        <script type="text/javascript" src="https://cdn.jsdelivr.net/npm/axios/dist/axios.min.js"></script>
+        <script defer src="https://cdn.jsdelivr.net/npm/sweetalert2@11.4.8"></script>
+        <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
 
-                const keys = res.data;
-                const keysList = document.getElementById('keysList');
-                
-                if (keys.length === 0) {
-                    keysList.innerHTML = '<p style="color: var(--text-color); text-align: center; padding: 40px;">No API keys yet. Generate your first key to get started!</p>';
-                } else {
-                    keysList.innerHTML = keys.map(k => `
-                        <div class="api-key-card">
-                            <div class="key-header">
-                                <div class="key-name">${k.name}</div>
-                                <span class="key-status ${k.is_active ? 'status-active' : 'status-inactive'}">
-                                    ${k.is_active ? 'Active' : 'Inactive'}
-                                </span>
-                            </div>
-                            <div class="key-info">
-                                <div class="key-prefix">${k.prefix}...</div>
-                                <button class="btn-copy" onclick="copyPrefix('${k.prefix}')">
-                                    <i class="fas fa-copy"></i> Copy Prefix
-                                </button>
+        <!-- Author: Sanket - Professional Developer Portal Styles (Matching Login) -->
+        <style>
+            .blob {
+                position: absolute;
+                filter: blur(40px);
+                z-index: -1;
+                opacity: 0.4;
+                animation: move 10s infinite alternate;
+            }
+            @keyframes move {
+                from { transform: translate(0, 0) scale(1); }
+                to { transform: translate(20px, -20px) scale(1.1); }
+            }
+            /* Glassmorphism utilities */
+            .glass-card {
+                background: rgba(255, 255, 255, 0.7);
+                backdrop-filter: blur(12px);
+                border: 1px solid rgba(255, 255, 255, 0.5);
+            }
+            .dark .glass-card {
+                background: rgba(29, 32, 38, 0.7);
+                border: 1px solid rgba(255, 255, 255, 0.05);
+            }
+        </style>
+    </head>
+    <body class="bg-gray-50 dark:bg-gray-900 text-gray-800 dark:text-white transition-colors duration-300 min-h-screen flex flex-col relative overflow-x-hidden font-sans antialiased">
+        
+        <!-- Standard Header -->
+        <header class="w-full bg-white dark:bg-gray-900/95 sticky top-0 z-50 transition-all duration-300 border-b border-gray-100 dark:border-gray-800">
+            <div class="w-full h-16 flex px-4 md:px-6 flex-row items-center justify-between">
+                <!-- Left: Logo & Branding -->
+                <a href="/" class="flex items-center gap-2 group mr-8">
+                    <img src="../images/logo.svg" alt="logo" class="h-7 w-auto mb-1">
+                </a>
+
+                <!-- Middle: Navigation (Hidden on mobile) -->
+                 <nav class="hidden md:flex items-center gap-6 mr-auto">
+                    <a href="/login" class="text-base font-normal text-gray-500 hover:text-blue-600 transition-colors">Host Login</a>
+                    <a href="/developer" class="text-base font-medium text-blue-600 transition-colors">Developer</a>
+                </nav>
+
+                <!-- Right: Actions -->
+                <div class="flex items-center gap-2 md:gap-4">
+                     <!-- Date & Time -->
+                    <div id="headerDateTime" class="hidden xl:block text-lg text-gray-500 font-normal mr-2"></div>
+
+                    <!-- Theme Toggle -->
+                    <button id="themeToggle" class="p-2.5 rounded-full text-gray-500 hover:bg-gray-100 transition-colors focus:outline-none">
+                        <i class="fas fa-sun text-xl"></i>
+                    </button>
+
+                    <!-- Auth/Nav Actions -->
+                     <div class="flex items-center gap-3 ml-2">
+                         <a href="/" class="md:hidden text-gray-600 hover:text-blue-600 font-medium px-2">Home</a>
+                         <button id="logoutBtn" onclick="logout()" class="hidden text-sm font-medium text-red-600 hover:text-red-700 bg-red-50 hover:bg-red-100 px-4 py-2 rounded-lg transition-colors">Logout</button>
+                     </div>
+                </div>
+            </div>
+        </header>
+
+        <!-- Background Decoration -->
+        <div class="fixed top-0 left-0 w-full h-full overflow-hidden pointer-events-none z-0">
+            <div class="absolute top-0 right-0 -mr-20 -mt-20 w-96 h-96 rounded-full bg-blue-400/20 dark:bg-blue-900/20 blur-3xl"></div>
+            <div class="absolute bottom-0 left-0 -ml-20 -mb-20 w-80 h-80 rounded-full bg-purple-400/20 dark:bg-purple-900/20 blur-3xl"></div>
+        </div>
+
+        <!-- Main Content Area -->
+        <main class="flex-grow flex items-center justify-center relative z-10 w-full px-4 py-12">
+            
+            <!-- Auth Section -->
+            <div id="authSection" class="w-full max-w-md animate__animated animate__fadeInUp">
+                <!-- Header -->
+                <div class="text-center mb-8">
+                    <div class="inline-flex items-center justify-center w-16 h-16 rounded-2xl bg-gradient-to-tr from-blue-500 to-purple-500 mb-6 shadow-lg shadow-blue-500/20">
+                        <i class="fas fa-code text-3xl text-white"></i>
+                    </div>
+                    <h1 class="text-3xl font-bold tracking-tight text-gray-900 dark:text-white mb-2">Developer Portal</h1>
+                    <p class="text-gray-500 dark:text-gray-400 text-sm">Build powerful video experiences with our API</p>
+                </div>
+
+                <!-- Error Message -->
+                <div id="authError" class="hidden mb-6 p-4 rounded-lg bg-red-50 dark:bg-red-900/20 border border-red-200 dark:border-red-800 text-red-600 dark:text-red-400 text-sm font-medium flex items-center gap-3">
+                    <i class="fas fa-exclamation-circle text-lg"></i>
+                    <span class="error-text"></span>
+                </div>
+
+                <!-- Toggle Buttons -->
+                <div class="flex p-1 bg-gray-100/50 dark:bg-gray-800/50 mb-8 rounded-xl glass-card">
+                    <button class="auth-tab flex-1 py-2.5 text-sm font-semibold text-center rounded-lg text-blue-600 bg-white dark:bg-gray-700 dark:text-white shadow-sm transition-all duration-200" onclick="switchTab('login')">Login</button>
+                    <button class="auth-tab flex-1 py-2.5 text-sm font-medium text-center rounded-lg text-gray-500 hover:text-gray-700 dark:text-gray-400 dark:hover:text-gray-200 transition-all duration-200" onclick="switchTab('register')">Register</button>
+                </div>
+
+                <!-- Login Form -->
+                <div id="loginPanel" class="tab-panel active">
+                    <form id="loginForm" class="space-y-6">
+                        <div>
+                            <label for="loginEmail" class="block text-sm font-medium text-gray-700 dark:text-gray-300 mb-2">Email Address</label>
+                            <div class="relative">
+                                <div class="absolute inset-y-0 left-0 pl-3 flex items-center pointer-events-none">
+                                    <i class="fas fa-envelope text-gray-400"></i>
+                                </div>
+                                <input id="loginEmail" type="email" class="w-full pl-10 pr-4 py-3 rounded-lg bg-gray-50 dark:bg-gray-800/50 border border-gray-200 dark:border-gray-700 text-gray-900 dark:text-white placeholder-gray-400 focus:ring-2 focus:ring-blue-500/20 focus:border-blue-600 outline-none transition-all duration-200 sm:text-sm" placeholder="name@company.com" required autocomplete="email" />
                             </div>
                         </div>
-                    `).join('');
-                }
-            } catch (error) {
-                console.error('Failed to load keys:', error);
-                Swal.fire({
-                    icon: 'error',
-                    title: 'Authentication Error',
-                    text: 'Please login again',
+
+                        <div>
+                            <div class="flex items-center justify-between mb-2">
+                                <label for="loginPassword" class="block text-sm font-medium text-gray-700 dark:text-gray-300">Password</label>
+                                <a href="#" class="text-sm font-medium text-blue-600 hover:text-blue-500">Forgot password?</a>
+                            </div>
+                            <div class="relative">
+                                <div class="absolute inset-y-0 left-0 pl-3 flex items-center pointer-events-none">
+                                    <i class="fas fa-lock text-gray-400"></i>
+                                </div>
+                                <input id="loginPassword" type="password" class="w-full pl-10 pr-4 py-3 rounded-lg bg-gray-50 dark:bg-gray-800/50 border border-gray-200 dark:border-gray-700 text-gray-900 dark:text-white placeholder-gray-400 focus:ring-2 focus:ring-blue-500/20 focus:border-blue-600 outline-none transition-all duration-200 sm:text-sm" placeholder="Enter your password" required autocomplete="current-password" />
+                            </div>
+                        </div>
+
+                        <button type="submit" id="loginBtn" class="w-full flex justify-center items-center py-3.5 px-4 border border-transparent rounded-xl shadow-lg text-sm font-semibold text-white bg-blue-600 hover:bg-blue-700 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-blue-500 transition-all duration-200 transform hover:-translate-y-0.5">
+                            <i class="fas fa-sign-in-alt mr-2"></i>
+                            <span>Sign In</span>
+                        </button>
+                    </form>
+                </div>
+
+                <!-- Register Form -->
+                <div id="registerPanel" class="tab-panel hidden">
+                    <form id="registerForm" class="space-y-5">
+                        <div class="grid grid-cols-1 md:grid-cols-2 gap-5">
+                            <div>
+                                <label for="regName" class="block text-sm font-medium text-gray-700 dark:text-gray-300 mb-2">Company Name</label>
+                                <div class="relative">
+                                    <div class="absolute inset-y-0 left-0 pl-3 flex items-center pointer-events-none">
+                                        <i class="fas fa-building text-gray-400"></i>
+                                    </div>
+                                    <input id="regName" type="text" class="w-full pl-10 pr-4 py-3 rounded-lg bg-gray-50 dark:bg-gray-800/50 border border-gray-200 dark:border-gray-700 text-gray-900 dark:text-white placeholder-gray-400 focus:ring-2 focus:ring-blue-500/20 focus:border-blue-600 outline-none transition-all duration-200 sm:text-sm" placeholder="Acme Inc." required />
+                                </div>
+                            </div>
+                             <div>
+                                <label for="regEmail" class="block text-sm font-medium text-gray-700 dark:text-gray-300 mb-2">Email Address</label>
+                                <div class="relative">
+                                    <div class="absolute inset-y-0 left-0 pl-3 flex items-center pointer-events-none">
+                                        <i class="fas fa-envelope text-gray-400"></i>
+                                    </div>
+                                    <input id="regEmail" type="email" class="w-full pl-10 pr-4 py-3 rounded-lg bg-gray-50 dark:bg-gray-800/50 border border-gray-200 dark:border-gray-700 text-gray-900 dark:text-white placeholder-gray-400 focus:ring-2 focus:ring-blue-500/20 focus:border-blue-600 outline-none transition-all duration-200 sm:text-sm" placeholder="name@company.com" required />
+                                </div>
+                            </div>
+                        </div>
+
+                        <div>
+                            <label for="regPassword" class="block text-sm font-medium text-gray-700 dark:text-gray-300 mb-2">Password</label>
+                            <div class="relative">
+                                <div class="absolute inset-y-0 left-0 pl-3 flex items-center pointer-events-none">
+                                    <i class="fas fa-lock text-gray-400"></i>
+                                </div>
+                                <input id="regPassword" type="password" class="w-full pl-10 pr-4 py-3 rounded-lg bg-gray-50 dark:bg-gray-800/50 border border-gray-200 dark:border-gray-700 text-gray-900 dark:text-white placeholder-gray-400 focus:ring-2 focus:ring-blue-500/20 focus:border-blue-600 outline-none transition-all duration-200 sm:text-sm" placeholder="Create a strong password" required />
+                            </div>
+                            <p class="mt-1 text-xs text-gray-500 dark:text-gray-400">Must be at least 8 characters</p>
+                        </div>
+
+                        <div class="flex items-start">
+                             <div class="flex items-center h-5">
+                                <input id="terms" type="checkbox" required class="w-4 h-4 border border-gray-300 rounded bg-gray-50 focus:ring-3 focus:ring-blue-300 dark:bg-gray-700 dark:border-gray-600 dark:focus:ring-blue-600 dark:ring-offset-gray-800" />
+                            </div>
+                            <label for="terms" class="ml-2 text-sm font-medium text-gray-900 dark:text-gray-300">I agree with the <a href="#" class="text-blue-600 hover:underline dark:text-blue-500">Terms and Conditions</a></label>
+                        </div>
+
+                        <button type="submit" id="registerBtn" class="w-full flex justify-center items-center py-3.5 px-4 border border-transparent rounded-xl shadow-lg text-sm font-semibold text-white bg-blue-600 hover:bg-blue-700 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-blue-500 transition-all duration-200 transform hover:-translate-y-0.5">
+                            <i class="fas fa-user-plus mr-2"></i>
+                            <span>Create Account</span>
+                        </button>
+                    </form>
+                </div>
+            </div>
+
+            <!-- Dashboard Section -->
+             <div id="dashboardSection" class="hidden w-full max-w-6xl animate__animated animate__fadeIn">
+                 
+                 <div class="flex flex-col md:flex-row justify-between items-start md:items-center mb-8 gap-4">
+                     <div>
+                         <h1 class="text-3xl font-bold text-gray-900 dark:text-white mb-2">Welcome, <span id="userName" class="text-blue-600">Developer</span></h1>
+                         <p class="text-gray-500 dark:text-gray-400">Manage your API keys and analytics</p>
+                     </div>
+                     <button onclick="generateKey()" class="btn-primary flex items-center gap-2 bg-blue-600 hover:bg-blue-700 text-white px-6 py-3 rounded-xl font-semibold shadow-lg shadow-blue-500/30 transition-all hover:-translate-y-0.5">
+                         <i class="fas fa-plus"></i> Generate Key
+                     </button>
+                 </div>
+
+                 <div class="grid grid-cols-1 lg:grid-cols-3 gap-6">
+                     <!-- API Keys Card -->
+                     <div class="lg:col-span-2 glass-card rounded-2xl p-6 bg-white/60 dark:bg-gray-800/60 backdrop-blur-xl border border-white/20 dark:border-gray-700 shadow-xl">
+                         <h2 class="text-xl font-bold text-gray-900 dark:text-white mb-6 flex items-center gap-2">
+                             <i class="fas fa-key text-blue-500"></i> API Keys
+                         </h2>
+                         <div id="keysList" class="space-y-4">
+                             <!-- Keys will be loaded here -->
+                             <div class="text-center py-10 text-gray-400">Loading keys...</div>
+                         </div>
+                     </div>
+
+                     <!-- Quick Start Card -->
+                     <div class="glass-card rounded-2xl p-6 bg-white/60 dark:bg-gray-800/60 backdrop-blur-xl border border-white/20 dark:border-gray-700 shadow-xl h-fit">
+                        <h2 class="text-xl font-bold text-gray-900 dark:text-white mb-6 flex items-center gap-2">
+                            <i class="fas fa-rocket text-purple-500"></i> Quick Start
+                        </h2>
+                        
+                        <div class="space-y-6">
+                            <div class="p-4 rounded-xl bg-blue-50 dark:bg-gray-700/50 border border-blue-100 dark:border-gray-600">
+                                <h4 class="font-semibold text-blue-900 dark:text-blue-100 mb-2 text-sm">API Endpoint</h4>
+                                <code id="apiBaseUrlDisplay" class="block w-full text-xs font-mono bg-white dark:bg-gray-800 p-2 rounded border border-gray-200 dark:border-gray-600 text-gray-600 dark:text-gray-300 break-all">...</code>
+                            </div>
+
+                             <div class="p-4 rounded-xl bg-purple-50 dark:bg-gray-700/50 border border-purple-100 dark:border-gray-600">
+                                <h4 class="font-semibold text-purple-900 dark:text-purple-100 mb-2 text-sm">Example Request</h4>
+                                <div class="text-xs font-mono bg-white dark:bg-gray-800 p-2 rounded border border-gray-200 dark:border-gray-600 text-gray-600 dark:text-gray-300 overflow-x-auto">
+                                    POST /api/v1/meeting<br>
+                                    Headers:<br>
+                                    x-api-key: YOUR_KEY
+                                </div>
+                            </div>
+                        </div>
+                     </div>
+
+                     <!-- Analytics Chart -->
+                     <div class="lg:col-span-3 glass-card rounded-2xl p-6 bg-white/60 dark:bg-gray-800/60 backdrop-blur-xl border border-white/20 dark:border-gray-700 shadow-xl">
+                         <h2 class="text-xl font-bold text-gray-900 dark:text-white mb-6 flex items-center gap-2">
+                             <i class="fas fa-chart-line text-green-500"></i> Usage Analytics
+                         </h2>
+                         <div class="h-[300px] w-full">
+                             <canvas id="usageChart"></canvas>
+                         </div>
+                     </div>
+                 </div>
+             </div>
+
+        </main>
+
+        <script>
+            // Set API Base URL Display
+            document.getElementById('apiBaseUrlDisplay').textContent = window.location.origin + '/api/v1';
+
+            const API_URL = '/api/v1';
+            let token = localStorage.getItem('dev_token');
+
+            // --- UI Helper Functions ---
+
+            function switchTab(tab) {
+                const tabs = document.querySelectorAll('.auth-tab');
+                const loginPanel = document.getElementById('loginPanel');
+                const registerPanel = document.getElementById('registerPanel');
+                const loginBtn = document.getElementById('loginBtn');
+                
+                // Hide both
+                loginPanel.classList.add('hidden');
+                registerPanel.classList.add('hidden');
+                
+                // Reset tab styles
+                tabs.forEach(t => {
+                    t.classList.remove('bg-white', 'text-blue-600', 'shadow-sm', 'dark:bg-gray-700', 'dark:text-white');
+                    t.classList.add('text-gray-500', 'hover:text-gray-700', 'dark:text-gray-400');
                 });
-                logout();
-            }
-        }
 
-        // Author: Sanket - Generate new API key
-        async function generateKey() {
-            const { value: name } = await Swal.fire({
-                title: 'Generate API Key',
-                input: 'text',
-                inputLabel: 'Key Name',
-                inputPlaceholder: 'e.g., Production, Development',
-                showCancelButton: true,
-                inputValidator: (value) => {
-                    if (!value) {
-                        return 'Please enter a key name';
-                    }
+                if (tab === 'login') {
+                    loginPanel.classList.remove('hidden');
+                    tabs[0].classList.add('bg-white', 'text-blue-600', 'shadow-sm', 'dark:bg-gray-700', 'dark:text-white');
+                    tabs[0].classList.remove('text-gray-500', 'hover:text-gray-700', 'dark:text-gray-400');
+                    if(document.getElementById('authError')) document.getElementById('authError').classList.add('hidden');
+                } else {
+                    registerPanel.classList.remove('hidden');
+                    tabs[1].classList.add('bg-white', 'text-blue-600', 'shadow-sm', 'dark:bg-gray-700', 'dark:text-white');
+                    tabs[1].classList.remove('text-gray-500', 'hover:text-gray-700', 'dark:text-gray-400');
+                    if(document.getElementById('authError')) document.getElementById('authError').classList.add('hidden');
                 }
-            });
+            }
 
-            if (name) {
+            function showAuthError(message) {
+                const errorEl = document.getElementById('authError');
+                errorEl.querySelector('.error-text').textContent = message;
+                errorEl.classList.remove('hidden');
+            }
+
+            function hideAuthError() {
+                document.getElementById('authError').classList.add('hidden');
+            }
+
+            // --- Functionality ---
+
+            function showDashboard() {
+                document.getElementById('authSection').classList.add('hidden'); // Hide auth
+                document.getElementById('authSection').classList.remove('flex'); // Remove flex if present
+                
+                // Center alignment on main might conflict with top-aligned dashboard
+                document.querySelector('main').classList.remove('items-center', 'justify-center');
+                document.querySelector('main').classList.add('items-start');
+
+                document.getElementById('dashboardSection').classList.remove('hidden');
+                document.getElementById('logoutBtn').classList.remove('hidden');
+                document.querySelector('nav a[href="/developer"]').classList.add('text-blue-600');
+                
+                const userName = localStorage.getItem('dev_name') || 'Developer';
+                document.getElementById('userName').textContent = userName;
+                
+                loadKeys();
+                loadUsageStats();
+            }
+
+            function logout() {
+                localStorage.removeItem('dev_token');
+                localStorage.removeItem('dev_name');
+                location.reload();
+            }
+
+             // Login Logic
+            document.getElementById('loginForm').addEventListener('submit', async function(e) {
+                e.preventDefault();
+                hideAuthError();
+                
+                const email = document.getElementById('loginEmail').value.trim();
+                const password = document.getElementById('loginPassword').value;
+                const btn = document.getElementById('loginBtn');
+                const originalText = btn.innerHTML;
+
+                btn.disabled = true;
+                btn.innerHTML = '<i class="fas fa-spinner fa-spin mr-2"></i> Signing In...';
+
                 try {
-                    const res = await axios.post(`${API_URL}/keys`, 
-                        { name },
-                        { headers: { 'Authorization': `Bearer ${token}` }}
-                    );
-
-                    if (res.data && res.data.apiKey) {
+                    const res = await axios.post(`${API_URL}/auth/login`, { email, password });
+                    if (res.data && res.data.token) {
+                        token = res.data.token;
+                        localStorage.setItem('dev_token', token);
+                        localStorage.setItem('dev_name', res.data.name || email);
+                        
                         await Swal.fire({
                             icon: 'success',
-                            title: 'API Key Generated!',
-                            html: `
-                                <p>Your API key has been generated. Save it now - you won't be able to see it again!</p>
-                                <div style="background: #f8f9fa; padding: 16px; border-radius: 8px; margin: 16px 0; font-family: monospace; word-break: break-all;">
-                                    ${res.data.apiKey}
-                                </div>
-                                <button onclick="navigator.clipboard.writeText('${res.data.apiKey}')" style="padding: 8px 16px; background: #0270d7; color: white; border: none; border-radius: 6px; cursor: pointer;">
-                                    <i class="fas fa-copy"></i> Copy to Clipboard
-                                </button>
-                            `,
-                            confirmButtonText: 'Done'
+                            title: 'Welcome back!',
+                            toast: true,
+                            position: 'top-end',
+                            showConfirmButton: false,
+                            timer: 1500
                         });
-                        
-                        loadKeys();
+                        showDashboard();
                     }
                 } catch (error) {
-                    Swal.fire({
-                        icon: 'error',
-                        title: 'Error',
-                        text: 'Failed to generate API key'
+                    console.error(error);
+                    const msg = error.response?.data?.message || 'Login failed. Please check your credentials.';
+                    showAuthError(msg);
+                } finally {
+                    btn.disabled = false;
+                    btn.innerHTML = originalText;
+                }
+            });
+
+            // Register Logic
+            document.getElementById('registerForm').addEventListener('submit', async function(e) {
+                e.preventDefault();
+                hideAuthError();
+                
+                const name = document.getElementById('regName').value.trim();
+                const email = document.getElementById('regEmail').value.trim();
+                const password = document.getElementById('regPassword').value;
+                const btn = document.getElementById('registerBtn');
+                const originalText = btn.innerHTML;
+
+                btn.disabled = true;
+                btn.innerHTML = '<i class="fas fa-spinner fa-spin mr-2"></i> Creating Account...';
+
+                 try {
+                    const res = await axios.post(`${API_URL}/auth/register`, { name, email, password });
+                    
+                    await Swal.fire({
+                        icon: 'success',
+                        title: 'Account Created!',
+                        text: 'Please sign in with your new credentials.',
+                        confirmButtonColor: '#2563eb'
                     });
+                    
+                    switchTab('login');
+                    document.getElementById('loginEmail').value = email;
+                    document.getElementById('registerForm').reset();
+
+                } catch (error) {
+                    console.error(error);
+                    const msg = error.response?.data?.message || 'Registration failed. Please try again.';
+                    showAuthError(msg);
+                } finally {
+                    btn.disabled = false;
+                    btn.innerHTML = originalText;
+                }
+            });
+
+            // Dashboard Logic: Load Keys
+            async function loadKeys() {
+                try {
+                    const res = await axios.get(`${API_URL}/keys`, {
+                        headers: { 'Authorization': `Bearer ${token}` }
+                    });
+                    const keys = res.data;
+                    const list = document.getElementById('keysList');
+                    
+                    if (keys.length === 0) {
+                        list.innerHTML = `
+                            <div class="text-center py-8 px-4 rounded-xl border-2 border-dashed border-gray-200 dark:border-gray-700">
+                                <i class="fas fa-key text-gray-400 text-3xl mb-3"></i>
+                                <p class="text-gray-500 dark:text-gray-400">No API keys found. Generate one to get started.</p>
+                            </div>
+                        `;
+                    } else {
+                        list.innerHTML = keys.map(k => `
+                            <div class="flex items-center justify-between p-4 rounded-xl bg-gray-50 dark:bg-gray-800/50 border border-gray-200 dark:border-gray-700 transition-all hover:shadow-md">
+                                <div>
+                                    <h3 class="font-semibold text-gray-900 dark:text-white">${k.name}</h3>
+                                    <div class="flex items-center gap-2 mt-1">
+                                        <code class="text-xs font-mono bg-gray-200 dark:bg-gray-700 px-2 py-1 rounded text-gray-700 dark:text-gray-300">${k.prefix}...</code>
+                                        <span class="text-xs px-2 py-0.5 rounded-full ${k.is_active ? 'bg-green-100 text-green-700 dark:bg-green-900/30 dark:text-green-400' : 'bg-red-100 text-red-700'}">
+                                            ${k.is_active ? 'Active' : 'Inactive'}
+                                        </span>
+                                    </div>
+                                </div>
+                                <button onclick="copyPrefix('${k.prefix}')" class="text-gray-400 hover:text-blue-600 dark:hover:text-blue-400 transition-colors p-2" title="Copy Prefix">
+                                    <i class="fas fa-copy"></i>
+                                </button>
+                            </div>
+                        `).join('');
+                    }
+                } catch (error) {
+                    console.error(error);
+                    if (error.response && error.response.status === 401) logout();
                 }
             }
-        }
 
-        // Author: Sanket - Copy prefix helper
-        function copyPrefix(prefix) {
-            navigator.clipboard.writeText(prefix);
-            Swal.fire({
-                icon: 'success',
-                title: 'Copied!',
-                text: 'Key prefix copied to clipboard',
-                timer: 1500,
-                showConfirmButton: false
-            });
-        }
+            // Dashboard Logic: Generate Key
+             async function generateKey() {
+                const { value: name } = await Swal.fire({
+                    title: 'New API Key',
+                    input: 'text',
+                    inputLabel: 'Key Name',
+                    inputPlaceholder: 'e.g. Production App',
+                    showCancelButton: true,
+                    confirmButtonText: 'Generate',
+                    confirmButtonColor: '#2563eb',
+                    background: document.documentElement.classList.contains('dark') ? '#1f2937' : '#fff',
+                    color: document.documentElement.classList.contains('dark') ? '#fff' : '#000',
+                    inputValidator: (value) => {
+                        if (!value) return 'Please enter a name for your key';
+                    }
+                });
 
-        // Author: Sanket - Logout
-        function logout() {
-            localStorage.removeItem('dev_token');
-            localStorage.removeItem('dev_name');
-            location.reload();
-        }
+                if (name) {
+                    try {
+                        const res = await axios.post(`${API_URL}/keys`, { name }, {
+                            headers: { 'Authorization': `Bearer ${token}` }
+                        });
 
-        // Author: Sanket - Error helpers
-        function showError(id, message) {
-            const errorEl = document.getElementById(id);
-            errorEl.textContent = message;
-            errorEl.classList.add('show');
-        }
+                        if (res.data && res.data.apiKey) {
+                            await Swal.fire({
+                                icon: 'success',
+                                title: 'Key Generated',
+                                html: `
+                                    <div class="text-left">
+                                        <p class="text-sm text-gray-600 dark:text-gray-300 mb-2">Copy this key now. You won't see it again.</p>
+                                        <div class="bg-gray-100 dark:bg-gray-700 p-3 rounded-lg break-all font-mono text-sm select-all mb-3 text-gray-800 dark:text-white border border-gray-200 dark:border-gray-600">
+                                            ${res.data.apiKey}
+                                        </div>
+                                    </div>
+                                `,
+                                confirmButtonText: 'I have copied it',
+                                confirmButtonColor: '#2563eb'
+                            });
+                            loadKeys();
+                        }
+                    } catch (error) {
+                         Swal.fire({ icon: 'error', title: 'Error', text: 'Failed to generate key' });
+                    }
+                }
+            }
 
-        function hideError(id) {
-            document.getElementById(id).classList.remove('show');
-        }
+            function copyPrefix(prefix) {
+                navigator.clipboard.writeText(prefix);
+                const toast = Swal.mixin({
+                    toast: true,
+                    position: 'top-end',
+                    showConfirmButton: false,
+                    timer: 2000,
+                    timerProgressBar: false
+                });
+                toast.fire({ icon: 'success', title: 'Prefix copied' });
+            }
 
-        // Auto-load dashboard if token exists
-        if (token) {
-            showDashboard();
-        }
-    </script>
-</body>
+            // Dashboard Logic: Stats
+            async function loadUsageStats() {
+                try {
+                     const res = await axios.get(`${API_URL}/stats/usage`, {
+                        headers: { 'Authorization': `Bearer ${token}` }
+                    });
+                    const data = res.data;
+                    const labels = data.map(d => d.date);
+                    const values = data.map(d => d.count);
+
+                    const ctx = document.getElementById('usageChart').getContext('2d');
+                    
+                    // Gradient
+                    const gradient = ctx.createLinearGradient(0, 0, 0, 400);
+                    gradient.addColorStop(0, 'rgba(59, 130, 246, 0.5)'); // Blue 500
+                    gradient.addColorStop(1, 'rgba(59, 130, 246, 0.0)');
+
+                    new Chart(ctx, {
+                        type: 'line',
+                        data: {
+                            labels: labels.length ? labels : ['No Data'],
+                            datasets: [{
+                                label: 'Meetings Created',
+                                data: values.length ? values : [0],
+                                borderColor: '#3b82f6',
+                                backgroundColor: gradient,
+                                borderWidth: 2,
+                                fill: true,
+                                tension: 0.4,
+                                pointBackgroundColor: '#ffffff',
+                                pointBorderColor: '#3b82f6',
+                                pointRadius: 4
+                            }]
+                        },
+                        options: {
+                            responsive: true,
+                            maintainAspectRatio: false,
+                            plugins: {
+                                legend: { display: false },
+                                tooltip: {
+                                    mode: 'index',
+                                    intersect: false,
+                                    backgroundColor: 'rgba(17, 24, 39, 0.9)',
+                                    titleColor: '#fff',
+                                    bodyColor: '#fff',
+                                    borderColor: 'rgba(255,255,255,0.1)',
+                                    borderWidth: 1
+                                }
+                            },
+                            scales: {
+                                y: {
+                                    beginAtZero: true,
+                                    grid: { color: 'rgba(156, 163, 175, 0.1)' },
+                                    ticks: { color: '#9ca3af', precision: 0 }
+                                },
+                                x: {
+                                    grid: { display: false },
+                                    ticks: { color: '#9ca3af' }
+                                }
+                            }
+                        }
+                    });
+
+                } catch (error) {
+                    console.error('Failed to load stats', error);
+                }
+            }
+
+            // Init
+            if (token) {
+                showDashboard();
+            }
+
+            // Init dynamic footer
+            if (typeof initDynamicFooter === 'function') initDynamicFooter();
+        </script>
+        <!-- Dynamic Footer -->
+        <footer id="site-footer"></footer>
+    </body>
 </html>

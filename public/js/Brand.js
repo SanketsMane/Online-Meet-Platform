@@ -1,6 +1,6 @@
 'use strict';
 
-const brandDataKey = 'brandData';
+const brandDataKey = 'brandData_v2';
 const brandData = window.sessionStorage.getItem(brandDataKey);
 
 const title = document.getElementById('title');
@@ -286,6 +286,10 @@ function customizeSite() {
     }
     if (newRoomDescription && BRAND.site?.newRoomDescription) {
         newRoomDescription.textContent = BRAND.site.newRoomDescription;
+    }
+    if (BRAND.brand_color) {
+        document.documentElement.style.setProperty('--link-color', BRAND.brand_color);
+        document.documentElement.style.setProperty('--primary-color', BRAND.brand_color);
     }
 }
 

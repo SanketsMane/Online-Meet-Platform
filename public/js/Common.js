@@ -279,3 +279,61 @@ console.log('Allow Camera or Audio', {
     message: message,
 });
 if (showMessage) showMessage.innerHTML = message;
+
+// #########################################################
+// DYNAMIC FOOTER
+// #########################################################
+
+/**
+ * Initialize the dynamic footer by fetching configuration from the API
+ * Author: Sanket
+ */
+async function initDynamicFooter() {
+    const footerContainer = document.getElementById('site-footer');
+    if (!footerContainer) return;
+
+    try {
+        const response = await fetch('/api/v1/footer');
+        const config = await response.json();
+        
+        if (!config) return;
+
+        const { copyright, contactEmail, links } = config;
+
+        // Create footer HTML with premium aesthetics (synchronized with theme)
+        let linksHtml = '';
+        if (links && Array.isArray(links)) {
+            linksHtml = links.map(link => `
+                <a href="${link.url}" class="text-sm text-gray-500 hover:text-blue-600 dark:text-gray-400 dark:hover:text-blue-400 transition-colors mx-3">
+                    ${link.label}
+                </a>
+            `).join('');
+        }
+
+        footerContainer.innerHTML = `
+            <div class="container mx-auto px-5 md:px-10 flex flex-col sm:flex-row items-center max-w-screen-xl justify-between">
+                <div class="flex flex-col sm:flex-row items-center gap-4">
+                    <a href="/" class="flex font-medium items-center text-gray-900 dark:text-white group">
+                        <span class="text-xl font-bold tracking-tight">tawktoo</span>
+                    </a>
+                    <p class="text-sm text-gray-500 dark:text-gray-400 sm:ml-4 sm:pl-4 sm:border-l sm:border-gray-200 dark:sm:border-gray-700 sm:py-2">
+                        ${copyright} — 
+                        <a href="mailto:${contactEmail}" class="text-gray-600 dark:text-gray-300 hover:text-blue-600 transition-colors ml-1">Contact</a>
+                    </p>
+                </div>
+                <div class="inline-flex sm:ml-auto sm:mt-0 mt-6 justify-center sm:justify-end items-center">
+                    ${linksHtml}
+                </div>
+            </div>
+        `;
+        
+        // Apply classes to container if not already present
+        footerContainer.className = "text-gray-600 dark:text-gray-400 body-font py-12 bg-white dark:bg-gray-900 border-t border-gray-100 dark:border-gray-800 transition-colors duration-300";
+        
+    } catch (err) {
+        console.error('Failed to initialize dynamic footer:', err);
+    }
+}
+
+// Auto-init if footer exists
+document.addEventListener('DOMContentLoaded', initDynamicFooter);

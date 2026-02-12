@@ -1,9 +1,29 @@
 'use strict';
 
-const { Tenant, ApiKey, Feedback, GlobalSetting } = require('../db/models');
+const { Tenant, ApiKey, Feedback, GlobalSetting, AuditLog, WebhookLog } = require('../db/models');
 const settingsService = require('../services/SettingsService');
+const statsService = require('../services/StatsService');
 const Logger = require('../Logger');
 const log = new Logger('AdminController');
+
+// Author: Sanket - Log Admin Action helper
+async function logAdminAction(req, action, target, details = '') {
+    try {
+        const ip = req.headers['x-forwarded-for'] || req.socket.remoteAddress;
+        let adminId = 'Admin';
+        if (req.admin && req.admin.username) adminId = req.admin.username;
+        
+        await AuditLog.create({
+            admin_id: adminId,
+            action: action,
+            target: target,
+            details: details,
+            ip_address: ip
+        });
+    } catch (e) {
+        log.error('Failed to log admin action:', e.message);
+    }
+}
 
 /**
  * AdminController - Centralized administrative logic
@@ -28,6 +48,19 @@ class AdminController {
         } catch (err) {
             log.error('Error fetching stats:', err.message);
             res.status(500).json({ message: 'Error fetching statistics' });
+        }
+    }
+
+    /**
+     * Get real-time system metrics (CPU/Memory)
+     */
+    static async getSystemStats(req, res) {
+        try {
+            const stats = await statsService.getSystemStats();
+            res.json(stats);
+        } catch (err) {
+            log.error('Error fetching system stats:', err.message);
+            res.status(500).json({ message: 'Error fetching system statistics' });
         }
     }
 
@@ -125,13 +158,100 @@ class AdminController {
                 peers: room.peers.size,
                 locked: room.locked,
                 broadcasting: room.broadcasting,
-                createdAt: room.createdAt || new Date(), // Assuming room object might have this
+                createdAt: room.createdAt || new Date(),
             }));
             
             res.json(rooms);
         } catch (err) {
             log.error('Error fetching active rooms:', err.message);
             res.status(500).json({ message: 'Error fetching active rooms' });
+        }
+    }
+
+    /**
+     * Get audit logs
+     */
+    static async getAuditLogs(req, res) {
+        try {
+            const logs = await AuditLog.findAll({
+                limit: 100,
+                order: [['createdAt', 'DESC']]
+            });
+            res.json(logs);
+        } catch (err) {
+            log.error('Error fetching audit logs:', err.message);
+            res.status(500).json({ message: 'Error fetching audit logs' });
+        }
+    }
+
+    /**
+     * Get all API keys
+     */
+    static async getApiKeys(req, res) {
+        try {
+            const keys = await ApiKey.findAll({
+                include: [{ model: Tenant, attributes: ['name', 'email'] }],
+                order: [['createdAt', 'DESC']]
+            });
+            res.json(keys);
+        } catch (err) {
+            log.error('Error fetching API keys:', err.message);
+            res.status(500).json({ message: 'Error fetching API keys' });
+        }
+    }
+
+    /**
+     * Revoke an API key
+     */
+    static async revokeApiKey(req, res) {
+        try {
+            const { id } = req.params;
+            const apiKey = await ApiKey.findByPk(id);
+            if (!apiKey) return res.status(404).json({ message: 'API Key not found' });
+            
+            apiKey.is_active = false;
+            await apiKey.save();
+            
+            await logAdminAction(req, 'REVOKE_API_KEY', apiKey.prefix, `Key ID: ${id}`);
+            res.json({ success: true });
+        } catch (err) {
+            log.error('Error revoking API key:', err.message);
+            res.status(500).json({ message: 'Error revoking API key' });
+        }
+    }
+
+    /**
+     * Get webhook delivery logs
+     */
+    static async getWebhookLogs(req, res) {
+        try {
+            const logs = await WebhookLog.findAll({
+                limit: 100,
+                order: [['timestamp', 'DESC']]
+            });
+            res.json(logs);
+        } catch (err) {
+            log.error('Error fetching webhook logs:', err.message);
+            res.status(500).json({ message: 'Error fetching webhook logs' });
+        }
+    }
+
+    /**
+     * Kick all participants from a room (Close Room)
+     */
+    static async kickRoom(req, res, io) {
+        try {
+            const { id } = req.params;
+            if (io) {
+                io.to(id).emit('kick-peer', { message: 'This room has been closed by an administrator.' });
+                await logAdminAction(req, 'KICK_ROOM', id, 'Closed all participants');
+                res.json({ success: true });
+            } else {
+                res.status(503).json({ message: 'Socket service unavailable' });
+            }
+        } catch (err) {
+            log.error('Error kicking room:', err.message);
+            res.status(500).json({ message: 'Error closing room' });
         }
     }
 }

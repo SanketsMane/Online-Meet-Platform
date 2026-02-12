@@ -29,12 +29,14 @@ class ThemeManager {
     applyTheme(theme) {
         if (theme === 'light') {
             this.html.setAttribute('data-theme', 'light');
+            this.html.classList.remove('dark');
             if (this.toggleBtn) {
                 this.toggleBtn.innerHTML = '<i class="fas fa-moon"></i>';
                 this.toggleBtn.title = 'Switch to Dark Mode';
             }
         } else {
             this.html.removeAttribute('data-theme');
+            this.html.classList.add('dark');
             if (this.toggleBtn) {
                 this.toggleBtn.innerHTML = '<i class="fas fa-sun"></i>';
                 this.toggleBtn.title = 'Switch to Light Mode';

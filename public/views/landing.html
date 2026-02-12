@@ -32,6 +32,21 @@
 
         <!-- Tailwind and Font Awesome -->
         <script src="https://cdn.tailwindcss.com"></script>
+        <script>
+            tailwind.config = {
+                darkMode: 'class',
+                theme: {
+                    extend: {
+                        colors: {
+                            gray: {
+                                900: '#15181d', // Matching landing.css bg
+                                800: '#1d2026', // Matching landing.css input bg
+                            }
+                        }
+                    }
+                }
+            }
+        </script>
         <script src="https://kit.fontawesome.com/7433d3320f.js" crossorigin="anonymous"></script>
 
         <!-- Existing Styles and Injections -->
@@ -117,23 +132,19 @@
             }
         </style>
     </head>
-    <body class="bg-white text-gray-800 antialiased">
-        <div id="snow-container"></div>
+    <body class="bg-white dark:bg-gray-900 text-gray-800 dark:text-white antialiased transition-colors duration-300">
 
         <!-- header section  -->
-        <!-- header section  -->
-        <header class="bg-white sticky top-0 z-50 transition-all duration-300 border-b border-gray-100">
+        <header class="bg-white dark:bg-gray-900/95 sticky top-0 z-50 transition-all duration-300 border-b border-gray-100 dark:border-gray-800">
             <div class="w-full h-16 flex px-4 md:px-6 flex-row items-center justify-between">
                 <!-- Left: Logo & Branding -->
                 <a href="/" class="flex items-center gap-2 group mr-8">
                     <img src="../images/logo.svg" alt="logo" class="h-7 w-auto mb-1">
-                    <span class="text-[22px] font-medium text-gray-500 tracking-tight group-hover:text-blue-600 transition-colors pb-1">tawktoo</span>
                 </a>
 
-                <!-- Middle: Navigation (Hidden on mobile) -->
+                 <!-- Middle: Navigation (Hidden on mobile) -->
                  <nav class="hidden md:flex items-center gap-6 mr-auto">
                     <a href="/login" class="text-base font-normal text-gray-500 hover:text-blue-600 transition-colors">Host Login</a>
-                    <a href="/admin" class="text-base font-normal text-gray-500 hover:text-blue-600 transition-colors">Admin</a>
                     <a href="/developer" class="text-base font-normal text-gray-500 hover:text-blue-600 transition-colors">Developer</a>
                 </nav>
 
@@ -159,172 +170,167 @@
 
         <main>
             <!-- Hero Section -->
-            <section class="text-gray-600 body-font pt-24 pb-12 md:pt-32 md:pb-20 relative overflow-visible">
+            <section class="text-gray-600 dark:text-gray-300 body-font pt-20 pb-16 md:pt-32 md:pb-24 relative overflow-hidden">
                 <!-- Background decoration -->
-                <div class="absolute top-0 right-0 -mr-20 -mt-20 w-96 h-96 rounded-full bg-blue-50 opacity-50 blur-3xl -z-10"></div>
-
-                <div class="container mx-auto flex px-5 md:px-10 flex-col md:flex-row items-center max-w-screen-xl relative z-10">
-                    <div class="lg:flex-grow md:w-1/2 md:pr-16 flex flex-col md:items-start text-left mb-16 md:mb-0 items-center text-center">
-                        <h1 id="appTitle" class="text-3xl md:text-5xl mb-6 font-normal text-gray-900 leading-tight tracking-tight">
+                <div class="absolute top-0 right-0 -mr-20 -mt-20 w-96 h-96 rounded-full bg-blue-50 dark:bg-blue-900/10 opacity-50 blur-3xl -z-10"></div>
+                
+                <div class="container mx-auto flex px-6 md:px-0 flex-col md:flex-row items-center gap-12 max-w-screen-xl relative z-10">
+                    <!-- Left Content text-center md:text-left -->
+                    <div class="md:w-1/2 flex flex-col items-center md:items-start text-center md:text-left mb-10 md:mb-0">
+                        <h1 id="appTitle" class="text-4xl md:text-5xl lg:text-6xl mb-6 font-normal tracking-tight leading-[1.15] text-gray-900 dark:text-white">
                             Premium video meetings. Now free for everyone.
                         </h1>
-                        <p id="appDescription" class="mb-10 leading-relaxed text-lg text-gray-600 font-normal max-w-lg">
+                        <p id="appDescription" class="mb-10 text-lg md:text-xl text-gray-500 dark:text-gray-400 max-w-lg leading-relaxed">
                             We re-engineered the service we built for secure business meetings, tawktoo, to make it free and available for all.
                         </p>
                         
-                        <div class="flex flex-col sm:flex-row items-center gap-3 w-full max-w-xl">
-                            <button type="button" id="genRoomButton" class="w-full sm:w-auto inline-flex items-center justify-center bg-blue-600 text-white border-0 py-3 px-5 focus:outline-none hover:bg-blue-700 hover:shadow-md rounded text-base font-medium transition-all duration-200">
-                                <i class="fa-solid fa-video mr-2"></i>
+                        <!-- Actions Group -->
+                        <div class="flex flex-col sm:flex-row items-center gap-4 w-full max-w-xl">
+                            <!-- New Meeting Button -->
+                            <button type="button" id="genRoomButton" class="w-full sm:w-auto flex-shrink-0 inline-flex items-center justify-center bg-blue-600 text-white border-0 h-14 px-8 focus:outline-none hover:bg-blue-700 hover:shadow-lg rounded-lg text-base font-medium transition-all duration-200 whitespace-nowrap">
+                                <i class="fa-solid fa-video mr-2.5"></i>
                                 New meeting
                             </button>
                             
-                            <div class="flex items-center w-full sm:w-auto flex-grow relative gap-2">
-                                <div class="relative w-full">
-                                    <span class="absolute left-3 top-1/2 transform -translate-y-1/2 text-gray-500 pointer-events-none text-xl"><i class="fas fa-keyboard"></i></span>
-                                    <input type="text" id="roomName" class="w-full py-3 pl-11 pr-4 text-base bg-white border border-gray-300 rounded focus:ring-2 focus:ring-blue-100 focus:border-blue-600 outline-none transition-all placeholder-gray-500 text-gray-700" placeholder="Enter a code or link" maxlength="32">
+                            <!-- Input & Join -->
+                            <div class="flex items-center w-full sm:w-auto flex-grow relative gap-3 h-14">
+                                <div class="relative w-full h-full group">
+                                    <span class="absolute left-4 top-1/2 transform -translate-y-1/2 text-gray-400 group-focus-within:text-blue-600 transition-colors text-lg">
+                                        <i class="fas fa-keyboard"></i>
+                                    </span>
+                                    <input type="text" id="roomName" class="w-full h-full pl-12 pr-4 text-base bg-white dark:bg-gray-800 dark:border-gray-700 dark:text-white border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500/20 focus:border-blue-600 outline-none transition-all placeholder-gray-500 text-gray-700" placeholder="Enter a code or link" maxlength="32">
                                 </div>
-                                <button id="joinRoomButton" class="hidden sm:inline-flex text-blue-600 font-semibold hover:bg-blue-50 px-4 py-2 rounded transition-colors disabled:opacity-50 disabled:cursor-not-allowed whitespace-nowrap h-full" disabled>Join</button>
+                                <button id="joinRoomButton" class="hidden sm:inline-flex text-gray-500 font-semibold hover:bg-blue-50 hover:text-blue-600 dark:hover:bg-gray-800 dark:hover:text-blue-400 px-6 h-full items-center justify-center rounded-lg transition-colors disabled:opacity-50 disabled:cursor-not-allowed whitespace-nowrap" disabled>Join</button>
                             </div>
                         </div>
 
+                        <!-- Recent Room -->
                         <div id="lastRoomContainer" class="mt-8 hidden items-center gap-2 text-gray-500 animate__animated animate__fadeIn">
                             <span id="joinLastLabel" class="text-sm font-medium">Your recent room:</span>
                             <a id="lastRoom" class="text-blue-600 hover:text-blue-800 hover:underline font-medium transition-colors cursor-pointer"></a>
                         </div>
 
-                        <div class="mt-8 border-t border-gray-100 pt-6 w-full max-w-lg">
+                        <div class="mt-8 border-t border-gray-100 dark:border-gray-800 pt-6 w-full max-w-lg">
                             <a href="#" class="text-gray-500 hover:text-blue-600 transition-colors text-sm font-medium">
                                 <span class="border-b border-dotted border-gray-400 hover:border-blue-600 pb-0.5">Learn more</span> about tawktoo
                             </a>
                         </div>
                     </div>
-                    <div class="md:w-1/2 w-full flex justify-center relative">
+                    
+                    <!-- Right Image -->
+                    <div class="md:w-1/2 w-full flex justify-center md:justify-end relative">
                          <!-- Decorative elements behind image -->
-                         <div class="absolute inset-0 bg-gradient-to-tr from-blue-100 to-purple-100 rounded-2xl transform rotate-3 scale-95 opacity-60 -z-10"></div>
-                         <img src="../images/image1.webp" alt="video meeting" class="rounded-2xl shadow-2xl max-w-full h-auto object-cover transform transition-transform hover:scale-[1.01] duration-500">
+                         <div class="absolute inset-0 bg-blue-100 dark:bg-blue-900/30 rounded-2xl transform rotate-3 scale-95 opacity-60 -z-10"></div>
+                         <img src="../images/image1.webp" alt="video meeting" class="rounded-2xl shadow-2xl max-w-full h-auto object-cover transform transition-transform hover:scale-[1.01] duration-500 border border-gray-100 dark:border-gray-700">
                     </div>
                 </div>
             </section>
 
             <!-- Showcase Sections -->
-            <section class="text-gray-600 body-font py-20 md:py-24">
+            <section class="text-gray-600 dark:text-gray-300 body-font py-20 md:py-24 transition-colors duration-300">
                 <div class="container mx-auto px-5 md:px-10 flex flex-col md:flex-row items-center gap-16 max-w-screen-xl">
                     <div class="md:w-1/2 flex flex-col items-center md:items-start text-center md:text-left animate-on-scroll">
-                        <h2 class="text-3xl md:text-4xl mb-6 font-medium text-gray-900 leading-tight">Meet Safely</h2>
-                        <p class="mb-8 leading-relaxed text-lg text-gray-600">
+                        <h2 class="text-3xl md:text-4xl mb-6 font-medium text-gray-900 dark:text-white leading-tight">Meet Safely</h2>
+                        <p class="mb-8 leading-relaxed text-lg text-gray-600 dark:text-gray-300">
                             All video conferences are encrypted in transit. We use industry-standard security protocols to secure your information and safeguard your privacy.
                         </p>
-                        <a href="#" class="inline-flex items-center text-blue-600 font-semibold hover:text-blue-800 transition-colors group">
+                        <a href="#" class="inline-flex items-center text-blue-600 dark:text-blue-400 font-semibold hover:text-blue-800 dark:hover:text-blue-300 transition-colors group">
                             Learn more about security 
                             <i class="fas fa-arrow-right ml-2 transform group-hover:translate-x-1 transition-transform"></i>
                         </a>
                     </div>
                     <div class="md:w-1/2 w-full flex justify-center">
-                        <img src="../images/image2.webp" alt="secure meetings" class="rounded-2xl shadow-lg hover:shadow-xl transition-shadow duration-300 w-full max-w-md object-cover">
+                        <img src="../images/image2.webp" alt="secure meetings" class="rounded-2xl shadow-lg hover:shadow-xl transition-shadow duration-300 w-full max-w-md object-cover border border-gray-100 dark:border-gray-700">
                     </div>
                 </div>
             </section>
 
-            <section class="text-gray-600 body-font py-20 md:py-24 bg-gray-50 border-y border-gray-100">
+            <section class="text-gray-600 dark:text-gray-300 body-font py-20 md:py-24 bg-gray-50 dark:bg-gray-800/50 border-y border-gray-100 dark:border-gray-800 transition-colors duration-300">
                 <div class="container mx-auto px-5 md:px-10 flex flex-col md:flex-row-reverse items-center gap-16 max-w-screen-xl">
                     <div class="md:w-1/2 flex flex-col items-center md:items-start text-center md:text-left animate-on-scroll">
-                        <h2 class="text-3xl md:text-4xl mb-6 font-medium text-gray-900 leading-tight">Meet from anywhere</h2>
-                        <p class="mb-8 leading-relaxed text-lg text-gray-600">
+                        <h2 class="text-3xl md:text-4xl mb-6 font-medium text-gray-900 dark:text-white leading-tight">Meet from anywhere</h2>
+                        <p class="mb-8 leading-relaxed text-lg text-gray-600 dark:text-gray-300">
                             Get the whole crew together in tawktoo, where you can present business proposals, collaborate on chemistry assignments, or just catch up face to face.
                         </p>
                         <ul class="list-none space-y-4 text-left">
-                            <li class="flex items-center text-gray-700">
-                                <span class="w-8 h-8 rounded-full bg-blue-100 text-blue-600 flex items-center justify-center mr-3 text-sm flex-shrink-0"><i class="fas fa-check"></i></span>
+                            <li class="flex items-center text-gray-700 dark:text-gray-300">
+                                <span class="w-8 h-8 rounded-full bg-blue-100 dark:bg-blue-900/30 text-blue-600 dark:text-blue-400 flex items-center justify-center mr-3 text-sm flex-shrink-0"><i class="fas fa-check"></i></span>
                                 High-quality video & audio
                             </li>
-                            <li class="flex items-center text-gray-700">
-                                <span class="w-8 h-8 rounded-full bg-blue-100 text-blue-600 flex items-center justify-center mr-3 text-sm flex-shrink-0"><i class="fas fa-check"></i></span>
+                            <li class="flex items-center text-gray-700 dark:text-gray-300">
+                                <span class="w-8 h-8 rounded-full bg-blue-100 dark:bg-blue-900/30 text-blue-600 dark:text-blue-400 flex items-center justify-center mr-3 text-sm flex-shrink-0"><i class="fas fa-check"></i></span>
                                 Screen sharing & messaging
                             </li>
                         </ul>
                     </div>
                     <div class="md:w-1/2 w-full flex justify-center">
                         <div class="relative">
-                            <div class="absolute -inset-4 bg-gradient-to-r from-blue-200 to-indigo-200 rounded-2xl opacity-30 blur-lg -z-10"></div>
-                            <img src="../images/image3.webp" alt="collaborate" class="rounded-2xl shadow-xl w-full max-w-lg object-cover">
+                            <div class="absolute -inset-4 bg-gradient-to-r from-blue-200 to-indigo-200 dark:from-blue-900/40 dark:to-indigo-900/40 rounded-2xl opacity-30 blur-lg -z-10"></div>
+                            <img src="../images/image3.webp" alt="collaborate" class="rounded-2xl shadow-xl w-full max-w-lg object-cover border border-gray-100 dark:border-gray-700">
                         </div>
                     </div>
                 </div>
             </section>
 
             <!-- Device Support -->
-            <section class="text-gray-600 body-font py-24 md:py-32">
+            <section class="text-gray-600 dark:text-gray-300 body-font py-24 md:py-32 transition-colors duration-300">
                 <div class="container mx-auto px-5 md:px-10 text-center max-w-screen-xl">
-                    <h2 class="text-3xl md:text-4xl mb-16 font-medium text-gray-900">Meet on any device</h2>
+                    <h2 class="text-3xl md:text-4xl mb-16 font-medium text-gray-900 dark:text-white">Meet on any device</h2>
                     <div class="grid md:grid-cols-2 gap-8 mb-16 max-w-4xl mx-auto">
-                        <div class="bg-white p-10 rounded-3xl shadow-sm border border-gray-100 hover:shadow-md transition-shadow text-center group">
-                            <div class="w-16 h-16 bg-blue-50 text-blue-600 rounded-2xl flex items-center justify-center mx-auto mb-6 text-3xl group-hover:scale-110 transition-transform duration-300">
+                        <div class="bg-white dark:bg-gray-800 p-10 rounded-3xl shadow-sm border border-gray-100 dark:border-gray-700 hover:shadow-md transition-all text-center group">
+                            <div class="w-16 h-16 bg-blue-50 dark:bg-blue-900/20 text-blue-600 dark:text-blue-400 rounded-2xl flex items-center justify-center mx-auto mb-6 text-3xl group-hover:scale-110 transition-transform duration-300">
                                 <i class="fas fa-laptop"></i>
                             </div>
-                            <h3 class="text-xl font-semibold text-gray-900 mb-3">On your computer</h3>
-                            <p class="leading-relaxed text-gray-600">Join from any modern web browser—no software to install. Just click the link and you're in.</p>
+                            <h3 class="text-xl font-semibold text-gray-900 dark:text-white mb-3">On your computer</h3>
+                            <p class="leading-relaxed text-gray-600 dark:text-gray-300">Join from any modern web browser—no software to install. Just click the link and you're in.</p>
                         </div>
-                        <div class="bg-white p-10 rounded-3xl shadow-sm border border-gray-100 hover:shadow-md transition-shadow text-center group">
-                            <div class="w-16 h-16 bg-purple-50 text-purple-600 rounded-2xl flex items-center justify-center mx-auto mb-6 text-3xl group-hover:scale-110 transition-transform duration-300">
+                        <div class="bg-white dark:bg-gray-800 p-10 rounded-3xl shadow-sm border border-gray-100 dark:border-gray-700 hover:shadow-md transition-all text-center group">
+                            <div class="w-16 h-16 bg-purple-50 dark:bg-purple-900/20 text-purple-600 dark:text-purple-400 rounded-2xl flex items-center justify-center mx-auto mb-6 text-3xl group-hover:scale-110 transition-transform duration-300">
                                 <i class="fas fa-mobile-alt"></i>
                             </div>
-                            <h3 class="text-xl font-semibold text-gray-900 mb-3">On your mobile</h3>
-                            <p class="leading-relaxed text-gray-600">Access meetings on the go with our responsive mobile web interface. Stay connected anywhere.</p>
+                            <h3 class="text-xl font-semibold text-gray-900 dark:text-white mb-3">On your mobile</h3>
+                            <p class="leading-relaxed text-gray-600 dark:text-gray-300">Access meetings on the go with our responsive mobile web interface. Stay connected anywhere.</p>
                         </div>
                     </div>
                     <div class="mt-8 relative inline-block">
-                         <div class="absolute inset-0 bg-blue-200 blur-3xl opacity-20 rounded-full"></div>
-                        <img src="../images/image4.webp" alt="any device" class="mx-auto rounded-2xl shadow-2xl max-w-4xl w-full relative z-10">
+                         <div class="absolute inset-0 bg-blue-200 dark:bg-blue-900/30 blur-3xl opacity-20 rounded-full"></div>
+                        <img src="../images/image4.webp" alt="any device" class="mx-auto rounded-2xl shadow-2xl max-w-4xl w-full relative z-10 border border-gray-100 dark:border-gray-700">
                     </div>
                 </div>
             </section>
             
             <!-- Showcase Sections Continued -->
-            <section class="text-gray-600 body-font py-20 md:py-24 bg-gradient-to-b from-white to-gray-50">
+            <section class="text-gray-600 dark:text-gray-300 body-font py-20 md:py-24 bg-gradient-to-b from-white to-gray-50 dark:from-gray-900 dark:to-gray-800/50 transition-colors duration-300">
                 <div class="container mx-auto px-5 md:px-10 flex flex-col md:flex-row items-center gap-16 max-w-screen-xl">
                     <div class="md:w-1/2 flex flex-col items-center md:items-start text-center md:text-left animate-on-scroll">
-                        <h2 class="text-3xl md:text-4xl mb-6 font-medium text-gray-900 leading-tight">Meet clearly</h2>
-                        <p class="mb-8 leading-relaxed text-lg text-gray-600">
+                        <h2 class="text-3xl md:text-4xl mb-6 font-medium text-gray-900 dark:text-white leading-tight">Meet clearly</h2>
+                        <p class="mb-8 leading-relaxed text-lg text-gray-600 dark:text-gray-300">
                             tawktoo adjusts to your network speed, ensuring high quality video calls wherever you are. Our technology keeps your calls clear even when your surroundings aren’t.
                         </p>
                     </div>
                     <div class="md:w-1/2 w-full flex justify-center">
-                        <img src="../images/image5.webp" alt="clear meetings" class="rounded-2xl shadow-lg w-full max-w-md object-cover hover:shadow-xl transition-shadow duration-300">
+                        <img src="../images/image5.webp" alt="clear meetings" class="rounded-2xl shadow-lg w-full max-w-md object-cover hover:shadow-xl transition-shadow duration-300 border border-gray-100 dark:border-gray-700">
                     </div>
                 </div>
             </section>
 
-            <section class="text-gray-600 body-font py-20 md:py-24 bg-gray-50 border-t border-gray-100">
+            <section class="text-gray-600 dark:text-gray-300 body-font py-20 md:py-24 bg-gray-50 dark:bg-gray-800/50 border-t border-gray-100 dark:border-gray-800 transition-colors duration-300">
                 <div class="container mx-auto px-5 md:px-10 flex flex-col md:flex-row-reverse items-center gap-16 max-w-screen-xl">
                     <div class="md:w-1/2 flex flex-col items-center md:items-start text-center md:text-left animate-on-scroll">
-                        <h2 class="text-3xl md:text-4xl mb-6 font-medium text-gray-900 leading-tight">Meet with everyone</h2>
-                        <p class="mb-8 leading-relaxed text-lg text-gray-600">
+                        <h2 class="text-3xl md:text-4xl mb-6 font-medium text-gray-900 dark:text-white leading-tight">Meet with everyone</h2>
+                        <p class="mb-8 leading-relaxed text-lg text-gray-600 dark:text-gray-300">
                             With advanced audio processing and clear visuals, we make meetings more accessible for everyone. Stay connected with non-native speakers, hearing impaired participants, or just join from a noisy environment.
                         </p>
                     </div>
                     <div class="md:w-1/2 w-full flex justify-center">
-                        <img src="../images/image6.webp" alt="everyone" class="rounded-2xl shadow-lg w-full max-w-md object-cover hover:shadow-xl transition-shadow duration-300">
+                        <img src="../images/image6.webp" alt="everyone" class="rounded-2xl shadow-lg w-full max-w-md object-cover hover:shadow-xl transition-shadow duration-300 border border-gray-100 dark:border-gray-700">
                     </div>
                 </div>
             </section>
         </main>
 
         <!-- footer  -->
-        <footer class="text-gray-600 body-font py-12 bg-white border-t border-gray-100">
-            <div class="container mx-auto px-5 md:px-10 flex flex-col sm:flex-row items-center max-w-screen-xl justify-between">
-                <a class="flex font-medium items-center md:justify-start justify-center text-gray-900">
-                     <span class="text-xl">tawktoo</span>
-                </a>
-                <p class="text-sm text-gray-500 sm:ml-4 sm:pl-4 sm:border-l-2 sm:border-gray-200 sm:py-2 sm:mt-0 mt-4">© 2026 tawktoo —
-                    <a href="mailto:sanketmane7170@gmail.com" class="text-gray-600 ml-1" rel="noopener noreferrer" target="_blank">Contact</a>
-                </p>
-                <div class="inline-flex sm:ml-auto sm:mt-0 mt-4 justify-center sm:justify-start">
-                    <a href="https://github.com/SanketsMane/Online-Meet-Platform" class="mx-4 text-gray-400 hover:text-gray-900 transition-colors">
-                        <i class="fab fa-github text-xl"></i>
-                    </a>
-                </div>
-            </div>
-        </footer>
+        <footer id="site-footer"></footer>
 
         <script defer src="../js/Utils.js"></script>
         <script defer src="../js/Common.js"></script>
