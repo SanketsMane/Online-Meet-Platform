@@ -70,6 +70,9 @@ dev dependencies: {
  */
 
 
+const config = require('./config');
+const { UsageLog, Feedback } = require('./db/models');
+
 if (!process.env.JWT_SECRET) {
     console.error('CRITICAL: JWT_SECRET is not defined in the environment variables. The server cannot start securely.');
     process.exit(1);
@@ -96,8 +99,6 @@ const jwt = require('jsonwebtoken');
 const fs = require('fs');
 const sanitizeFilename = require('sanitize-filename');
 const helmet = require('helmet');
-const config = require('./config');
-const { UsageLog, Feedback } = require('./db/models');
 
 // Rest API configuration
 const restApi = {
@@ -841,12 +842,9 @@ function startServer() {
         htmlInjector.injectHtml(views.whoAreYou, res);
     });
 
-    // handle login if user_auth enabled
+    // handle login
     app.get('/login', (req, res) => {
-        if (hostCfg.protected || hostCfg.user_auth) {
-            return htmlInjector.injectHtml(views.login, res);
-        }
-        res.redirect('/');
+        return htmlInjector.injectHtml(views.login, res);
     });
 
     // handle logged on host protected
