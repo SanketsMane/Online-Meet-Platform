@@ -10,6 +10,7 @@ const { v4: uuidv4 } = require('uuid');
 const config = require('../config');
 const crypto = require('crypto');
 const { validateApiKey } = require('../middleware/AuthMiddleware');
+const EmailService = require('../services/EmailService');
 
 // Register
 router.post('/auth/register', async (req, res) => {
@@ -26,6 +27,9 @@ router.post('/auth/register', async (req, res) => {
 
         const password_hash = await bcrypt.hash(password, 10);
         const tenant = await Tenant.create({ name, email, password_hash });
+
+        // Author: Sanket - Send Welcome Email
+        EmailService.sendWelcome(tenant).catch(err => console.error('Welcome email failed:', err));
 
         res.status(201).json({ message: 'Registered successfully', id: tenant.id });
     } catch (err) {
@@ -159,6 +163,14 @@ router.patch('/keys/:id', async (req, res) => {
         if (!key) return res.status(404).json({ message: 'Key not found' });
 
         await key.update({ is_active });
+
+        // Author: Sanket - Send Security Alert
+        const tenant = await Tenant.findByPk(decoded.id);
+        if (tenant) {
+            EmailService.sendSecurityAlert(tenant, is_active ? 'Activated' : 'Revoked', key.name)
+                .catch(err => console.error('Security alert email failed:', err));
+        }
+
         res.json({ message: `Key ${is_active ? 'activated' : 'deactivated'} successfully` });
     } catch (err) {
         res.status(500).json({ message: 'Failed to update key' });
@@ -173,12 +185,22 @@ router.delete('/keys/:id', async (req, res) => {
 
     try {
         const decoded = jwt.verify(token, config.security.jwt.key);
-
-        const result = await ApiKey.destroy({
+        
+        const key = await ApiKey.findOne({
             where: { id: req.params.id, tenant_id: decoded.id }
         });
 
-        if (!result) return res.status(404).json({ message: 'Key not found' });
+        if (!key) return res.status(404).json({ message: 'Key not found' });
+
+        const keyName = key.name;
+        await key.destroy();
+
+        // Author: Sanket - Send Security Alert
+        const tenant = await Tenant.findByPk(decoded.id);
+        if (tenant) {
+            EmailService.sendSecurityAlert(tenant, 'Deleted', keyName)
+                .catch(err => console.error('Security alert email failed:', err));
+        }
 
         res.json({ message: 'Key deleted successfully' });
     } catch (err) {

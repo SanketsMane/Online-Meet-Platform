@@ -3,6 +3,7 @@
 const { Tenant, ApiKey, Feedback, GlobalSetting, AuditLog, WebhookLog } = require('../db/models');
 const settingsService = require('../services/SettingsService');
 const statsService = require('../services/StatsService');
+const EmailService = require('../services/EmailService');
 const Logger = require('../Logger');
 const log = new Logger('AdminController');
 
@@ -95,6 +96,14 @@ class AdminController {
             await tenant.save();
 
             log.info(`Tenant ${id} status updated to ${status}`);
+
+            // Author: Sanket - Trigger Incidence Alert
+            EmailService.sendIncidentAlert({
+                event: 'TENANT_STATUS_CHANGE',
+                details: `Tenant ${id} status changed to ${status} by admin`,
+                severity: 'Medium'
+            }).catch(err => log.error('Incident alert failed:', err));
+
             res.json({ message: `Tenant status updated to ${status}` });
         } catch (err) {
             log.error('Error updating tenant status:', err.message);
@@ -125,6 +134,13 @@ class AdminController {
                 await settingsService.set(key, value);
             }
             res.json({ message: 'Settings updated successfully' });
+
+            // Author: Sanket - Trigger Incidence Alert
+            EmailService.sendIncidentAlert({
+                event: 'SYSTEM_SETTINGS_UPDATE',
+                details: `Global system settings were updated by admin`,
+                severity: 'Low'
+            }).catch(err => log.error('Incident alert failed:', err));
         } catch (err) {
             log.error('Error updating settings:', err.message);
             res.status(500).json({ message: 'Error updating settings' });
@@ -213,6 +229,14 @@ class AdminController {
             await apiKey.save();
             
             await logAdminAction(req, 'REVOKE_API_KEY', apiKey.prefix, `Key ID: ${id}`);
+
+            // Author: Sanket - Trigger Incidence Alert
+            EmailService.sendIncidentAlert({
+                event: 'API_KEY_REVOKED',
+                details: `API Key ${apiKey.prefix} was revoked by admin`,
+                severity: 'High'
+            }).catch(err => log.error('Incident alert failed:', err));
+
             res.json({ success: true });
         } catch (err) {
             log.error('Error revoking API key:', err.message);
@@ -245,6 +269,14 @@ class AdminController {
             if (io) {
                 io.to(id).emit('kick-peer', { message: 'This room has been closed by an administrator.' });
                 await logAdminAction(req, 'KICK_ROOM', id, 'Closed all participants');
+
+                // Author: Sanket - Trigger Incidence Alert
+                EmailService.sendIncidentAlert({
+                    event: 'ROOM_FORCE_CLOSED',
+                    details: `Room ${id} was forcefully closed by admin`,
+                    severity: 'Medium'
+                }).catch(err => log.error('Incident alert failed:', err));
+
                 res.json({ success: true });
             } else {
                 res.status(503).json({ message: 'Socket service unavailable' });

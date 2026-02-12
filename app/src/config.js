@@ -2,10 +2,10 @@
 
 /**
  * ==============================================
- * tawktoo SFU v2.1.06 - Configuration File
+ * Kidokool SFU v2.1.06 - Configuration File
  * ==============================================
  *
- * This file contains all configurable settings for the tawktoo SFU application.
+ * This file contains all configurable settings for the Kidokool SFU application.
  * Environment variables can override most settings (see each section for details).
  *
  * Structure:
@@ -44,8 +44,7 @@ const IPv4 = getIPv4();
 const RTC_MIN_PORT = parseInt(process.env.SFU_MIN_PORT) || 40000;
 const RTC_MAX_PORT = parseInt(process.env.SFU_MAX_PORT) || 40100;
 const NUM_CPUS = os.cpus().length;
-const SFU_NUM_WORKERS = parseInt(process.env.SFU_NUM_WORKERS);
-const NUM_WORKERS = !isNaN(SFU_NUM_WORKERS) && SFU_NUM_WORKERS > 0 ? Math.min(SFU_NUM_WORKERS, NUM_CPUS) : NUM_CPUS;
+const NUM_WORKERS = Math.min(process.env.SFU_NUM_WORKERS || NUM_CPUS, NUM_CPUS);
 
 // ==============================================
 // 3. FFmpeg Path Configuration
@@ -183,7 +182,6 @@ module.exports = {
             uploadToS3: process.env.RECORDING_UPLOAD_TO_S3 === 'true',
             endpoint: process.env.RECORDING_ENDPOINT || '',
             dir: process.env.RECORDING_DIR || '../rec',
-            format: process.env.RECORDING_FORMAT || 'webm', // webm or mp4
             maxFileSize: process.env.RECORDING_MAX_FILE_SIZE || 1 * 1024 * 1024 * 1024, // 1GB
         },
 
@@ -204,7 +202,7 @@ module.exports = {
          * - appName            : Application name (default: 'live')
          * - streamKey          : Optional authentication key (auto-generated UUID if empty)
          * - secret             : Must match NodeMediaServer's config.js (default: 'kidokoolRtmpSecret')
-         * - apiSecret          : WebRTC→RTMP API secret (default: 'kidokoolRtmpApiSecret')
+         * - apiSecret          : WebRTC→RTMP API secret (default: 'tawktooRtmpApiSecret')
          * - expirationHours    : Stream URL expiry in hours (default: 4)
          * - dir                : Video storage directory (Relative to app/src/ default: app/rtmp)
          * - ffmpegPath         : FFmpeg binary path (auto-detected)
@@ -254,7 +252,7 @@ module.exports = {
             appName: process.env.RTMP_APP_NAME || 'live',
             streamKey: process.env.RTMP_STREAM_KEY || '',
             secret: process.env.RTMP_SECRET || 'kidokoolRtmpSecret',
-            apiSecret: process.env.RTMP_API_SECRET || 'kidokoolRtmpApiSecret',
+            apiSecret: process.env.RTMP_API_SECRET || 'tawktooRtmpApiSecret',
             expirationHours: parseInt(process.env.RTMP_EXPIRATION_HOURS) || 4,
             dir: process.env.RTMP_DIR || '../rtmp',
             ffmpegPath: RTMP_FFMPEG_PATH,
@@ -417,8 +415,7 @@ module.exports = {
          * https://docs.kidokool.com/kidokool-sfu/host-protection/
          */
         host: {
-            // Author: Sanket - Enable host protection for admin authentication
-            protected: process.env.HOST_PROTECTED !== 'false',
+            protected: process.env.HOST_PROTECTED === 'true',
             user_auth: process.env.HOST_USER_AUTH === 'true',
 
             maxAttempts: process.env.HOST_MAX_LOGIN_ATTEMPTS || 5,
@@ -449,13 +446,24 @@ module.exports = {
                       };
                   })
                 : [
-                      // Author: Sanket - Single admin user configuration
                       {
-                          username: 'bksun170882@gmail.com',
-                          password: 'Kidokool@3030',
-                          displayname: 'Admin',
+                          username: 'username',
+                          password: 'password',
+                          displayname: 'username displayname',
                           allowed_rooms: ['*'],
                       },
+                      {
+                          username: 'username2',
+                          password: 'password2',
+                          displayname: 'username2 displayname',
+                          allowed_rooms: ['room1', 'room2'],
+                      },
+                      {
+                          username: 'username3',
+                          password: 'password3',
+                          displayname: 'username3 displayname',
+                      },
+                      //...
                   ],
 
             presenters: {
@@ -463,7 +471,7 @@ module.exports = {
                     ? process.env.PRESENTERS.split(splitChar)
                           .map((presenter) => presenter.trim())
                           .filter((presenter) => presenter !== '')
-                    : ['Miroslav Pejic', 'miroslav.pejic.85@gmail.com'],
+                    : ['Sanket Mane', 'sanketmane7170@gmail.com'],
                 join_first: process.env.PRESENTER_JOIN_FIRST !== 'false',
             },
         },
@@ -672,9 +680,9 @@ module.exports = {
             notify: process.env.EMAIL_NOTIFICATIONS === 'true',
             host: process.env.EMAIL_HOST || 'smtp.gmail.com',
             port: parseInt(process.env.EMAIL_PORT) || 587,
-            username: process.env.EMAIL_USERNAME || 'your_username',
-            password: process.env.EMAIL_PASSWORD || 'your_password',
-            from: process.env.EMAIL_FROM || process.env.EMAIL_USERNAME,
+            username: process.env.EMAIL_USER || 'your_username',
+            password: process.env.EMAIL_PASS || 'your_password',
+            from: process.env.EMAIL_FROM || process.env.EMAIL_USER,
             sendTo: process.env.EMAIL_SEND_TO || 'sfu.kidokool@gmail.com',
         },
 
@@ -1001,15 +1009,15 @@ module.exports = {
 
             app: {
                 language: process.env.UI_LANGUAGE || 'en',
-                name: process.env.APP_NAME || 'tawktoo',
+                name: process.env.APP_NAME || 'Kidokool SFU',
                 title:
                     process.env.APP_TITLE ||
-                    'Premium video meetings. <br />Now free for everyone.',
+                    '<h1>tawktoo</h1> Free browser based Real-time video calls.<br />Simple, Secure, Fast.',
                 description:
                     process.env.APP_DESCRIPTION ||
-                    'We re-engineered the service we built for secure business meetings, tawktoo, to make it free and available for all.',
+                    'Start your next video call with a single click. No download, plug-in, or login is required.',
                 joinDescription: process.env.JOIN_DESCRIPTION || 'Pick a room name.<br />How about this one?',
-                joinButtonLabel: process.env.JOIN_BUTTON_LABEL || 'Join',
+                joinButtonLabel: process.env.JOIN_BUTTON_LABEL || 'JOIN ROOM',
                 customizeButtonLabel: process.env.CUSTOMIZE_BUTTON_LABEL || 'CUSTOMIZE ROOM',
                 joinLastLabel: process.env.JOIN_LAST_LABEL || 'Your recent room:',
             },
@@ -1020,7 +1028,7 @@ module.exports = {
              * Site-wide settings including icons and page-specific content.
              */
             site: {
-                title: process.env.SITE_TITLE || 'tawktoo, Free Video Calls, Messaging and Screen Sharing',
+                title: process.env.SITE_TITLE || 'Kidokool SFU, Free Video Calls, Messaging and Screen Sharing',
                 icon: process.env.SITE_ICON_PATH || '../images/logo.svg',
                 appleTouchIcon: process.env.APPLE_TOUCH_ICON_PATH || '../images/logo.svg',
                 newRoomTitle: process.env.NEW_ROOM_TITLE || 'Pick name. <br />Share URL. <br />Start conference.',
@@ -1036,8 +1044,8 @@ module.exports = {
             meta: {
                 description:
                     process.env.META_DESCRIPTION ||
-                    'tawktoo powered by WebRTC and mediasoup for real-time video communications.',
-                keywords: process.env.META_KEYWORDS || 'webrtc, video calls, conference, screen sharing, tawktoo, sfu',
+                    'Kidokool SFU powered by WebRTC and mediasoup for real-time video communications.',
+                keywords: process.env.META_KEYWORDS || 'webrtc, video calls, conference, screen sharing, kidokool, sfu',
             },
 
             /**
@@ -1047,12 +1055,12 @@ module.exports = {
              */
             og: {
                 type: process.env.OG_TYPE || 'app-webrtc',
-                siteName: process.env.OG_SITE_NAME || 'tawktoo',
+                siteName: process.env.OG_SITE_NAME || 'Kidokool SFU',
                 title: process.env.OG_TITLE || 'Click the link to make a call.',
                 description:
-                    process.env.OG_DESCRIPTION || 'tawktoo provides real-time video calls and screen sharing.',
-                image: process.env.OG_IMAGE_URL || 'https://tawktoo.com/images/tawktoosfu.png',
-                url: process.env.OG_URL || 'https://sfu.tawktoo.com',
+                    process.env.OG_DESCRIPTION || 'Kidokool SFU provides real-time video calls and screen sharing.',
+                image: process.env.OG_IMAGE_URL || 'https://sfu.kidokool.com/images/kidokoolsfu.png',
+                url: process.env.OG_URL || 'https://sfu.kidokool.com',
             },
 
             /**
@@ -1062,14 +1070,14 @@ module.exports = {
              * Set to 'false' via environment variables to hide.
              */
             html: {
-                topSponsors: process.env.SHOW_TOP_SPONSORS === 'true',
+                topSponsors: process.env.SHOW_TOP_SPONSORS !== 'false',
                 features: process.env.SHOW_FEATURES !== 'false',
-                teams: process.env.SHOW_TEAMS === 'true',
-                tryEasier: process.env.SHOW_TRY_EASIER === 'true',
-                poweredBy: process.env.SHOW_POWERED_BY === 'true',
-                sponsors: process.env.SHOW_SPONSORS === 'true',
-                advertisers: process.env.SHOW_ADVERTISERS === 'true',
-                supportUs: process.env.SHOW_SUPPORT_US === 'true',
+                teams: process.env.SHOW_TEAMS !== 'false',
+                tryEasier: process.env.SHOW_TRY_EASIER !== 'false',
+                poweredBy: process.env.SHOW_POWERED_BY !== 'false',
+                sponsors: process.env.SHOW_SPONSORS !== 'false',
+                advertisers: process.env.SHOW_ADVERTISERS !== 'false',
+                supportUs: process.env.SHOW_SUPPORT_US !== 'false',
                 footer: process.env.SHOW_FOOTER !== 'false',
             },
 
@@ -1095,30 +1103,30 @@ module.exports = {
              * Supports HTML content for flexible formatting.
              */
             about: {
-                imageUrl: process.env.ABOUT_IMAGE_URL || '../images/logo.svg',
+                imageUrl: process.env.ABOUT_IMAGE_URL || '../images/kidokool-logo.gif',
                 title: `WebRTC SFU v${packageJson.version}`,
                 html: `
                     <button id="support-button" data-umami-event="Support button"
-                        onclick="window.open('${process.env.SUPPORT_URL || 'mailto:support@tawktoo.com'}', '_blank')">
+                        onclick="window.open('${process.env.SUPPORT_URL || 'mailto:sanketmane7170@gmail.com'}', '_blank')">
                         <i class="fas fa-heart"></i> ${process.env.SUPPORT_TEXT || 'Support'}
                     </button>
                     <br />
                     <br />
                     ${process.env.AUTHOR_LABEL || 'Author'}: 
                     <a id="linkedin-button" data-umami-event="Linkedin button"
-                        href="${process.env.LINKEDIN_URL || 'https://www.linkedin.com/in/sanket-mane'}" 
+                        href="${process.env.LINKEDIN_URL || 'https://github.com/SanketsMane'}" 
                         target="_blank">
                         ${process.env.AUTHOR_NAME || 'Sanket Mane'}
                     </a>
                     <br />
                     ${process.env.EMAIL_LABEL || 'Email'}: 
                     <a id="email-button" data-umami-event="Email button"
-                        href="mailto:${process.env.CONTACT_EMAIL || 'support@tawktoo.com'}?subject=${process.env.EMAIL_SUBJECT || 'tawktoo SFU info'}">
-                        ${process.env.CONTACT_EMAIL || 'support@tawktoo.com'}
+                        href="mailto:${process.env.CONTACT_EMAIL || 'sanketmane7170@gmail.com'}?subject=${process.env.EMAIL_SUBJECT || 'Kidokool SFU info'}">
+                        ${process.env.CONTACT_EMAIL || 'sanketmane7170@gmail.com'}
                     </a>
                     <hr />
                     <span>
-                        &copy; ${new Date().getFullYear()} ${process.env.COPYRIGHT_TEXT || 'tawktoo, all rights reserved'}
+                        &copy; ${new Date().getFullYear()} ${process.env.COPYRIGHT_TEXT || 'Kidokool SFU, all rights reserved'}
                     </span>
                     <hr />
                     `,
@@ -1161,7 +1169,7 @@ module.exports = {
                         connectText: process.env.WIDGET_SUPPORT_CONNECT_TEXT || 'connect in < 5 seconds',
                         onlineText: process.env.WIDGET_SUPPORT_ONLINE_TEXT || 'We are online',
                         offlineText: process.env.WIDGET_SUPPORT_OFFLINE_TEXT || 'We are offline',
-                        poweredBy: process.env.WIDGET_SUPPORT_POWERED_BY || 'Powered by tawktoo',
+                        poweredBy: process.env.WIDGET_SUPPORT_POWERED_BY || 'Powered by Kidokool SFU',
                     },
                 },
                 alert: {
@@ -1370,8 +1378,8 @@ module.exports = {
          * - id           : Your website ID from Umami
          */
         stats: {
-            enabled: process.env.STATS_ENABLED === 'true',
-            src: process.env.STATS_SRC || 'https://analytics.tawktoo.com/script.js',
+            enabled: process.env.STATS_ENABLED !== 'false',
+            src: process.env.STATS_SRC || 'https://stats.kidokool.com/script.js',
             id: process.env.STATS_ID || '41d26670-f275-45bb-af82-3ce91fe57756',
         },
     },

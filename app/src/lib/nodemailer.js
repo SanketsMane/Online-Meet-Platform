@@ -13,6 +13,7 @@ const APP_NAME = config.ui.brand.app.name || 'Kidokool SFU';
 // ####################################################
 
 const emailConfig = config.integrations?.email || {};
+const EMAIL_SERVICE = process.env.EMAIL_SERVICE || false;
 const EMAIL_ALERT = emailConfig.alert || false;
 const EMAIL_NOTIFY = emailConfig.notify || false;
 const EMAIL_HOST = emailConfig.host || false;
@@ -22,28 +23,43 @@ const EMAIL_PASSWORD = emailConfig.password || false;
 const EMAIL_FROM = emailConfig.from || emailConfig.username;
 const EMAIL_SEND_TO = emailConfig.sendTo || false;
 
-if ((EMAIL_ALERT || EMAIL_NOTIFY) && EMAIL_HOST && EMAIL_PORT && EMAIL_USERNAME && EMAIL_PASSWORD && EMAIL_SEND_TO) {
-    log.info('Email', {
-        alert: EMAIL_ALERT,
-        notify: EMAIL_NOTIFY,
+if ((EMAIL_ALERT || EMAIL_NOTIFY) && EMAIL_USERNAME && EMAIL_PASSWORD) {
+    log.info('Email System Initialized', {
+        service: EMAIL_SERVICE,
         host: EMAIL_HOST,
         port: EMAIL_PORT,
-        username: EMAIL_USERNAME,
-        password: EMAIL_PASSWORD,
+        user: EMAIL_USERNAME,
         from: EMAIL_FROM,
-        to: EMAIL_SEND_TO,
+        alerts_enabled: EMAIL_ALERT,
+        notifications_enabled: EMAIL_NOTIFY
     });
 }
 
-const IS_TLS_PORT = EMAIL_PORT === 465;
-const transport = nodemailer.createTransport({
-    host: EMAIL_HOST,
-    port: EMAIL_PORT,
-    secure: IS_TLS_PORT,
+const transportOptions = EMAIL_SERVICE ? {
+    service: EMAIL_SERVICE,
     auth: {
         user: EMAIL_USERNAME,
         pass: EMAIL_PASSWORD,
     },
+} : {
+    host: EMAIL_HOST,
+    port: EMAIL_PORT,
+    secure: EMAIL_PORT === 465,
+    auth: {
+        user: EMAIL_USERNAME,
+        pass: EMAIL_PASSWORD,
+    },
+};
+
+const transport = nodemailer.createTransport(transportOptions);
+
+// Verify connection configuration
+transport.verify(function (error, success) {
+    if (error) {
+        log.error('SMTP Connection Error', error);
+    } else {
+        log.info('SMTP Server reached successfully');
+    }
 });
 
 // ####################################################
@@ -261,4 +277,5 @@ function getCurrentDataTime() {
 module.exports = {
     sendEmailAlert,
     sendEmailNotifications,
+    sendEmail,
 };
