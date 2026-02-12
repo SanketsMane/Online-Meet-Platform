@@ -687,6 +687,11 @@
                 <i class="fas fa-sliders-h"></i>
                 <span class="nav-text">Settings</span>
             </div>
+            <div class="nav-item" data-module="footer">
+                <i class="fas fa-compass"></i>
+                <span class="nav-text">Site Branding</span>
+            </div>
+
         </nav>
         <div class="sidebar-footer">
             <div class="nav-item" onclick="logout()">
@@ -1101,6 +1106,13 @@
                                     </div>
                                 </div>
                                 <div class="form-control">
+                                    <label>Logo Size (Width: <span id="logo_size_value">150px</span>)</label>
+                                    <div class="input-group">
+                                        <i class="fas fa-ruler-horizontal"></i>
+                                        <input type="range" id="setting_logo_width" min="50" max="300" step="10" value="150" style="flex:1; cursor: pointer;" oninput="document.getElementById('logo_size_value').innerText = this.value + 'px'" />
+                                    </div>
+                                </div>
+                                <div class="form-control">
                                     <label>Favicon URL</label>
                                     <div class="input-group">
                                         <i class="fas fa-globe"></i>
@@ -1284,6 +1296,7 @@
             if (moduleId === 'audit') loadAuditLogs();
             if (moduleId === 'settings') loadSettings();
             if (moduleId === 'footer') loadFooterSettings();
+
         }
 
         function showLogin() {
@@ -1730,7 +1743,26 @@
                         if (text) text.value = v || '#0270d7';
                     }
                 }
+                
+                if (s.LOGO_CONFIG) {
+                     const width = s.LOGO_CONFIG.width ? parseInt(s.LOGO_CONFIG.width) : 150;
+                     const slider = document.getElementById('setting_logo_width');
+                     if (slider) {
+                         slider.value = width;
+                         document.getElementById('logo_size_value').innerText = width + 'px';
+                     }
+                }
+
                 applyBranding(s);
+                
+                if (s.LOGO_CONFIG) {
+                     const width = s.LOGO_CONFIG.width ? parseInt(s.LOGO_CONFIG.width) : 150;
+                     const slider = document.getElementById('setting_logo_width');
+                     if (slider) {
+                         slider.value = width;
+                         document.getElementById('logo_size_value').innerText = width + 'px';
+                     }
+                }
             } catch (e) { console.error('Settings error:', e); }
         }
 
@@ -1785,8 +1817,13 @@
                 app_name: document.getElementById('setting_app_name').value,
                 brand_color: document.getElementById('setting_brand_color').value,
                 logo_url: document.getElementById('setting_logo_url').value,
-                favicon_url: document.getElementById('setting_favicon_url').value
+                favicon_url: document.getElementById('setting_favicon_url').value,
+                
+                LOGO_CONFIG: {
+                    width: document.getElementById('setting_logo_width').value + 'px'
+                }
             };
+
 
             try {
                 await axios.put(`${API_BASE}/settings`, payload, {

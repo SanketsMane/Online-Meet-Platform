@@ -162,6 +162,9 @@ async function initialize() {
     customizeWidget();
 
     customizeWhoAreYou();
+    
+    customizeLogo();
+    customizeFooter();
 
     checkBrand();
 }
@@ -315,6 +318,47 @@ function customizeWhoAreYou() {
     }
     if (guestJoinRoomButton && BRAND.whoAreYou?.buttonJoinLabel) {
         guestJoinRoomButton.textContent = BRAND.whoAreYou.buttonJoinLabel;
+    }
+}
+
+function customizeLogo() {
+    if (BRAND.logo_config?.width) {
+        const width = BRAND.logo_config.width;
+        // Target all logo images that match common patterns
+        const images = document.querySelectorAll('header img[src*="logo"], .sidebar-logo, img[alt*="logo" i]');
+        images.forEach(img => {
+            img.style.width = width;
+            img.style.height = 'auto'; 
+        });
+    }
+}
+
+function customizeFooter() {
+    const footerEl = document.getElementById('site-footer');
+    if (footerEl && BRAND.footer_config) {
+        const { copyright, links, contactEmail } = BRAND.footer_config;
+        
+        let linksHtml = '';
+        if (links && Array.isArray(links)) {
+            linksHtml = links.map(l => 
+                `<a href="${l.url}" class="text-sm text-gray-500 hover:text-blue-600 transition-colors">${l.label}</a>`
+            ).join('');
+        }
+
+        if (contactEmail) {
+            linksHtml += `<a href="mailto:${contactEmail}" class="text-sm text-gray-500 hover:text-blue-600 transition-colors"><i class="fas fa-envelope mr-1"></i> Contact</a>`;
+        }
+
+        footerEl.innerHTML = `
+            <div class="container mx-auto px-5 md:px-10 flex flex-col md:flex-row items-center justify-between py-6 border-t border-gray-100 dark:border-gray-800 mt-10">
+                <div class="text-sm text-gray-500 text-center md:text-left mb-4 md:mb-0">
+                    ${copyright || '&copy; 2026 tawktoo'}
+                </div>
+                <div class="flex flex-wrap justify-center md:justify-end items-center gap-6">
+                    ${linksHtml}
+                </div>
+            </div>
+        `;
     }
 }
 

@@ -622,29 +622,28 @@ function startServer() {
     // Author: Sanket - Brand configuration
     app.get('/brand', async (req, res) => {
         try {
-            const dbSettings = await GlobalSetting.findAll();
+            const settings = await settingsService.getAll();
             const branding = JSON.parse(JSON.stringify(config.ui.brand)); 
             
-            dbSettings.forEach(s => {
-                const val = s.value;
-                if (s.key === 'app_name' && branding.app) {
-                    branding.app.name = val;
-                    if (branding.site) {
-                        branding.site.title = val + ' - Free Video Calls, Messaging and Screen Sharing';
-                    }
+            if (settings.app_name && branding.app) {
+                branding.app.name = settings.app_name;
+                if (branding.site) {
+                    branding.site.title = settings.app_name + ' - Free Video Calls, Messaging and Screen Sharing';
                 }
-                if (s.key === 'logo_url' && branding.site) {
-                    branding.site.icon = val;
-                    branding.site.appleTouchIcon = val;
-                    if (branding.about) branding.about.imageUrl = val;
-                }
-                if (s.key === 'favicon_url' && branding.site) {
-                    branding.site.icon = val;
-                }
-                if (s.key === 'brand_color') {
-                    branding.brand_color = val; // Passing this to Brand.js
-                }
-            });
+            }
+            if (settings.logo_url && branding.site) {
+                branding.site.icon = settings.logo_url;
+                branding.site.appleTouchIcon = settings.logo_url;
+                if (branding.about) branding.about.imageUrl = settings.logo_url;
+            }
+            if (settings.favicon_url && branding.site) {
+                branding.site.icon = settings.favicon_url;
+            }
+            if (settings.brand_color) {
+                branding.brand_color = settings.brand_color;
+            }
+            if (settings.LOGO_CONFIG) branding.logo_config = settings.LOGO_CONFIG;
+            if (settings.FOOTER_CONFIG) branding.footer_config = settings.FOOTER_CONFIG;
 
             res.status(200).json({ message: brandHtmlInjection ? branding : false });
         } catch (e) {

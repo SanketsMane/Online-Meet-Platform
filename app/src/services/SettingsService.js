@@ -58,6 +58,11 @@ class SettingsService {
             'DEEPSEEK_ENABLED',
             'DEEPSEEK_API_KEY',
             'FOOTER_CONFIG',
+            'LOGO_CONFIG',
+            'app_name',
+            'logo_url',
+            'favicon_url',
+            'brand_color',
         ];
 
         const settings = {};
@@ -112,6 +117,10 @@ class SettingsService {
                         { label: 'About', url: '/about' },
                         { label: 'Privacy', url: '/privacy' }
                     ]
+                };
+            case 'LOGO_CONFIG':
+                return {
+                    width: '150px'
                 };
             default:
                 return null;
