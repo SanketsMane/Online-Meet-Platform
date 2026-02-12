@@ -18,22 +18,30 @@ const validateApiKey = async (req, res, next) => {
     try {
         const [prefix, secret] = apiKey.split('.');
         if (!prefix || !secret) {
-            return res.status(401).json({ message: 'Invalid API Key format' });
+            return res.status(401).json({ message: 'Invalid API Key format. Expected prefix.secret' });
         }
 
         const keyRecord = await ApiKey.findOne({
-            where: { prefix: prefix, is_active: true },
+            where: { prefix: prefix },
             include: [{ model: Tenant, as: 'Tenant' }],
         });
 
-        if (!keyRecord || !keyRecord.Tenant) {
-            return res.status(401).json({ message: 'Invalid API Key' });
+        if (!keyRecord) {
+            return res.status(401).json({ message: 'API Key not found' });
+        }
+
+        if (!keyRecord.is_active) {
+            return res.status(401).json({ message: 'API Key is deactivated' });
+        }
+
+        if (!keyRecord.Tenant) {
+            return res.status(401).json({ message: 'Owner tenant not found' });
         }
 
         // Validate Hash
         const hash = crypto.createHash('sha256').update(apiKey).digest('hex');
         if (hash !== keyRecord.key_hash) {
-            return res.status(401).json({ message: 'Invalid API Key' });
+            return res.status(401).json({ message: 'Invalid API Key secret' });
         }
 
         if (keyRecord.Tenant.status !== 'active') {

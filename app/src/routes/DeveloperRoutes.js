@@ -142,4 +142,48 @@ router.get('/keys', async (req, res) => {
     }
 });
 
+// Author: Sanket - Toggle Key Active Status
+router.patch('/keys/:id', async (req, res) => {
+    const authHeader = req.headers['authorization'];
+    const token = authHeader && authHeader.split(' ')[1];
+    if (!token) return res.status(401).json({ message: 'Unauthorized' });
+
+    try {
+        const decoded = jwt.verify(token, config.security.jwt.key);
+        const { is_active } = req.body;
+
+        const key = await ApiKey.findOne({
+            where: { id: req.params.id, tenant_id: decoded.id }
+        });
+
+        if (!key) return res.status(404).json({ message: 'Key not found' });
+
+        await key.update({ is_active });
+        res.json({ message: `Key ${is_active ? 'activated' : 'deactivated'} successfully` });
+    } catch (err) {
+        res.status(500).json({ message: 'Failed to update key' });
+    }
+});
+
+// Author: Sanket - Delete API Key
+router.delete('/keys/:id', async (req, res) => {
+    const authHeader = req.headers['authorization'];
+    const token = authHeader && authHeader.split(' ')[1];
+    if (!token) return res.status(401).json({ message: 'Unauthorized' });
+
+    try {
+        const decoded = jwt.verify(token, config.security.jwt.key);
+
+        const result = await ApiKey.destroy({
+            where: { id: req.params.id, tenant_id: decoded.id }
+        });
+
+        if (!result) return res.status(404).json({ message: 'Key not found' });
+
+        res.json({ message: 'Key deleted successfully' });
+    } catch (err) {
+        res.status(500).json({ message: 'Failed to delete key' });
+    }
+});
+
 module.exports = router;
