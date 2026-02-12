@@ -40,9 +40,9 @@ let BRAND = {
     app: {
         language: 'en',
         name: 'tawktoo',
-        title: 'tawktoo<br />Free browser based Real-time video calls.<br />Simple, Secure, Fast.',
+        title: 'Premium video meetings. <br />Now free for everyone.',
         description:
-            'Start your next video call with a single click. No download, plug-in, or login is required. Just get straight to talking, messaging, and sharing your screen.',
+            'We re-engineered the service we built for secure business meetings, tawktoo, to make it free and available for all.',
         joinDescription: 'Pick a room name.<br />How about this one?',
         joinButtonLabel: 'JOIN ROOM',
         customizeButtonLabel: 'CUSTOMIZE ROOM',

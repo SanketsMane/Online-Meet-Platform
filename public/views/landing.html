@@ -142,18 +142,6 @@
                      <!-- Date & Time -->
                     <div id="headerDateTime" class="hidden xl:block text-lg text-gray-500 font-normal mr-2"></div>
 
-                    <!-- Icons (Hidden on small mobile) -->
-                    <div class="hidden md:flex items-center gap-2 text-gray-500">
-                        <button class="p-2.5 hover:bg-gray-100 rounded-full transition-colors focus:outline-none" title="Support">
-                            <i class="far fa-question-circle text-xl"></i>
-                        </button>
-                        <button class="p-2.5 hover:bg-gray-100 rounded-full transition-colors focus:outline-none" title="Feedback">
-                            <i class="far fa-comment-alt text-xl"></i>
-                        </button>
-                        <button class="p-2.5 hover:bg-gray-100 rounded-full transition-colors focus:outline-none" title="Settings">
-                            <i class="fas fa-cog text-xl"></i>
-                        </button>
-                    </div>
 
                     <!-- Theme Toggle -->
                     <button id="themeToggle" class="p-2.5 rounded-full text-gray-500 hover:bg-gray-100 transition-colors focus:outline-none">
@@ -184,16 +172,18 @@
                             We re-engineered the service we built for secure business meetings, tawktoo, to make it free and available for all.
                         </p>
                         
-                        <div class="flex flex-col sm:flex-row items-center gap-4 w-full max-w-xl">
-                            <button type="button" id="genRoomButton" class="w-full sm:w-auto inline-flex items-center justify-center bg-blue-600 text-white border-0 py-3 px-6 focus:outline-none hover:bg-blue-700 hover:shadow-md rounded text-base font-medium transition-all duration-200">
-                                <i class="fa-solid fa-video mr-3"></i>
+                        <div class="flex flex-col sm:flex-row items-center gap-3 w-full max-w-xl">
+                            <button type="button" id="genRoomButton" class="w-full sm:w-auto inline-flex items-center justify-center bg-blue-600 text-white border-0 py-3 px-5 focus:outline-none hover:bg-blue-700 hover:shadow-md rounded text-base font-medium transition-all duration-200">
+                                <i class="fa-solid fa-video mr-2"></i>
                                 New meeting
                             </button>
                             
-                            <div class="flex items-center w-full sm:w-auto flex-grow relative max-w-xs">
-                                <span class="absolute left-3 text-gray-500 pointer-events-none text-lg"><i class="fas fa-keyboard"></i></span>
-                                <input type="text" id="roomName" class="w-full py-3 pl-10 pr-16 text-base bg-white border border-gray-300 rounded focus:ring-2 focus:ring-blue-200 focus:border-blue-600 outline-none transition-all placeholder-gray-500 text-gray-700" placeholder="Enter a code or link" maxlength="32">
-                                <button id="joinRoomButton" class="absolute right-2 top-1/2 transform -translate-y-1/2 text-gray-400 font-medium cursor-not-allowed px-2 py-1 transition-colors" disabled>Join</button>
+                            <div class="flex items-center w-full sm:w-auto flex-grow relative gap-2">
+                                <div class="relative w-full">
+                                    <span class="absolute left-3 top-1/2 transform -translate-y-1/2 text-gray-500 pointer-events-none text-xl"><i class="fas fa-keyboard"></i></span>
+                                    <input type="text" id="roomName" class="w-full py-3 pl-11 pr-4 text-base bg-white border border-gray-300 rounded focus:ring-2 focus:ring-blue-100 focus:border-blue-600 outline-none transition-all placeholder-gray-500 text-gray-700" placeholder="Enter a code or link" maxlength="32">
+                                </div>
+                                <button id="joinRoomButton" class="hidden sm:inline-flex text-blue-600 font-semibold hover:bg-blue-50 px-4 py-2 rounded transition-colors disabled:opacity-50 disabled:cursor-not-allowed whitespace-nowrap h-full" disabled>Join</button>
                             </div>
                         </div>
 
@@ -345,6 +335,8 @@
             document.addEventListener('DOMContentLoaded', function() {
                 const header_join_btn = document.getElementById("header_join_btn")
                 const roomNameInput = document.getElementById("roomName");
+                const joinRoomButton = document.getElementById("joinRoomButton");
+
                 if (header_join_btn && roomNameInput) {
                     header_join_btn.addEventListener("click", function() {
                         if (roomNameInput) {
@@ -352,6 +344,28 @@
                             roomNameInput.scrollIntoView({ behavior: 'smooth', block: 'center' });
                         }
                     })
+                }
+
+                if (roomNameInput && joinRoomButton) {
+                    // Check initial state (in case of browser autofill or typewriter)
+                    if (roomNameInput.value.trim().length > 0) {
+                        joinRoomButton.disabled = false;
+                    }
+
+                    roomNameInput.addEventListener("input", function() {
+                        joinRoomButton.disabled = this.value.trim().length === 0;
+                    });
+                    
+                    // Also check periodically for the typewriter effect
+                    const checkInterval = setInterval(() => {
+                        if (document.activeElement !== roomNameInput && roomNameInput.value.trim().length > 0) {
+                            joinRoomButton.disabled = false;
+                            clearInterval(checkInterval);
+                        }
+                    }, 500);
+                     
+                     // Stop checking if user interacts
+                     roomNameInput.addEventListener("focus", () => clearInterval(checkInterval));
                 }
 
                 // Header Date/Time
