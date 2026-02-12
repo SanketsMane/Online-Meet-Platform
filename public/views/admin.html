@@ -7,11 +7,11 @@
     <meta http-equiv="Cache-Control" content="no-cache, no-store, must-revalidate">
     <meta http-equiv="Pragma" content="no-cache">
     <meta http-equiv="Expires" content="0">
-    <title>tawktoo - Admin Dashboard</title>
+    <title>Kidokool - Professional Admin Dashboard</title>
     <link rel="shortcut icon" href="../images/logo.svg" />
     
     <!-- Fonts and Icons -->
-    <link rel="stylesheet" href="https://fonts.googleapis.com/css?family=IBM+Plex+Sans:400,600" />
+    <link rel="stylesheet" href="https://fonts.googleapis.com/css?family=IBM+Plex+Sans:400,500,600&display=swap" />
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.2/css/all.min.css" />
     <link rel="stylesheet" href="/css/landing.css">
     
@@ -21,231 +21,308 @@
     <script src="https://cdn.jsdelivr.net/npm/axios/dist/axios.min.js"></script>
     <script defer src="https://cdn.jsdelivr.net/npm/sweetalert2@11.4.8"></script>
 
-    <!-- Author: Sanket - Professional admin dashboard styles -->
+    <!-- Author: Sanket - Premium production-grade admin styles -->
     <style>
+        :root {
+            --sidebar-width: 260px;
+            --sidebar-collapsed-width: 80px;
+            --sidebar-bg: rgba(255, 255, 255, 0.05);
+            --header-height: 70px;
+            --transition-speed: 0.3s;
+            --primary-gradient: linear-gradient(135deg, #0270d7 0%, #0056b3 100%);
+            --glass-bg: rgba(255, 255, 255, 0.03);
+            --active-item-bg: rgba(2, 112, 215, 0.1);
+        }
+
+        [data-theme='light'] :root {
+            --sidebar-bg: #f8f9fa;
+            --glass-bg: #ffffff;
+            --active-item-bg: rgba(2, 112, 215, 0.05);
+        }
+
         body {
             background: var(--bg-color);
             font-family: 'IBM Plex Sans', sans-serif;
             margin: 0;
             padding: 0;
+            overflow-x: hidden;
+            display: flex;
+            min-height: 100vh;
         }
 
-        /* Header Styles */
-        .site-header {
-            position: sticky;
+        /* Sidebar Styles */
+        .sidebar {
+            width: var(--sidebar-width);
+            background: var(--sidebar-bg);
+            border-right: 1px solid var(--divider-color);
+            height: 100vh;
+            position: fixed;
+            left: 0;
             top: 0;
-            z-index: 1000;
+            z-index: 1001;
+            transition: width var(--transition-speed) cubic-bezier(0.4, 0, 0.2, 1);
+            backdrop-filter: blur(20px);
+            display: flex;
+            flex-direction: column;
+            overflow: hidden;
+        }
+
+        .sidebar.collapsed {
+            width: var(--sidebar-collapsed-width);
+        }
+
+        .sidebar-header {
+            height: var(--header-height);
+            display: flex;
+            align-items: center;
+            padding: 0 24px;
+            border-bottom: 1px solid var(--divider-color);
+            white-space: nowrap;
+        }
+
+        .sidebar-logo {
+            width: 32px;
+            height: 32px;
+            min-width: 32px;
+        }
+
+        .sidebar-brand {
+            margin-left: 12px;
+            font-size: 18px;
+            font-weight: 600;
+            color: var(--heading-color);
+            opacity: 1;
+            transition: opacity var(--transition-speed);
+        }
+
+        .sidebar.collapsed .sidebar-brand {
+            opacity: 0;
+            pointer-events: none;
+        }
+
+        .sidebar-nav {
+            flex: 1;
+            padding: 20px 14px;
+            display: flex;
+            flex-direction: column;
+            gap: 8px;
+        }
+
+        .nav-item {
+            display: flex;
+            align-items: center;
+            padding: 12px 16px;
+            color: var(--text-color);
+            text-decoration: none;
+            border-radius: 10px;
+            transition: all 0.2s ease;
+            white-space: nowrap;
+            cursor: pointer;
+        }
+
+        .nav-item i {
+            font-size: 18px;
+            min-width: 24px;
+            text-align: center;
+        }
+
+        .nav-text {
+            margin-left: 12px;
+            font-weight: 500;
+            opacity: 1;
+            transition: opacity var(--transition-speed);
+        }
+
+        .sidebar.collapsed .nav-text {
+            opacity: 0;
+        }
+
+        .nav-item:hover, .nav-item.active {
+            background: var(--active-item-bg);
+            color: var(--link-color);
+        }
+
+        .nav-item.active i {
+            color: var(--link-color);
+        }
+
+        .sidebar-footer {
+            padding: 20px;
+            border-top: 1px solid var(--divider-color);
+        }
+
+        /* Main Content Wrapper */
+        .main-content {
+            flex: 1;
+            margin-left: var(--sidebar-width);
+            transition: margin-left var(--transition-speed) cubic-bezier(0.4, 0, 0.2, 1);
+            position: relative;
+        }
+
+        .main-content.expanded {
+            margin-left: var(--sidebar-collapsed-width);
+        }
+
+        /* Navbar Styles */
+        .top-navbar {
+            height: var(--header-height);
             background: var(--bg-color);
             border-bottom: 1px solid var(--divider-color);
-            backdrop-filter: blur(10px);
-        }
-
-        /* Author: Sanket - Remove the diagonal crossover design overlay */
-        .site-header::before {
-            display: none !important;
-        }
-
-        .site-header-inner {
             display: flex;
             align-items: center;
             justify-content: space-between;
-            padding: 16px 0;
-            max-width: 1200px;
-            margin: 0 auto;
-            padding-left: 24px;
-            padding-right: 24px;
-        }
-
-        .header-brand {
-            display: flex;
-            align-items: center;
-            gap: 16px;
-        }
-
-        .header-logo {
-            width: 40px;
-            height: 40px;
-        }
-
-        .header-title {
-            font-size: 20px;
-            font-weight: 600;
-            color: var(--heading-color);
-            margin: 0;
-        }
-
-        .header-nav {
-            display: flex;
-            align-items: center;
-            gap: 16px;
-        }
-
-        .nav-link {
-            color: var(--text-color);
-            text-decoration: none;
-            font-weight: 500;
-            padding: 8px 16px;
-            border-radius: 6px;
-            transition: all 0.2s ease;
-            display: flex;
-            align-items: center;
-            gap: 6px;
-        }
-
-        .nav-link:hover {
-            background: var(--divider-color);
-            color: var(--heading-color);
-        }
-
-        .theme-toggle {
-            background: transparent !important;
-            border: 1px solid var(--divider-color) !important;
-            color: var(--heading-color) !important;
-            padding: 8px 12px !important;
-            border-radius: 6px !important;
-            cursor: pointer;
-            transition: all 0.2s ease;
-        }
-
-        .theme-toggle:hover {
-            background: var(--divider-color) !important;
-        }
-
-        /* Login Container */
-        .login-container {
-            min-height: calc(100vh - 80px);
-            display: flex;
-            align-items: center;
-            justify-content: center;
-            padding: 40px 16px;
-        }
-
-        .login-card {
-            max-width: 450px;
-            width: 100%;
-            background: rgba(255, 255, 255, 0.05);
-            border: 1px solid var(--divider-color);
-            border-radius: 16px;
-            padding: 48px 40px;
-            box-shadow: 0 20px 60px rgba(0, 0, 0, 0.3);
+            padding: 0 32px;
+            position: sticky;
+            top: 0;
+            z-index: 1000;
             backdrop-filter: blur(10px);
         }
 
-        [data-theme='light'] .login-card {
-            background: #ffffff;
-            box-shadow: 0 10px 40px rgba(0, 0, 0, 0.1);
+        .nav-left {
+            display: flex;
+            align-items: center;
+            gap: 20px;
         }
 
-        .login-header {
-            text-align: center;
+        .toggle-btn {
+            background: none;
+            border: 1px solid var(--divider-color);
+            color: var(--text-color);
+            width: 36px;
+            height: 36px;
+            border-radius: 8px;
+            cursor: pointer;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            transition: all 0.2s;
+        }
+
+        .toggle-btn:hover {
+            background: var(--divider-color);
+        }
+
+        .nav-right {
+            display: flex;
+            align-items: center;
+            gap: 16px;
+        }
+
+        .user-dropdown {
+            display: flex;
+            align-items: center;
+            gap: 12px;
+            padding: 6px 14px;
+            border-radius: 30px;
+            background: var(--divider-color);
+            cursor: pointer;
+        }
+
+        /* Module Sections */
+        .module-container {
+            padding: 40px;
+            max-width: 1400px;
+            margin: 0 auto;
+        }
+
+        .module-header {
             margin-bottom: 32px;
+            display: flex;
+            justify-content: space-between;
+            align-items: flex-end;
         }
 
-        .login-title {
+        .module-info h2 {
             font-size: 28px;
             font-weight: 600;
             color: var(--heading-color);
-            margin: 0 0 8px 0;
+            margin: 0 0 6px 0;
         }
 
-        .login-subtitle {
-            font-size: 16px;
+        .module-info p {
             color: var(--text-color);
             margin: 0;
-        }
-
-        /* Dashboard Container */
-        .dashboard-container {
-            max-width: 1200px;
-            margin: 0 auto;
-            padding: 40px 24px;
-        }
-
-        .dashboard-header {
-            margin-bottom: 32px;
-        }
-
-        .dashboard-title {
-            font-size: 32px;
-            font-weight: 600;
-            color: var(--heading-color);
-            margin: 0 0 8px 0;
-        }
-
-        .dashboard-subtitle {
-            font-size: 16px;
-            color: var(--text-color);
-            margin: 0;
+            font-size: 15px;
         }
 
         /* Stats Grid */
         .stats-grid {
             display: grid;
-            grid-template-columns: repeat(auto-fit, minmax(250px, 1fr));
+            grid-template-columns: repeat(auto-fit, minmax(260px, 1fr));
             gap: 24px;
             margin-bottom: 40px;
         }
 
         .stat-card {
+            background: var(--glass-bg);
+            border: 1px solid var(--divider-color);
             padding: 24px;
-            border-radius: 12px;
-            color: white;
-            box-shadow: 0 10px 30px rgba(0, 0, 0, 0.2);
+            border-radius: 16px;
+            display: flex;
+            align-items: flex-start;
+            justify-content: space-between;
+            transition: transform 0.2s, box-shadow 0.2s;
             position: relative;
             overflow: hidden;
         }
 
-        .stat-card::before {
-            display: none;
+        .stat-card:hover {
+            transform: translateY(-4px);
+            box-shadow: 0 10px 30px rgba(0, 0, 0, 0.1);
         }
 
-        .stat-purple { background: linear-gradient(135deg, #667eea 0%, #764ba2 100%); }
-        .stat-blue { background: linear-gradient(135deg, #0270d7 0%, #0056b3 100%); }
-        .stat-green { background: linear-gradient(135deg, #11998e 0%, #38ef7d 100%); }
-
-        .stat-icon {
-            font-size: 32px;
-            margin-bottom: 12px;
-            opacity: 0.9;
+        .stat-card::after {
+            content: '';
+            position: absolute;
+            bottom: 0;
+            left: 0;
+            height: 4px;
+            width: 100%;
+            background: var(--primary-gradient);
+            opacity: 0.6;
         }
 
-        .stat-number {
-            font-size: 36px;
-            font-weight: 600;
-            margin-bottom: 4px;
-        }
-
-        .stat-label {
+        .stat-info h3 {
             font-size: 14px;
-            opacity: 0.9;
+            color: var(--text-color);
+            margin: 0 0 8px 0;
+            text-transform: uppercase;
+            letter-spacing: 0.5px;
         }
 
-        /* Table Section */
-        .table-section {
-            background: rgba(255, 255, 255, 0.03);
-            border: 1px solid var(--divider-color);
-            border-radius: 12px;
-            padding: 24px;
-            backdrop-filter: blur(10px);
-        }
-
-        [data-theme='light'] .table-section {
-            background: #ffffff;
-            box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1);
-        }
-
-        .table-header {
-            display: flex;
-            justify-content: space-between;
-            align-items: center;
-            margin-bottom: 24px;
-        }
-
-        .table-title {
-            font-size: 20px;
+        .stat-value {
+            font-size: 32px;
             font-weight: 600;
             color: var(--heading-color);
-            margin: 0;
+        }
+
+        .stat-icon-bg {
+            width: 50px;
+            height: 50px;
+            border-radius: 12px;
+            background: var(--active-item-bg);
+            display: flex;
+            align-items: center;
+            justify-content: center;
+        }
+
+        .stat-icon-bg i {
+            font-size: 22px;
+            color: var(--link-color);
+        }
+
+        /* Table & Card Components */
+        .content-card {
+            background: var(--glass-bg);
+            border: 1px solid var(--divider-color);
+            border-radius: 16px;
+            padding: 28px;
+            box-shadow: 0 4px 20px rgba(0, 0, 0, 0.05);
+        }
+
+        .table-responsive {
+            margin-top: 10px;
+            overflow-x: auto;
         }
 
         .data-table {
@@ -255,88 +332,152 @@
 
         .data-table th {
             text-align: left;
-            padding: 12px 16px;
-            color: var(--heading-color);
+            padding: 16px;
+            font-size: 13px;
+            text-transform: uppercase;
+            color: var(--text-color);
             font-weight: 600;
             border-bottom: 2px solid var(--divider-color);
         }
 
         .data-table td {
-            padding: 16px;
+            padding: 18px 16px;
             border-bottom: 1px solid var(--divider-color);
-            color: var(--text-color);
+            color: var(--heading-color);
+            font-size: 15px;
         }
 
-        .data-table tr:last-child td {
-            border-bottom: none;
+        .data-table tr:hover td {
+            background: var(--active-item-bg);
         }
 
-        .status-badge {
-            padding: 4px 12px;
-            border-radius: 12px;
-            font-size: 12px;
+        /* Badges & Status */
+        .badge {
+            padding: 5px 12px;
+            border-radius: 30px;
+            font-size: 11px;
             font-weight: 600;
             text-transform: uppercase;
         }
 
-        .status-active {
-            background: rgba(17, 153, 142, 0.2);
-            color: #38ef7d;
+        .badge-active { background: rgba(56, 239, 125, 0.15); color: #38ef7d; }
+        .badge-banned { background: rgba(220, 53, 69, 0.15); color: #dc3545; }
+        .badge-info { background: rgba(2, 112, 215, 0.15); color: #0270d7; }
+
+        /* Login Screen Redesign */
+        .login-wrapper {
+            width: 100vw;
+            height: 100vh;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            background: var(--bg-color);
+            padding: 20px;
+            position: fixed;
+            top: 0;
+            left: 0;
+            z-index: 2000;
         }
 
-        .status-banned {
-            background: rgba(220, 53, 69, 0.2);
-            color: #dc3545;
+        .login-card {
+            max-width: 440px;
+            width: 100%;
+            background: var(--glass-bg);
+            border: 1px solid var(--divider-color);
+            border-radius: 24px;
+            padding: 48px;
+            backdrop-filter: blur(40px);
+            box-shadow: 0 40px 100px rgba(0, 0, 0, 0.3);
         }
 
-        .btn-action {
-            padding: 6px 16px;
-            border-radius: 6px;
-            border: none;
-            font-size: 14px;
-            font-weight: 500;
+        .login-logo-box {
+            width: 70px;
+            height: 70px;
+            background: var(--primary-gradient);
+            border-radius: 18px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            margin: 0 auto 24px auto;
+            box-shadow: 0 10px 20px rgba(2, 112, 215, 0.3);
+        }
+
+        .login-logo-box img {
+            width: 40px;
+            height: 40px;
+            filter: brightness(0) invert(1);
+        }
+
+        .login-titles {
+            text-align: center;
+            margin-bottom: 40px;
+        }
+
+        .login-titles h2 {
+            font-size: 28px;
+            font-weight: 600;
+            margin: 0 0 8px 0;
+            color: var(--heading-color);
+        }
+
+        .login-titles p {
+            color: var(--text-color);
+            font-size: 15px;
+        }
+
+        /* Generic UI Elements */
+        .hidden { display: none !important; }
+
+        .btn {
+            padding: 12px 24px;
+            border-radius: 10px;
+            font-weight: 600;
             cursor: pointer;
-            transition: all 0.2s ease;
+            transition: all 0.2s;
+            border: none;
+            display: flex;
+            align-items: center;
+            gap: 10px;
+            justify-content: center;
         }
 
-        .btn-ban {
-            background: rgba(220, 53, 69, 0.2);
-            color: #dc3545;
-        }
-
-        .btn-ban:hover {
-            background: #dc3545;
+        .btn-primary {
+            background: var(--primary-gradient);
             color: white;
         }
 
-        .btn-unban {
-            background: rgba(17, 153, 142, 0.2);
-            color: #38ef7d;
+        .btn-primary:hover {
+            transform: translateY(-2px);
+            box-shadow: 0 8px 25px rgba(2, 112, 215, 0.4);
         }
 
-        .btn-unban:hover {
-            background: #38ef7d;
-            color: white;
+        .btn-outline {
+            background: none;
+            border: 1px solid var(--divider-color);
+            color: var(--text-color);
         }
 
-        /* Form Styles */
-        .form-group {
+        .btn-outline:hover {
+            background: var(--divider-color);
+        }
+
+        .form-control {
             margin-bottom: 24px;
         }
 
-        .form-label {
+        .form-control label {
             display: block;
-            font-size: 14px;
+            margin-bottom: 8px;
             font-weight: 500;
             color: var(--heading-color);
-            margin-bottom: 8px;
+            font-size: 14px;
         }
 
-        .form-input-wrapper {
+        .input-group {
             position: relative;
         }
 
-        .form-input-icon {
+        .input-group i {
             position: absolute;
             left: 16px;
             top: 50%;
@@ -344,576 +485,635 @@
             color: var(--text-color);
         }
 
-        .form-input {
+        .input-group input, .input-group select {
             width: 100%;
-            padding: 14px 16px 14px 48px;
-            font-size: 16px;
+            padding: 13px 13px 13px 48px;
+            border-radius: 10px;
+            background: var(--sidebar-bg);
+            border: 1px solid var(--divider-color);
             color: var(--heading-color);
-            background: var(--input-bg);
-            border: 1px solid var(--input-border);
-            border-radius: 8px;
-            transition: all 0.2s ease;
-            font-family: 'IBM Plex Sans', sans-serif;
-        }
-
-        .form-input:focus {
+            font-size: 15px;
             outline: none;
+            box-sizing: border-box;
+            font-family: inherit;
+        }
+
+        .input-group input:focus {
             border-color: var(--link-color);
-            box-shadow: 0 0 0 3px rgba(2, 112, 215, 0.1);
+            box-shadow: 0 0 0 4px rgba(2, 112, 215, 0.1);
         }
 
-        .btn-primary {
-            width: 100%;
-            padding: 14px 24px;
-            font-size: 16px;
-            font-weight: 600;
-            color: #ffffff;
-            background: linear-gradient(135deg, #0270d7 0%, #0056b3 100%);
-            border: none;
-            border-radius: 8px;
-            cursor: pointer;
-            transition: all 0.2s ease;
-            display: flex;
-            align-items: center;
-            justify-content: center;
-            gap: 8px;
-        }
-
-        .btn-primary:hover {
-            transform: translateY(-2px);
-            box-shadow: 0 8px 20px rgba(2, 112, 215, 0.3);
-        }
-
-        .btn-primary:disabled {
-            opacity: 0.6;
-            cursor: not-allowed;
-            transform: none;
-        }
-
-        .error-message {
-            background: rgba(220, 53, 69, 0.1);
-            border: 1px solid rgba(220, 53, 69, 0.3);
-            color: #dc3545;
-            padding: 12px 16px;
-            border-radius: 8px;
-            font-size: 14px;
-            margin-bottom: 24px;
-            display: none;
-        }
-
-        .error-message.show {
-            display: block;
-        }
-
-        .hidden {
-            display: none !important;
-        }
-
-        .logout-btn {
-            background: rgba(220, 53, 69, 0.2);
-            color: #dc3545;
-            padding: 8px 16px;
-            border-radius: 6px;
-            border: none;
-            cursor: pointer;
-            font-weight: 500;
-            transition: all 0.2s ease;
-        }
-
-        .logout-btn:hover {
-            background: #dc3545;
-            color: white;
-        }
-
-        @media (max-width: 768px) {
-            .stats-grid {
-                grid-template-columns: 1fr;
-            }
-
-            .table-section {
-                overflow-x: auto;
-            }
-
-            .header-title {
-                font-size: 16px;
-            }
-        }
-
-        /* Author: Sanket - Password toggle styles */
         .password-toggle {
             position: absolute;
             right: 16px;
             top: 50%;
             transform: translateY(-50%);
-            color: var(--text-color);
             cursor: pointer;
-            z-index: 10;
-            padding: 8px; /* Increase click area */
-        }
-        
-        .password-toggle:hover {
-            color: var(--heading-color);
-        }
-
-        .form-input.has-toggle {
-            padding-right: 48px;
+            color: var(--text-color);
         }
     </style>
 </head>
-<body>
-    <!-- Author: Sanket - Professional header with navigation -->
-    <header class="site-header">
-        <div class="site-header-inner">
-            <div class="header-brand">
-                <a href="/">
-                    <img src="../images/logo.svg" alt="tawktoo" class="header-logo" />
-                </a>
-                <h1 class="header-title">Admin Dashboard</h1>
-            </div>
-            <nav class="header-nav">
-                <a href="/" class="nav-link">
-                    <i class="fas fa-home"></i> Home
-                </a>
-                <a href="/admin/feedbacks" class="nav-link">
-                    <i class="fas fa-comments"></i> Feedbacks
-                </a>
-                <a href="#" class="nav-link" id="navSettings">
-                    <i class="fas fa-cog"></i> Settings
-                </a>
-                <button id="logoutBtn" class="logout-btn hidden" onclick="logout()">
-                    <i class="fas fa-sign-out-alt"></i> Logout
-                </button>
-                <button id="themeToggle" class="theme-toggle">
-                    <i class="fas fa-sun"></i>
-                </button>
-            </nav>
-        </div>
-    </header>
-
-    <!-- Author: Sanket - Login Section -->
-    <div id="loginSection" class="login-container">
+<body class="dark">
+    
+    <!-- Redesigned Login Section -->
+    <div id="loginSection" class="login-wrapper">
         <div class="login-card">
-            <div class="login-header">
-                <h2 class="login-title">Admin Login</h2>
-                <p class="login-subtitle">Sign in to access the admin dashboard</p>
+            <div class="login-logo-box">
+                <img src="../images/logo.svg" alt="Kidokool" />
             </div>
-
-            <div id="errorMessage" class="error-message"></div>
-
+            <div class="login-titles">
+                <h2>Admin Hub</h2>
+                <p>Welcome back! Please enter your details.</p>
+            </div>
+            <div id="loginError" class="badge badge-banned hidden" style="width: 100%; text-align: center; margin-bottom: 20px; padding: 12px; box-sizing: border-box;"></div>
             <form id="loginForm">
-                <div class="form-group">
-                    <label for="username" class="form-label">Username</label>
-                    <div class="form-input-wrapper">
-                        <i class="fas fa-user form-input-icon"></i>
-                        <input type="text" id="username" class="form-input" placeholder="Enter admin username" required />
+                <div class="form-control">
+                    <label>Username</label>
+                    <div class="input-group">
+                        <i class="fas fa-user-shield"></i>
+                        <input type="text" id="username" placeholder="Admin username" required />
                     </div>
                 </div>
-
-                <div class="form-group">
-                    <label for="password" class="form-label">Password</label>
-                    <div class="form-input-wrapper">
-                        <i class="fas fa-lock form-input-icon"></i>
-                        <input type="password" id="password" class="form-input has-toggle" placeholder="Enter password" required />
-                        <i class="fas fa-eye password-toggle" id="togglePassword"></i>
+                <div class="form-control">
+                    <label>Password</label>
+                    <div class="input-group">
+                        <i class="fas fa-lock"></i>
+                        <input type="password" id="password" placeholder="••••••••" required />
+                        <i class="fas fa-eye password-toggle" id="toggleLoginPassword"></i>
                     </div>
                 </div>
-
-                <button type="submit" id="loginBtn" class="btn-primary">
-                    <i class="fas fa-sign-in-alt"></i>
+                <button type="submit" id="loginBtn" class="btn btn-primary" style="width: 100%;">
                     <span>Sign In</span>
+                    <i class="fas fa-arrow-right"></i>
                 </button>
             </form>
         </div>
     </div>
 
-    <!-- Author: Sanket - Dashboard Section -->
-    <div id="dashboardSection" class="dashboard-container hidden">
-        <div class="dashboard-header">
-            <h2 class="dashboard-title">Welcome, <span id="adminName">Admin</span></h2>
-            <p class="dashboard-subtitle">Manage developers, API keys, and system statistics</p>
+    <!-- Redesigned Sidebar -->
+    <aside id="sidebar" class="sidebar">
+        <div class="sidebar-header">
+            <img src="../images/logo.svg" alt="Kidokool" class="sidebar-logo" />
+            <span class="sidebar-brand">Kidokool Hub</span>
         </div>
-
-        <!-- Stats Cards -->
-        <div class="stats-grid">
-            <div class="stat-card stat-purple">
-                <i class="fas fa-users stat-icon"></i>
-                <div class="stat-number" id="tenantCount">0</div>
-                <div class="stat-label">Total Developers</div>
+        <nav class="sidebar-nav">
+            <div class="nav-item active" data-module="dashboard">
+                <i class="fas fa-chart-line"></i>
+                <span class="nav-text">Dashboard</span>
             </div>
-            <div class="stat-card stat-blue">
-                <i class="fas fa-key stat-icon"></i>
-                <div class="stat-number" id="keyCount">0</div>
-                <div class="stat-label">Active API Keys</div>
+            <div class="nav-item" data-module="tenants">
+                <i class="fas fa-users-cog"></i>
+                <span class="nav-text">Developers</span>
             </div>
-            <div class="stat-card stat-green">
-                <i class="fas fa-video stat-icon"></i>
-                <div class="stat-number" id="roomCount">0</div>
-                <div class="stat-label">Active Rooms</div>
+            <div class="nav-item" data-module="rooms">
+                <i class="fas fa-video"></i>
+                <span class="nav-text">Active Rooms</span>
+            </div>
+            <div class="nav-item" data-module="feedbacks">
+                <i class="fas fa-star"></i>
+                <span class="nav-text">Feedback</span>
+            </div>
+            <div class="nav-item" data-module="settings">
+                <i class="fas fa-sliders-h"></i>
+                <span class="nav-text">Settings</span>
+            </div>
+        </nav>
+        <div class="sidebar-footer">
+            <div class="nav-item" onclick="logout()">
+                <i class="fas fa-sign-out-alt"></i>
+                <span class="nav-text">Logout</span>
             </div>
         </div>
+    </aside>
 
-        <!-- Developers Table -->
-        <div id="tenantsSection" class="table-section">
-            <div class="table-header">
-                <h3 class="table-title">Registered Developers</h3>
+    <!-- Main Content -->
+    <main id="mainContent" class="main-content">
+        <header class="top-navbar">
+            <div class="nav-left">
+                <button id="sidebarToggle" class="toggle-btn">
+                    <i class="fas fa-bars-staggered"></i>
+                </button>
+                <div class="breadcrumb" style="color: var(--text-color); font-weight: 500;">
+                    System / <span id="currentModuleTitle" style="color: var(--heading-color);">Dashboard</span>
+                </div>
             </div>
-            <table class="data-table">
-                <thead>
-                    <tr>
-                        <th>Name</th>
-                        <th>Email</th>
-                        <th>Plan</th>
-                        <th>Status</th>
-                        <th>Actions</th>
-                    </tr>
-                </thead>
-                <tbody id="tenantTable">
-                    <tr>
-                        <td colspan="5" style="text-align: center; padding: 40px;">Loading...</td>
-                    </tr>
-                </tbody>
-            </table>
-        </div>
+            <div class="nav-right">
+                <button id="themeToggle" class="toggle-btn">
+                    <i class="fas fa-moon"></i>
+                </button>
+                <div class="user-dropdown">
+                    <i class="fas fa-user-circle" style="font-size: 20px;"></i>
+                    <span id="adminDisplayName" style="font-weight: 500; font-size: 14px;">Admin</span>
+                </div>
+            </div>
+        </header>
 
-        <!-- System Settings Section -->
-        <div id="settingsSection" class="table-section hidden">
-            <div class="table-header">
-                <h3 class="table-title">System Settings</h3>
-            </div>
+        <div class="module-container">
             
-            <form id="settingsForm">
-                <h4 style="color: var(--heading-color); margin: 24px 0 16px 0; border-bottom: 1px solid var(--divider-color); padding-bottom: 8px;">AI Configuration</h4>
+            <!-- Dashboard Overview Module -->
+            <section id="module-dashboard" class="module-section">
+                <div class="module-header">
+                    <div class="module-info">
+                        <h2>System Dashboard</h2>
+                        <p>Real-time analytics and platform health overview.</p>
+                    </div>
+                </div>
                 
-                <div class="stats-grid" style="grid-template-columns: 1fr 1fr; gap: 24px; margin-bottom: 24px;">
-                    <div class="form-group">
-                        <label class="form-label">ChatGPT Enabled</label>
-                        <select id="setting_CHATGPT_ENABLED" class="form-input" style="padding-left: 16px;">
-                            <option value="true">Enabled</option>
-                            <option value="false">Disabled</option>
-                        </select>
+                <div class="stats-grid">
+                    <div class="stat-card">
+                        <div class="stat-info">
+                            <h3>Total Developers</h3>
+                            <div class="stat-value" id="stat-tenants">0</div>
+                        </div>
+                        <div class="stat-icon-bg"><i class="fas fa-users"></i></div>
                     </div>
-                    <div class="form-group">
-                        <label class="form-label">ChatGPT Model</label>
-                        <input type="text" id="setting_CHATGPT_MODEL" class="form-input" style="padding-left: 16px;" placeholder="gpt-3.5-turbo" />
+                    <div class="stat-card">
+                        <div class="stat-info">
+                            <h3>Active Meetings</h3>
+                            <div class="stat-value" id="stat-rooms">0</div>
+                        </div>
+                        <div class="stat-icon-bg"><i class="fas fa-house-laptop"></i></div>
                     </div>
-                </div>
-
-                <div class="form-group">
-                    <label class="form-label">ChatGPT API Key</label>
-                    <div class="form-input-wrapper">
-                        <i class="fas fa-key form-input-icon"></i>
-                        <input type="password" id="setting_CHATGPT_API_KEY" class="form-input has-toggle" placeholder="sk-..." />
-                        <i class="fas fa-eye password-toggle" id="toggleApiKey"></i>
+                    <div class="stat-card">
+                        <div class="stat-info">
+                            <h3>Reviews</h3>
+                            <div class="stat-value" id="stat-feedbacks">0</div>
+                        </div>
+                        <div class="stat-icon-bg"><i class="fas fa-comment-heart"></i></div>
                     </div>
-                </div>
-
-                <div class="stats-grid" style="grid-template-columns: 1fr 1fr; gap: 24px; margin-bottom: 24px;">
-                    <div class="form-group">
-                        <label class="form-label">Max Tokens</label>
-                        <input type="number" id="setting_CHATGPT_MAX_TOKENS" class="form-input" style="padding-left: 16px;" placeholder="1024" />
-                    </div>
-                    <div class="form-group">
-                        <label class="form-label">Temperature (0.0 - 1.0)</label>
-                        <input type="number" step="0.1" id="setting_CHATGPT_TEMPERATURE" class="form-input" style="padding-left: 16px;" placeholder="0.7" />
+                    <div class="stat-card">
+                        <div class="stat-info">
+                            <h3>API Keys</h3>
+                            <div class="stat-value" id="stat-keys">0</div>
+                        </div>
+                        <div class="stat-icon-bg"><i class="fas fa-shield-keyhole"></i></div>
                     </div>
                 </div>
 
-                <button type="submit" id="saveSettingsBtn" class="btn-primary" style="width: auto; min-width: 200px;">
-                    <i class="fas fa-save"></i>
-                    <span>Save Settings</span>
-                </button>
-            </form>
+                <div class="content-card">
+                    <h3 style="margin-top: 0; color: var(--heading-color);">Quick Actions</h3>
+                    <div style="display: flex; gap: 16px; margin-top: 20px;">
+                        <button class="btn btn-outline" onclick="changeModule('tenants')">
+                            <i class="fas fa-user-plus"></i> Manage Users
+                        </button>
+                        <button class="btn btn-outline" onclick="changeModule('settings')">
+                            <i class="fas fa-gear"></i> System Config
+                        </button>
+                    </div>
+                </div>
+            </section>
+
+            <!-- Developers Module -->
+            <section id="module-tenants" class="module-section hidden">
+                <div class="module-header">
+                    <div class="module-info">
+                        <h2>Developer Management</h2>
+                        <p>Track and control tenant accounts and access levels.</p>
+                    </div>
+                </div>
+                <div class="content-card">
+                    <div class="table-responsive">
+                        <table class="data-table">
+                            <thead>
+                                <tr>
+                                    <th>Developer</th>
+                                    <th>Email</th>
+                                    <th>Plan</th>
+                                    <th>Status</th>
+                                    <th>Joined</th>
+                                    <th>Actions</th>
+                                </tr>
+                            </thead>
+                            <tbody id="tenantsTableBody">
+                                <tr><td colspan="6" style="text-align: center; padding: 50px;">Fetching records...</td></tr>
+                            </tbody>
+                        </table>
+                    </div>
+                </div>
+            </section>
+
+            <!-- Active Rooms Module -->
+            <section id="module-rooms" class="module-section hidden">
+                <div class="module-header">
+                    <div class="module-info">
+                        <h2>Active Meetings</h2>
+                        <p>Live overview of ongoing sessions across the platform.</p>
+                    </div>
+                    <button class="btn btn-primary btn-sm" onclick="loadActiveRooms()">
+                        <i class="fas fa-sync-alt"></i> Refresh
+                    </button>
+                </div>
+                <div class="content-card">
+                    <div class="table-responsive">
+                        <table class="data-table">
+                            <thead>
+                                <tr>
+                                    <th>Room ID</th>
+                                    <th>Participants</th>
+                                    <th>Security</th>
+                                    <th>Status</th>
+                                    <th>Created</th>
+                                    <th>Actions</th>
+                                </tr>
+                            </thead>
+                            <tbody id="roomsTableBody">
+                                <tr><td colspan="6" style="text-align: center; padding: 50px;">Scanning network...</td></tr>
+                            </tbody>
+                        </table>
+                    </div>
+                </div>
+            </section>
+
+            <!-- Feedbacks Module -->
+            <section id="module-feedbacks" class="module-section hidden">
+                <div class="module-header">
+                    <div class="module-info">
+                        <h2>User Feedback</h2>
+                        <p>Reviews and experience reports from meeting participants.</p>
+                    </div>
+                </div>
+                <div class="content-card">
+                    <div class="table-responsive">
+                        <table class="data-table">
+                            <thead>
+                                <tr>
+                                    <th>User</th>
+                                    <th>Room</th>
+                                    <th>Rating</th>
+                                    <th>Comments</th>
+                                    <th>Date</th>
+                                </tr>
+                            </thead>
+                            <tbody id="feedbackTableBody">
+                                <tr><td colspan="5" style="text-align: center; padding: 50px;">Loading feedback...</td></tr>
+                            </tbody>
+                        </table>
+                    </div>
+                </div>
+            </section>
+
+            <!-- Settings Module -->
+            <section id="module-settings" class="module-section hidden">
+                <div class="module-header">
+                    <div class="module-info">
+                        <h2>System Configuration</h2>
+                        <p>Global settings for AI, Security, and Integrations.</p>
+                    </div>
+                </div>
+                <div class="content-card">
+                    <form id="settingsForm">
+                        <div style="display: grid; grid-template-columns: 1fr 1fr; gap: 40px;">
+                            <div>
+                                <h4 style="color: var(--link-color); border-bottom: 2px solid var(--divider-color); padding-bottom: 12px; margin-bottom: 24px;">
+                                    <i class="fas fa-robot"></i> ChatGPT Integration
+                                </h4>
+                                <div class="form-control">
+                                    <label>Enable AI Assistance</label>
+                                    <div class="input-group">
+                                        <i class="fas fa-toggle-on"></i>
+                                        <select id="setting_CHATGPT_ENABLED">
+                                            <option value="true">Enabled</option>
+                                            <option value="false">Disabled</option>
+                                        </select>
+                                    </div>
+                                </div>
+                                <div class="form-control">
+                                    <label>OpenAI API Key</label>
+                                    <div class="input-group">
+                                        <i class="fas fa-shield-key"></i>
+                                        <input type="password" id="setting_CHATGPT_API_KEY" placeholder="sk-..." />
+                                        <i class="fas fa-eye password-toggle" id="toggleApiKey"></i>
+                                    </div>
+                                </div>
+                                <div class="form-control">
+                                    <label>Model Engine</label>
+                                    <div class="input-group">
+                                        <i class="fas fa-brain"></i>
+                                        <input type="text" id="setting_CHATGPT_MODEL" placeholder="gpt-3.5-turbo" />
+                                    </div>
+                                </div>
+                            </div>
+                            <div>
+                                <h4 style="color: var(--link-color); border-bottom: 2px solid var(--divider-color); padding-bottom: 12px; margin-bottom: 24px;">
+                                    <i class="fas fa-sliders"></i> Parameters
+                                </h4>
+                                <div class="form-control">
+                                    <label>Max Tokens (Response Length)</label>
+                                    <div class="input-group">
+                                        <i class="fas fa-text-width"></i>
+                                        <input type="number" id="setting_CHATGPT_MAX_TOKENS" placeholder="1024" />
+                                    </div>
+                                </div>
+                                <div class="form-control">
+                                    <label>Temperature (Creativity)</label>
+                                    <div class="input-group">
+                                        <i class="fas fa-thermometer-half"></i>
+                                        <input type="number" step="0.1" id="setting_CHATGPT_TEMPERATURE" placeholder="0.7" />
+                                    </div>
+                                </div>
+                                
+                                <div style="margin-top: 40px; padding: 20px; border-radius: 12px; background: var(--header-bg); border-left: 4px solid var(--link-color);">
+                                    <p style="font-size: 13px; color: var(--text-color); margin: 0;">
+                                        <strong>Note:</strong> These settings are global. Changes take effect immediately for all rooms using AI Summarization.
+                                    </p>
+                                </div>
+                            </div>
+                        </div>
+                        
+                        <div style="margin-top: 40px; text-align: right;">
+                            <button type="submit" id="saveSettingsBtn" class="btn btn-primary" style="display: inline-flex;">
+                                <i class="fas fa-save"></i> Save Configuration
+                            </button>
+                        </div>
+                    </form>
+                </div>
+            </section>
+
         </div>
-    </div>
+    </main>
 
-    <!-- Author: Sanket - Admin dashboard functionality -->
     <script>
-        const API_URL = '/api/v1/admin';
-        let token = localStorage.getItem('admin_token');
-
-        // Author: Sanket - Handle login form submission
-        document.getElementById('loginForm').addEventListener('submit', async function(e) {
-            e.preventDefault();
+        const API_BASE = '/api/v1/admin';
+        let adminToken = localStorage.getItem('admin_token');
+        
+        // --- Initialization & UI Helpers ---
+        
+        document.addEventListener('DOMContentLoaded', () => {
+            initSidebar();
+            initTheme();
             
-            const username = document.getElementById('username').value.trim();
-            const password = document.getElementById('password').value;
-            const loginBtn = document.getElementById('loginBtn');
-            const errorMessage = document.getElementById('errorMessage');
-
-            if (!username || !password) {
-                showError('Please enter both username and password');
-                return;
-            }
-
-            loginBtn.disabled = true;
-            loginBtn.innerHTML = '<i class="fas fa-spinner fa-spin"></i><span>Signing in...</span>';
-            hideError();
-
-            try {
-                // Author: Sanket - Use host login endpoint for admin authentication
-                const response = await axios.post('/login', {
-                    username: username,
-                    password: password
-                });
-
-                console.log('Login response received:', response.data);
-                
-                if (response.data && response.data.message) {
-                    token = response.data.message;
-                    localStorage.setItem('admin_token', token);
-                    localStorage.setItem('admin_name', response.data.displayname || username);
-                    
-                    console.log('Token saved, showing success message...');
-                    
-                    // Author: Sanket - Show success message then load dashboard
-                    Swal.fire({
-                        icon: 'success',
-                        title: 'Login Successful!',
-                        text: `Welcome, ${response.data.displayname || username}!`,
-                        timer: 1500,
-                        showConfirmButton: false
-                    }).then(() => {
-                        console.log('Success message closed, loading dashboard...');
-                        loadDashboard();
-                    });
-                } else {
-                    console.error('Invalid response structure:', response.data);
-                    showError('Invalid response from server');
-                }
-            } catch (error) {
-                console.error('Login error:', error);
-                let errorMsg = 'Login failed. Please check your credentials.';
-                
-                if (error.response) {
-                    if (error.response.status === 401) {
-                        errorMsg = 'Invalid admin credentials';
-                    } else if (error.response.data && error.response.data.message) {
-                        errorMsg = error.response.data.message;
-                    }
-                }
-                
-                showError(errorMsg);
-            } finally {
-                loginBtn.disabled = false;
-                loginBtn.innerHTML = '<i class="fas fa-sign-in-alt"></i><span>Sign In</span>';
+            if (adminToken) {
+                showDashboard();
+            } else {
+                showLogin();
             }
         });
 
-        // Author: Sanket - Password toggle functionality
-        document.getElementById('togglePassword').addEventListener('click', function() {
-            const passwordInput = document.getElementById('password');
-            const type = passwordInput.getAttribute('type') === 'password' ? 'text' : 'password';
-            passwordInput.setAttribute('type', type);
+        function initSidebar() {
+            const sidebar = document.getElementById('sidebar');
+            const mainContent = document.getElementById('mainContent');
+            const toggle = document.getElementById('sidebarToggle');
             
-            // Toggle icon
+            toggle.addEventListener('click', () => {
+                sidebar.classList.toggle('collapsed');
+                mainContent.classList.toggle('expanded');
+            });
+
+            // Module switching
+            document.querySelectorAll('.nav-item[data-module]').forEach(item => {
+                item.addEventListener('click', () => {
+                    const module = item.getAttribute('data-module');
+                    changeModule(module);
+                });
+            });
+        }
+
+        function initTheme() {
+            const toggle = document.getElementById('themeToggle');
+            const icon = toggle.querySelector('i');
+            
+            toggle.addEventListener('click', () => {
+                document.body.classList.toggle('light');
+                document.body.classList.toggle('dark');
+                const isLight = document.body.classList.contains('light');
+                icon.className = isLight ? 'fas fa-sun' : 'fas fa-moon';
+            });
+        }
+
+        function changeModule(moduleId) {
+            // Update UI Sidebar
+            document.querySelectorAll('.nav-item').forEach(i => i.classList.remove('active'));
+            document.querySelector(`.nav-item[data-module="${moduleId}"]`)?.classList.add('active');
+            
+            // Update Title
+            const titleMap = {
+                dashboard: 'Overview Dashboard',
+                tenants: 'Developer Management',
+                rooms: 'Active Meetings',
+                feedbacks: 'User Feedback',
+                settings: 'System Configuration'
+            };
+            document.getElementById('currentModuleTitle').textContent = titleMap[moduleId] || 'Admin';
+            
+            // Toggle Sections
+            document.querySelectorAll('.module-section').forEach(s => s.classList.add('hidden'));
+            document.getElementById(`module-${moduleId}`).classList.remove('hidden');
+            
+            // Trigger Data Load
+            if (moduleId === 'dashboard') loadStats();
+            if (moduleId === 'tenants') loadTenants();
+            if (moduleId === 'rooms') loadActiveRooms();
+            if (moduleId === 'feedbacks') loadFeedbacks();
+            if (moduleId === 'settings') loadSettings();
+        }
+
+        function showLogin() {
+            document.getElementById('loginSection').classList.remove('hidden');
+            document.getElementById('sidebar').classList.add('hidden');
+            document.getElementById('mainContent').classList.add('hidden');
+        }
+
+        function showDashboard() {
+            document.getElementById('loginSection').classList.add('hidden');
+            document.getElementById('sidebar').classList.remove('hidden');
+            document.getElementById('mainContent').classList.remove('hidden');
+            
+            const name = localStorage.getItem('admin_name') || 'Admin';
+            document.getElementById('adminDisplayName').textContent = name;
+            
+            changeModule('dashboard');
+        }
+
+        // --- Core Functions ---
+
+        document.getElementById('loginForm').addEventListener('submit', async (e) => {
+            e.preventDefault();
+            const username = document.getElementById('username').value.trim();
+            const password = document.getElementById('password').value;
+            const btn = document.getElementById('loginBtn');
+            const errorBox = document.getElementById('loginError');
+
+            btn.disabled = true;
+            btn.innerHTML = '<i class="fas fa-spinner fa-spin"></i> Authenticating...';
+            errorBox.classList.add('hidden');
+
+            try {
+                const res = await axios.post('/login', { username, password });
+                if (res.data && res.data.message) {
+                    adminToken = res.data.message;
+                    localStorage.setItem('admin_token', adminToken);
+                    localStorage.setItem('admin_name', res.data.displayname || username);
+                    
+                    Swal.fire({
+                        icon: 'success',
+                        title: 'Authenticated',
+                        text: `Welcome, ${res.data.displayname || username}`,
+                        timer: 1500,
+                        showConfirmButton: false
+                    }).then(showDashboard);
+                }
+            } catch (err) {
+                errorBox.textContent = err.response?.data?.message || 'Login failed. Security breach logged.';
+                errorBox.classList.remove('hidden');
+            } finally {
+                btn.disabled = false;
+                btn.innerHTML = '<span>Sign In</span> <i class="fas fa-arrow-right"></i>';
+            }
+        });
+
+        async function loadStats() {
+            try {
+                const res = await axios.get(`${API_BASE}/stats`, {
+                    headers: { 'Authorization': `Bearer ${adminToken}` }
+                });
+                const s = res.data;
+                document.getElementById('stat-tenants').textContent = s.tenants || 0;
+                document.getElementById('stat-rooms').textContent = s.activeRooms || 0;
+                document.getElementById('stat-feedbacks').textContent = s.feedbacks || 0;
+                document.getElementById('stat-keys').textContent = s.apiKeys || 0;
+            } catch (e) { console.error('Stats error:', e); }
+        }
+
+        async function loadTenants() {
+            try {
+                const res = await axios.get(`${API_BASE}/tenants`, {
+                    headers: { 'Authorization': `Bearer ${adminToken}` }
+                });
+                const tbody = document.getElementById('tenantsTableBody');
+                tbody.innerHTML = res.data.map(t => `
+                    <tr>
+                        <td><strong>${t.name}</strong></td>
+                        <td>${t.email}</td>
+                        <td><span class="badge badge-info">${t.plan}</span></td>
+                        <td><span class="badge ${t.status === 'active' ? 'badge-active' : 'badge-banned'}">${t.status}</span></td>
+                        <td>${new Date(t.createdAt).toLocaleDateString()}</td>
+                        <td>
+                            <button class="btn btn-sm ${t.status === 'active' ? 'btn-outline' : 'btn-primary'}" 
+                                onclick="updateUserStatus('${t.id}', '${t.status}')">
+                                ${t.status === 'active' ? '<i class="fas fa-user-slash"></i> Ban' : '<i class="fas fa-user-check"></i> Unban'}
+                            </button>
+                        </td>
+                    </tr>
+                `).join('');
+            } catch (e) {
+                console.error('Tenants fetch fail:', e);
+                tbody.innerHTML = '<tr><td colspan="6" style="text-align: center;">Permission denied or session expired.</td></tr>';
+            }
+        }
+
+        async function updateUserStatus(id, current) {
+            const next = current === 'active' ? 'banned' : 'active';
+            const { isConfirmed } = await Swal.fire({
+                title: `${next === 'banned' ? 'Block' : 'Reactivate'} Developer?`,
+                text: `Action will take effect immediately.`,
+                icon: 'warning',
+                showCancelButton: true,
+                confirmButtonText: 'Confirm'
+            });
+
+            if (isConfirmed) {
+                try {
+                    await axios.put(`${API_BASE}/tenants/${id}/status`, { status: next }, {
+                        headers: { 'Authorization': `Bearer ${adminToken}` }
+                    });
+                    loadTenants();
+                } catch (e) { Swal.fire('Error', 'Failed to update record', 'error'); }
+            }
+        }
+
+        async function loadActiveRooms() {
+            try {
+                const res = await axios.get(`${API_BASE}/active_rooms`, {
+                    headers: { 'Authorization': `Bearer ${adminToken}` }
+                });
+                const tbody = document.getElementById('roomsTableBody');
+                if (!res.data.length) {
+                    tbody.innerHTML = '<tr><td colspan="6" style="text-align: center; padding: 40px;">No meeting detected.</td></tr>';
+                    return;
+                }
+                tbody.innerHTML = res.data.map(r => `
+                    <tr>
+                        <td style="font-family: monospace; font-size: 13px;">${r.id}</td>
+                        <td><i class="fas fa-user-group"></i> ${r.peers}</td>
+                        <td>${r.locked ? '🔒' : '🔓'} ${r.locked ? 'Private' : 'Public'}</td>
+                        <td><span class="badge badge-active">Live</span></td>
+                        <td>${new Date(r.createdAt).toLocaleTimeString()}</td>
+                        <td>
+                            <button class="btn btn-sm btn-outline" style="color: #dc3545; border-color: rgba(220,53,69,0.3)" onclick="kickRoom('${r.id}')">
+                                <i class="fas fa-door-closed"></i> Close
+                            </button>
+                        </td>
+                    </tr>
+                `).join('');
+            } catch (e) { console.error('Rooms Fetch error:', e); }
+        }
+
+        async function loadFeedbacks() {
+            try {
+                const res = await axios.get(`${API_BASE}/feedbacks_data`, {
+                    headers: { 'Authorization': `Bearer ${adminToken}` }
+                });
+                const tbody = document.getElementById('feedbackTableBody');
+                tbody.innerHTML = res.data.map(f => `
+                    <tr>
+                        <td>${f.peer_name}</td>
+                        <td style="font-size: 11px;">${f.room_id}</td>
+                        <td style="color: #f1c40f;">${'★'.repeat(f.rating)}${'☆'.repeat(5-f.rating)}</td>
+                        <td style="max-width: 300px; white-space: normal;">${f.message || '—'}</td>
+                        <td>${new Date(f.timestamp).toLocaleDateString()}</td>
+                    </tr>
+                `).join('');
+            } catch (e) { console.error('Feedback error:', e); }
+        }
+
+        async function loadSettings() {
+            try {
+                const res = await axios.get(`${API_BASE}/settings`, {
+                    headers: { 'Authorization': `Bearer ${adminToken}` }
+                });
+                const s = res.data;
+                for (let [k, v] of Object.entries(s)) {
+                    const el = document.getElementById(`setting_${k}`);
+                    if (el) el.value = v;
+                }
+            } catch (e) { console.error('Settings error:', e); }
+        }
+
+        document.getElementById('settingsForm').addEventListener('submit', async (e) => {
+            e.preventDefault();
+            const btn = e.target.querySelector('button[type="submit"]');
+            btn.disabled = true;
+            btn.innerHTML = '<i class="fas fa-spinner fa-spin"></i> Applying...';
+
+            const payload = {
+                CHATGPT_ENABLED: document.getElementById('setting_CHATGPT_ENABLED').value === 'true',
+                CHATGPT_API_KEY: document.getElementById('setting_CHATGPT_API_KEY').value,
+                CHATGPT_MODEL: document.getElementById('setting_CHATGPT_MODEL').value,
+                CHATGPT_MAX_TOKENS: parseInt(document.getElementById('setting_CHATGPT_MAX_TOKENS').value),
+                CHATGPT_TEMPERATURE: parseFloat(document.getElementById('setting_CHATGPT_TEMPERATURE').value)
+            };
+
+            try {
+                await axios.put(`${API_BASE}/settings`, payload, {
+                    headers: { 'Authorization': `Bearer ${adminToken}` }
+                });
+                Swal.fire({ icon: 'success', title: 'Propagated', text: 'System settings synced successfully', timer: 1500, showConfirmButton: false });
+            } catch (e) { Swal.fire('Error', 'Communication failure with core service', 'error'); }
+            finally {
+                btn.disabled = false;
+                btn.innerHTML = '<i class="fas fa-save"></i> Save Configuration';
+            }
+        });
+
+        // Toggle helpers
+        document.getElementById('toggleLoginPassword').addEventListener('click', function() {
+            const input = document.getElementById('password');
+            const type = input.getAttribute('type') === 'password' ? 'text' : 'password';
+            input.setAttribute('type', type);
             this.classList.toggle('fa-eye');
             this.classList.toggle('fa-eye-slash');
         });
 
-        // Author: Sanket - Load dashboard data
-        async function loadDashboard() {
-            console.log('loadDashboard() called');
-            console.log('Hiding login section, showing dashboard section...');
-            
-            document.getElementById('loginSection').classList.add('hidden');
-            document.getElementById('dashboardSection').classList.remove('hidden');
-            document.getElementById('logoutBtn').classList.remove('hidden');
-            
-            const adminName = localStorage.getItem('admin_name') || 'Admin';
-            document.getElementById('adminName').textContent = adminName;
-            
-            console.log('Dashboard sections toggled, admin name set to:', adminName);
-
-            // Load stats
-            try {
-                const stats = await fetch(`${API_URL}/stats`, {
-                    headers: { 'Authorization': `Bearer ${token}` }
-                }).then(r => r.json());
-                
-                document.getElementById('tenantCount').textContent = stats.tenants || 0;
-                document.getElementById('keyCount').textContent = stats.apiKeys || 0;
-                document.getElementById('roomCount').textContent = stats.activeRooms || 0;
-            } catch (e) {
-                console.error('Failed to load stats:', e);
-            }
-
-            // Load tenants
-            try {
-                const tenants = await fetch(`${API_URL}/tenants`, {
-                    headers: { 'Authorization': `Bearer ${token}` }
-                }).then(r => r.json());
-                
-                const tbody = document.getElementById('tenantTable');
-                if (tenants.length === 0) {
-                    tbody.innerHTML = '<tr><td colspan="5" style="text-align: center; padding: 40px;">No developers registered yet</td></tr>';
-                } else {
-                    tbody.innerHTML = tenants.map(t => `
-                        <tr>
-                            <td><strong>${t.name}</strong></td>
-                            <td>${t.email}</td>
-                            <td>${t.plan || 'Free'}</td>
-                            <td>
-                                <span class="status-badge ${t.status === 'active' ? 'status-active' : 'status-banned'}">
-                                    ${t.status}
-                                </span>
-                            </td>
-                            <td>
-                                <button class="btn-action ${t.status === 'active' ? 'btn-ban' : 'btn-unban'}" 
-                                    onclick="toggleStatus('${t.id}', '${t.status}')">
-                                    ${t.status === 'active' ? 'Ban' : 'Unban'}
-                                </button>
-                            </td>
-                        </tr>
-                    `).join('');
-                }
-            } catch (e) {
-                console.error('Failed to load tenants:', e);
-                Swal.fire({
-                    icon: 'error',
-                    title: 'Authentication Error',
-                    text: 'Invalid admin token. Please login again.',
-                });
-                logout();
-            }
-        }
-
-        // Author: Sanket - Toggle developer status
-        async function toggleStatus(id, currentStatus) {
-            const newStatus = currentStatus === 'active' ? 'banned' : 'active';
-            const action = newStatus === 'banned' ? 'ban' : 'unban';
-            
-            const result = await Swal.fire({
-                title: `${action.charAt(0).toUpperCase() + action.slice(1)} Developer?`,
-                text: `Are you sure you want to ${action} this developer?`,
-                icon: 'warning',
-                showCancelButton: true,
-                confirmButtonColor: newStatus === 'banned' ? '#dc3545' : '#38ef7d',
-                cancelButtonColor: '#6c757d',
-                confirmButtonText: `Yes, ${action}!`
-            });
-
-            if (result.isConfirmed) {
-                try {
-                    await fetch(`${API_URL}/tenants/${id}/status`, {
-                        method: 'PUT',
-                        headers: { 
-                            'Content-Type': 'application/json',
-                            'Authorization': `Bearer ${token}` 
-                        },
-                        body: JSON.stringify({ status: newStatus })
-                    });
-                    
-                    await Swal.fire({
-                        icon: 'success',
-                        title: 'Success!',
-                        text: `Developer ${action}ned successfully`,
-                        timer: 1500,
-                        showConfirmButton: false
-                    });
-                    
-                    loadDashboard();
-                } catch (e) {
-                    Swal.fire({
-                        icon: 'error',
-                        title: 'Error',
-                        text: `Failed to ${action} developer`
-                    });
-                }
-            }
-        }
-
-        // Author: Sanket - Logout function
-        function logout() {
-            localStorage.removeItem('admin_token');
-            localStorage.removeItem('admin_name');
-            location.reload();
-        }
-
-        // Author: Sanket - Error message helpers
-        function showError(message) {
-            const errorEl = document.getElementById('errorMessage');
-            errorEl.textContent = message;
-            errorEl.classList.add('show');
-        }
-
-        function hideError() {
-            document.getElementById('errorMessage').classList.remove('show');
-        }
-
-        // Author: Sanket - Navigation between sections
-        document.getElementById('navSettings')?.addEventListener('click', function(e) {
-            e.preventDefault();
-            document.getElementById('tenantsSection').classList.add('hidden');
-            document.getElementById('settingsSection').classList.remove('hidden');
-            loadSettings();
-        });
-
-        document.querySelector('.header-title').addEventListener('click', function() {
-            document.getElementById('tenantsSection').classList.remove('hidden');
-            document.getElementById('settingsSection').classList.add('hidden');
-        });
-
-        // Author: Sanket - Load system settings
-        async function loadSettings() {
-            try {
-                const response = await fetch(`${API_URL}/settings`, {
-                    headers: { 'Authorization': `Bearer ${token}` }
-                });
-                const settings = await response.json();
-                
-                for (const [key, value] of Object.entries(settings)) {
-                    const el = document.getElementById(`setting_${key}`);
-                    if (el) el.value = value;
-                }
-            } catch (e) {
-                console.error('Failed to load settings:', e);
-            }
-        }
-
-        // Author: Sanket - Handle settings form submission
-        document.getElementById('settingsForm').addEventListener('submit', async function(e) {
-            e.preventDefault();
-            const btn = document.getElementById('saveSettingsBtn');
-            btn.disabled = true;
-            btn.innerHTML = '<i class="fas fa-spinner fa-spin"></i><span>Saving...</span>';
-
-            const settings = {
-                CHATGPT_ENABLED: document.getElementById('setting_CHATGPT_ENABLED').value === 'true',
-                CHATGPT_MODEL: document.getElementById('setting_CHATGPT_MODEL').value,
-                CHATGPT_API_KEY: document.getElementById('setting_CHATGPT_API_KEY').value,
-                CHATGPT_MAX_TOKENS: parseInt(document.getElementById('setting_CHATGPT_MAX_TOKENS').value),
-                CHATGPT_TEMPERATURE: parseFloat(document.getElementById('setting_CHATGPT_TEMPERATURE').value),
-            };
-
-            try {
-                const response = await fetch(`${API_URL}/settings`, {
-                    method: 'PUT',
-                    headers: { 
-                        'Content-Type': 'application/json',
-                        'Authorization': `Bearer ${token}` 
-                    },
-                    body: JSON.stringify(settings)
-                });
-
-                if (response.ok) {
-                    Swal.fire({
-                        icon: 'success',
-                        title: 'Settings Saved',
-                        timer: 1500,
-                        showConfirmButton: false
-                    });
-                } else {
-                    throw new Error('Failed to save settings');
-                }
-            } catch (e) {
-                Swal.fire({ icon: 'error', title: 'Error', text: e.message });
-            } finally {
-                btn.disabled = false;
-                btn.innerHTML = '<i class="fas fa-save"></i><span>Save Settings</span>';
-            }
-        });
-
-        // Author: Sanket - API Key toggle functionality
         document.getElementById('toggleApiKey').addEventListener('click', function() {
             const input = document.getElementById('setting_CHATGPT_API_KEY');
             const type = input.getAttribute('type') === 'password' ? 'text' : 'password';
@@ -922,9 +1122,10 @@
             this.classList.toggle('fa-eye-slash');
         });
 
-        // Auto-load dashboard if token exists
-        if (token) {
-            loadDashboard();
+        function logout() {
+            localStorage.removeItem('admin_token');
+            localStorage.removeItem('admin_name');
+            location.reload();
         }
     </script>
 </body>
