@@ -122,41 +122,48 @@
 
         <!-- header section  -->
         <!-- header section  -->
-        <header class="bg-white sticky top-0 z-50 transition-all duration-300">
-            <div class="w-full flex p-3 md:px-6 flex-row items-center justify-between">
-                <!-- Left: Logo -->
-                <a href="/" class="flex items-center gap-2 group">
-                    <img src="../images/logo.svg" alt="logo" class="h-8 w-auto">
-                    <span class="text-[22px] font-normal text-gray-500 tracking-tight mb-0.5 group-hover:text-blue-600 transition-colors">tawktoo</span>
+        <header class="bg-white sticky top-0 z-50 transition-all duration-300 border-b border-gray-100">
+            <div class="w-full h-16 flex px-4 md:px-6 flex-row items-center justify-between">
+                <!-- Left: Logo & Branding -->
+                <a href="/" class="flex items-center gap-2 group mr-8">
+                    <img src="../images/logo.svg" alt="logo" class="h-7 w-auto mb-1">
+                    <span class="text-[22px] font-medium text-gray-500 tracking-tight group-hover:text-blue-600 transition-colors pb-1">tawktoo</span>
                 </a>
 
+                <!-- Middle: Navigation (Hidden on mobile) -->
+                 <nav class="hidden md:flex items-center gap-6 mr-auto">
+                    <a href="/login" class="text-base font-normal text-gray-500 hover:text-blue-600 transition-colors">Host Login</a>
+                    <a href="/admin" class="text-base font-normal text-gray-500 hover:text-blue-600 transition-colors">Admin</a>
+                    <a href="/developer" class="text-base font-normal text-gray-500 hover:text-blue-600 transition-colors">Developer</a>
+                </nav>
+
                 <!-- Right: Actions -->
-                <div class="flex items-center gap-2 md:gap-5">
+                <div class="flex items-center gap-2 md:gap-4">
                      <!-- Date & Time -->
-                    <div id="headerDateTime" class="hidden lg:block text-lg text-gray-500 font-normal mr-2"></div>
+                    <div id="headerDateTime" class="hidden xl:block text-lg text-gray-500 font-normal mr-2"></div>
 
                     <!-- Icons (Hidden on small mobile) -->
                     <div class="hidden md:flex items-center gap-2 text-gray-500">
-                        <button class="p-3 hover:bg-gray-100 rounded-full transition-colors focus:outline-none" title="Support">
+                        <button class="p-2.5 hover:bg-gray-100 rounded-full transition-colors focus:outline-none" title="Support">
                             <i class="far fa-question-circle text-xl"></i>
                         </button>
-                        <button class="p-3 hover:bg-gray-100 rounded-full transition-colors focus:outline-none" title="Feedback">
+                        <button class="p-2.5 hover:bg-gray-100 rounded-full transition-colors focus:outline-none" title="Feedback">
                             <i class="far fa-comment-alt text-xl"></i>
                         </button>
-                        <button class="p-3 hover:bg-gray-100 rounded-full transition-colors focus:outline-none" title="Settings">
+                        <button class="p-2.5 hover:bg-gray-100 rounded-full transition-colors focus:outline-none" title="Settings">
                             <i class="fas fa-cog text-xl"></i>
                         </button>
                     </div>
 
                     <!-- Theme Toggle -->
-                    <button id="themeToggle" class="p-3 rounded-full text-gray-500 hover:bg-gray-100 transition-colors focus:outline-none">
+                    <button id="themeToggle" class="p-2.5 rounded-full text-gray-500 hover:bg-gray-100 transition-colors focus:outline-none">
                         <i class="fas fa-sun text-xl"></i>
                     </button>
 
                     <!-- Auth/Nav Actions -->
                      <div class="flex items-center gap-3 ml-2">
-                         <a href="/login" class="hidden md:block text-gray-600 hover:text-blue-600 font-medium px-2">Log in</a>
-                         <button id="header_join_btn" class="bg-blue-600 text-white px-6 py-2.5 rounded hover:bg-blue-700 font-medium text-sm shadow-md transition-all hover:shadow-lg active:scale-95">Join</button>
+                         <a href="/login" class="md:hidden text-gray-600 hover:text-blue-600 font-medium px-2">Log in</a>
+                         <button id="header_join_btn" class="hidden md:block bg-blue-600 text-white px-6 py-2 rounded hover:bg-blue-700 font-medium text-sm shadow-md transition-all hover:shadow-lg active:scale-95">Join</button>
                      </div>
                 </div>
             </div>
@@ -170,24 +177,23 @@
 
                 <div class="container mx-auto flex px-5 md:px-10 flex-col md:flex-row items-center max-w-screen-xl relative z-10">
                     <div class="lg:flex-grow md:w-1/2 md:pr-16 flex flex-col md:items-start text-left mb-16 md:mb-0 items-center text-center">
-                        <h1 id="appTitle" class="text-4xl md:text-5xl lg:text-6xl mb-6 font-medium text-gray-900 hero-text leading-tight tracking-tight">
-                            Premium video meetings for everyone.
+                        <h1 id="appTitle" class="text-3xl md:text-5xl mb-6 font-normal text-gray-900 leading-tight tracking-tight">
+                            Premium video meetings. Now free for everyone.
                         </h1>
-                        <p id="appDescription" class="mb-10 leading-relaxed text-lg md:text-xl text-gray-600 font-normal max-w-lg">
-                            Simple, secure, and fast browser-based video calls. Build connections from anywhere with screen sharing and instant messaging.
+                        <p id="appDescription" class="mb-10 leading-relaxed text-lg text-gray-600 font-normal max-w-lg">
+                            We re-engineered the service we built for secure business meetings, tawktoo, to make it free and available for all.
                         </p>
                         
-                        <div class="flex flex-col sm:flex-row items-center gap-4 w-full max-w-lg">
-                            <button type="button" id="genRoomButton" class="w-full sm:w-auto inline-flex items-center justify-center bg-blue-600 text-white border-0 py-3.5 px-8 focus:outline-none hover:bg-blue-700 hover:shadow-lg rounded-lg text-lg font-medium transition-all duration-200 transform hover:-translate-y-0.5 active:translate-y-0 active:shadow-md">
+                        <div class="flex flex-col sm:flex-row items-center gap-4 w-full max-w-xl">
+                            <button type="button" id="genRoomButton" class="w-full sm:w-auto inline-flex items-center justify-center bg-blue-600 text-white border-0 py-3 px-6 focus:outline-none hover:bg-blue-700 hover:shadow-md rounded text-base font-medium transition-all duration-200">
                                 <i class="fa-solid fa-video mr-3"></i>
                                 New meeting
                             </button>
                             
-                            <div class="flex items-center w-full sm:w-auto flex-grow relative">
-                                <span class="absolute left-4 text-gray-500 pointer-events-none"><i class="fas fa-keyboard"></i></span>
-                                <button onclick="document.getElementById('roomName').focus()" class="absolute inset-0 w-full h-full opacity-0 z-0 sm:hidden"></button> <!-- Mobile click helper -->
-                                <input type="text" id="roomName" class="w-full py-3.5 pl-12 pr-4 text-lg bg-white border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-200 focus:border-blue-600 outline-none transition-all placeholder-gray-500 text-gray-700" placeholder="Enter a code or link" maxlength="32">
-                                <button id="joinRoomButton" class="hidden sm:inline-flex absolute right-2 top-1/2 transform -translate-y-1/2 text-blue-600 font-semibold cursor-pointer hover:bg-blue-50 px-3 py-1.5 rounded disabled:opacity-50 disabled:cursor-not-allowed transition-colors">Join</button>
+                            <div class="flex items-center w-full sm:w-auto flex-grow relative max-w-xs">
+                                <span class="absolute left-3 text-gray-500 pointer-events-none text-lg"><i class="fas fa-keyboard"></i></span>
+                                <input type="text" id="roomName" class="w-full py-3 pl-10 pr-16 text-base bg-white border border-gray-300 rounded focus:ring-2 focus:ring-blue-200 focus:border-blue-600 outline-none transition-all placeholder-gray-500 text-gray-700" placeholder="Enter a code or link" maxlength="32">
+                                <button id="joinRoomButton" class="absolute right-2 top-1/2 transform -translate-y-1/2 text-gray-400 font-medium cursor-not-allowed px-2 py-1 transition-colors" disabled>Join</button>
                             </div>
                         </div>
 
@@ -234,7 +240,7 @@
                     <div class="md:w-1/2 flex flex-col items-center md:items-start text-center md:text-left animate-on-scroll">
                         <h2 class="text-3xl md:text-4xl mb-6 font-medium text-gray-900 leading-tight">Meet from anywhere</h2>
                         <p class="mb-8 leading-relaxed text-lg text-gray-600">
-                            Get the whole crew together in Google Meet, where you can present business proposals, collaborate on chemistry assignments, or just catch up face to face.
+                            Get the whole crew together in tawktoo, where you can present business proposals, collaborate on chemistry assignments, or just catch up face to face.
                         </p>
                         <ul class="list-none space-y-4 text-left">
                             <li class="flex items-center text-gray-700">
