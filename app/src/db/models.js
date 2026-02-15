@@ -39,6 +39,14 @@ const Tenant = sequelize.define('Tenant', {
         type: DataTypes.STRING,
         defaultValue: 'active', // 'active', 'banned'
     },
+    otp_code: {
+        type: DataTypes.STRING,
+        allowNull: true,
+    },
+    otp_expiry: {
+        type: DataTypes.DATE,
+        allowNull: true,
+    },
 });
 
 const ApiKey = sequelize.define('ApiKey', {

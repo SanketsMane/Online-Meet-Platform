@@ -63,6 +63,83 @@ router.post('/auth/login', async (req, res) => {
     }
 });
 
+// Author: Sanket - Send OTP for Login or Password Reset
+router.post('/auth/otp/send', async (req, res) => {
+    try {
+        const { email } = req.body;
+        if (!email) return res.status(400).json({ message: 'Email is required' });
+
+        const tenant = await Tenant.findOne({ where: { email } });
+        if (!tenant) {
+            // Be vague for security, but we'll send a success response anyway to prevent user enumeration
+            return res.json({ message: 'If this email exists, an OTP has been sent.' });
+        }
+
+        // Generate 6-digit OTP
+        const otp = Math.floor(100000 + Math.random() * 900000).toString();
+        const otp_expiry = new Date(Date.now() + 10 * 60 * 1000); // 10 minutes
+
+        await tenant.update({ otp_code: otp, otp_expiry });
+
+        // Send OTP via Email
+        EmailService.sendOTP(tenant, otp).catch(err => console.error('OTP email failed:', err));
+
+        res.json({ message: 'OTP sent successfully' });
+    } catch (err) {
+        res.status(500).json({ message: 'Failed to send OTP', error: err.message });
+    }
+});
+
+// Author: Sanket - Verify OTP and Login
+router.post('/auth/otp/login', async (req, res) => {
+    try {
+        const { email, otp } = req.body;
+        if (!email || !otp) return res.status(400).json({ message: 'Missing fields' });
+
+        const tenant = await Tenant.findOne({ where: { email } });
+        if (!tenant || tenant.otp_code !== otp || new Date() > tenant.otp_expiry) {
+            return res.status(401).json({ message: 'Invalid or expired OTP' });
+        }
+
+        // Clear OTP after successful use
+        await tenant.update({ otp_code: null, otp_expiry: null });
+
+        const token = jwt.sign(
+            { id: tenant.id, role: tenant.role },
+            config.security.jwt.key,
+            { expiresIn: '24h' }
+        );
+
+        res.json({ token, role: tenant.role, name: tenant.name });
+    } catch (err) {
+        res.status(500).json({ message: 'OTP verification failed', error: err.message });
+    }
+});
+
+// Author: Sanket - Reset Password using OTP
+router.post('/auth/password/reset', async (req, res) => {
+    try {
+        const { email, otp, newPassword } = req.body;
+        if (!email || !otp || !newPassword) return res.status(400).json({ message: 'Missing fields' });
+
+        const tenant = await Tenant.findOne({ where: { email } });
+        if (!tenant || tenant.otp_code !== otp || new Date() > tenant.otp_expiry) {
+            return res.status(401).json({ message: 'Invalid or expired OTP' });
+        }
+
+        const password_hash = await bcrypt.hash(newPassword, 10);
+        await tenant.update({
+            password_hash,
+            otp_code: null,
+            otp_expiry: null
+        });
+
+        res.json({ message: 'Password reset successfully' });
+    } catch (err) {
+        res.status(500).json({ message: 'Password reset failed', error: err.message });
+    }
+});
+
 // Usage Stats
 router.get('/stats/usage', async (req, res) => {
     const authHeader = req.headers['authorization'];

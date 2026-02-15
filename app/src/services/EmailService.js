@@ -73,6 +73,25 @@ class EmailService {
         
         await this.sendBrandedEmail(user.email, title, content);
     }
+ 
+    /**
+     * Send OTP for Login or Password Reset
+     * @param {object} user 
+     * @param {string} otp 
+     */
+    static async sendOTP(user, otp) {
+        const title = 'One-Time Password (OTP) Verification';
+        const content = `
+            <p>Hi ${user.name || 'Developer'},</p>
+            <p>You requested a secure code to access your ${APP_NAME} account. Use the code below to complete your verification. This code will expire in 10 minutes.</p>
+            <div style="background: #f1f5f9; border-radius: 12px; padding: 24px; text-align: center; margin: 32px 0;">
+                <h1 style="margin: 0; font-size: 32px; letter-spacing: 0.25em; color: ${BRAND_COLOR}; font-family: monospace;">${otp}</h1>
+            </div>
+            <p style="font-size: 14px; color: #64748b;">If you did not request this code, please ignore this email or contact support if you have concerns about your account security.</p>
+        `;
+        
+        await this.sendBrandedEmail(user.email, title, content);
+    }
 
     /**
      * Send Security Alert (Key Revocation/Deletion)
