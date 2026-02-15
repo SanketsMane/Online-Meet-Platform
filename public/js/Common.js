@@ -195,31 +195,74 @@ const joinRoomButton = document.getElementById('joinRoomButton');
 const customizeRoomButton = document.getElementById('customizeRoomButton');
 const adultCnt = document.getElementById('adultCnt');
 
-if (genRoomButton) {
-    genRoomButton.onclick = () => {
-        genRoom();
+// Author: Sanket - Dropdown and Advanced Meeting Logic
+const meetingDropdown = document.getElementById('meetingDropdown');
+
+if (genRoomButton && meetingDropdown) {
+    genRoomButton.onclick = (e) => {
+        e.stopPropagation();
+        meetingDropdown.classList.toggle('show');
     };
+
+    document.addEventListener('click', (e) => {
+        if (!meetingDropdown.contains(e.target) && e.target !== genRoomButton) {
+            meetingDropdown.classList.remove('show');
+        }
+    });
 }
 
-if (joinRoomButton) {
-    joinRoomButton.onclick = () => {
-        joinRoom();
-    };
+function createMeetingForLater() {
+    const room = getUUID4();
+    const url = window.location.origin + '/join/?room=' + room;
+    
+    meetingDropdown.classList.remove('show');
+    
+    Swal.fire({
+        title: 'Here\'s the link to your meeting',
+        html: `
+            <p class="text-sm text-gray-500 mb-6">Copy this link and send it to people you want to meet with. Be sure to save it so you can use it later too.</p>
+            <div class="flex items-center gap-2 bg-gray-50 dark:bg-gray-800 p-3 rounded-xl border border-gray-100 dark:border-gray-750">
+                <span id="generatedLink" class="font-mono text-sm text-gray-700 dark:text-gray-300 truncate flex-grow">${url}</span>
+                <button onclick="copyGeneratedLink('${url}')" class="p-2 text-blue-600 hover:bg-blue-50 dark:hover:bg-blue-900/20 rounded-lg transition-colors">
+                    <i class="fa-solid fa-copy"></i>
+                </button>
+            </div>
+        `,
+        showConfirmButton: false,
+        showCloseButton: true,
+        customClass: {
+            container: 'swal2-link-generator'
+        }
+    });
 }
 
-if (customizeRoomButton) {
-    customizeRoomButton.onclick = () => {
-        window.location.href = '/customizeRoom';
-    };
+function copyGeneratedLink(url) {
+    navigator.clipboard.writeText(url).then(() => {
+        const btn = document.querySelector('.swal2-link-generator button');
+        btn.innerHTML = '<i class="fa-solid fa-check"></i>';
+        setTimeout(() => {
+            btn.innerHTML = '<i class="fa-solid fa-copy"></i>';
+        }, 2000);
+    });
 }
 
-if (adultCnt) {
-    adultCnt.onclick = () => {
-        adultContent();
-    };
+function startInstantMeeting() {
+    const room = getUUID4();
+    window.location.href = '/join/?room=' + room;
+}
+
+function scheduleInCalendar() {
+    const room = getUUID4();
+    const url = window.location.origin + '/join/?room=' + room;
+    const title = encodeURIComponent('Video Meeting');
+    const description = encodeURIComponent(`Join my video meeting: ${url}`);
+    const calendarUrl = `https://www.google.com/calendar/render?action=TEMPLATE&text=${title}&details=${description}`;
+    
+    window.open(calendarUrl, '_blank');
 }
 
 function genRoom() {
+    // Legacy support if needed, but we now use the explicit functions above
     document.getElementById('roomName').value = getUUID4();
 }
 

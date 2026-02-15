@@ -130,6 +130,33 @@
                     flex-direction: row !important;
                 }
             }
+
+            /* New Meeting Dropdown Styles */
+            #meetingDropdown {
+                transform: translateY(10px);
+                opacity: 0;
+                pointer-events: none;
+                transition: all 0.2s cubic-bezier(0.4, 0, 0.2, 1);
+            }
+            #meetingDropdown.show {
+                transform: translateY(0);
+                opacity: 1;
+                pointer-events: auto;
+            }
+            .dropdown-item {
+                @apply flex items-center gap-3 px-4 py-3.5 text-sm font-medium text-gray-700 dark:text-gray-200 hover:bg-gray-50 dark:hover:bg-gray-800 transition-colors;
+            }
+            .dropdown-item i {
+                @apply text-lg text-gray-500 w-5 text-center;
+            }
+
+            /* Custom Modal Styling for Link Copy */
+            .swal2-link-generator {
+                @apply rounded-[32px] !important;
+            }
+            .swal2-link-input {
+                @apply bg-gray-50 dark:bg-gray-800 border-none rounded-xl px-4 py-3 font-mono text-sm w-full mb-4 !important;
+            }
         </style>
     </head>
     <body class="bg-white dark:bg-gray-900 text-gray-800 dark:text-white antialiased transition-colors duration-300">
@@ -186,11 +213,29 @@
                         
                         <!-- Actions Group -->
                         <div class="flex flex-col sm:flex-row items-center gap-4 w-full max-w-xl">
-                            <!-- New Meeting Button -->
-                            <button type="button" id="genRoomButton" class="w-full sm:w-auto flex-shrink-0 inline-flex items-center justify-center bg-blue-600 text-white border-0 h-14 px-8 focus:outline-none hover:bg-blue-700 hover:shadow-lg rounded-lg text-base font-medium transition-all duration-200 whitespace-nowrap">
-                                <i class="fa-solid fa-video mr-2.5"></i>
-                                New meeting
-                            </button>
+                            <!-- New Meeting Group -->
+                            <div class="relative w-full sm:w-auto">
+                                <button type="button" id="genRoomButton" class="w-full sm:w-auto flex-shrink-0 inline-flex items-center justify-center bg-blue-600 text-white border-0 h-14 px-8 focus:outline-none hover:bg-blue-700 hover:shadow-lg rounded-lg text-base font-medium transition-all duration-200 whitespace-nowrap">
+                                    <i class="fa-solid fa-video mr-2.5"></i>
+                                    New meeting
+                                </button>
+                                
+                                <!-- Dropdown Menu -->
+                                <div id="meetingDropdown" class="absolute left-0 bottom-full sm:bottom-auto sm:top-full mb-3 sm:mb-0 sm:mt-2 w-full sm:w-72 bg-white dark:bg-gray-900 rounded-2xl shadow-2xl border border-gray-100 dark:border-gray-800 overflow-hidden z-[60]">
+                                    <button onclick="createMeetingForLater()" class="dropdown-item w-full text-left border-b border-gray-50 dark:border-gray-800">
+                                        <i class="fa-solid fa-link"></i>
+                                        Create a meeting for later
+                                    </button>
+                                    <button onclick="startInstantMeeting()" class="dropdown-item w-full text-left border-b border-gray-50 dark:border-gray-800">
+                                        <i class="fa-solid fa-plus"></i>
+                                        Start an instant meeting
+                                    </button>
+                                    <button onclick="scheduleInCalendar()" class="dropdown-item w-full text-left">
+                                        <i class="fa-regular fa-calendar-plus"></i>
+                                        Schedule in Google Calendar
+                                    </button>
+                                </div>
+                            </div>
                             
                             <!-- Input & Join -->
                             <div class="flex items-center w-full sm:w-auto flex-grow relative gap-3 h-14">
