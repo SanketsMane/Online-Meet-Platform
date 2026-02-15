@@ -133,6 +133,7 @@
 
             /* New Meeting Dropdown Styles */
             #meetingDropdown {
+                @apply absolute left-0 bottom-full sm:bottom-auto sm:top-full mb-3 sm:mb-0 sm:mt-2 w-full sm:w-72 bg-white dark:bg-gray-900 rounded-2xl shadow-2xl border border-gray-100 dark:border-gray-800 overflow-hidden z-[60];
                 transform: translateY(10px);
                 opacity: 0;
                 pointer-events: none;
@@ -144,18 +145,28 @@
                 pointer-events: auto;
             }
             .dropdown-item {
-                @apply flex items-center gap-3 px-4 py-3.5 text-sm font-medium text-gray-700 dark:text-gray-200 hover:bg-gray-50 dark:hover:bg-gray-800 transition-colors;
+                @apply flex items-center gap-1 px-2 py-4 text-[15px] font-medium text-slate-700 dark:text-slate-200 hover:bg-slate-50 dark:hover:bg-slate-800 transition-all;
             }
-            .dropdown-item i {
-                @apply text-lg text-gray-500 w-5 text-center;
+            .dropdown-item .icon-box {
+                @apply w-12 flex-shrink-0 flex items-center justify-center text-slate-500 dark:text-slate-400;
             }
+            .dropdown-item i { @apply text-lg; }
 
             /* Custom Modal Styling for Link Copy */
             .swal2-link-generator {
-                @apply rounded-[32px] !important;
+                @apply rounded-[28px] !important;
+                padding: 1.5rem !important;
             }
-            .swal2-link-input {
-                @apply bg-gray-50 dark:bg-gray-800 border-none rounded-xl px-4 py-3 font-mono text-sm w-full mb-4 !important;
+            .swal2-popup.swal2-modal.swal2-show {
+                padding: 2.5rem 1.5rem 1.5rem 1.5rem !important;
+            }
+            .swal2-close {
+                top: 15px !important;
+                right: 15px !important;
+                @apply text-slate-300 hover:text-slate-900 dark:hover:text-white transition-colors !important;
+            }
+            .swal2-title {
+                @apply text-[22px] font-bold text-slate-900 dark:text-white mb-2 !important;
             }
         </style>
     </head>
@@ -221,17 +232,17 @@
                                 </button>
                                 
                                 <!-- Dropdown Menu -->
-                                <div id="meetingDropdown" class="absolute left-0 bottom-full sm:bottom-auto sm:top-full mb-3 sm:mb-0 sm:mt-2 w-full sm:w-72 bg-white dark:bg-gray-900 rounded-2xl shadow-2xl border border-gray-100 dark:border-gray-800 overflow-hidden z-[60]">
-                                    <button onclick="createMeetingForLater()" class="dropdown-item w-full text-left border-b border-gray-50 dark:border-gray-800">
-                                        <i class="fa-solid fa-link"></i>
+                                <div id="meetingDropdown">
+                                    <button onclick="createMeetingForLater()" class="dropdown-item w-full text-left border-b border-slate-50 dark:border-slate-800">
+                                        <div class="icon-box"><i class="fa-solid fa-link"></i></div>
                                         Create a meeting for later
                                     </button>
-                                    <button onclick="startInstantMeeting()" class="dropdown-item w-full text-left border-b border-gray-50 dark:border-gray-800">
-                                        <i class="fa-solid fa-plus"></i>
+                                    <button onclick="startInstantMeeting()" class="dropdown-item w-full text-left border-b border-slate-50 dark:border-slate-800">
+                                        <div class="icon-box"><i class="fa-solid fa-plus"></i></div>
                                         Start an instant meeting
                                     </button>
                                     <button onclick="scheduleInCalendar()" class="dropdown-item w-full text-left">
-                                        <i class="fa-regular fa-calendar-plus"></i>
+                                        <div class="icon-box"><i class="fa-regular fa-calendar-plus"></i></div>
                                         Schedule in Google Calendar
                                     </button>
                                 </div>

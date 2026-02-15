@@ -220,11 +220,11 @@ function createMeetingForLater() {
     Swal.fire({
         title: 'Here\'s the link to your meeting',
         html: `
-            <p class="text-sm text-gray-500 mb-6">Copy this link and send it to people you want to meet with. Be sure to save it so you can use it later too.</p>
-            <div class="flex items-center gap-2 bg-gray-50 dark:bg-gray-800 p-3 rounded-xl border border-gray-100 dark:border-gray-750">
-                <span id="generatedLink" class="font-mono text-sm text-gray-700 dark:text-gray-300 truncate flex-grow">${url}</span>
-                <button onclick="copyGeneratedLink('${url}')" class="p-2 text-blue-600 hover:bg-blue-50 dark:hover:bg-blue-900/20 rounded-lg transition-colors">
-                    <i class="fa-solid fa-copy"></i>
+            <p class="text-[15px] text-slate-500 dark:text-slate-400 mb-6 leading-relaxed">Copy this link and send it to people you want to meet with. Be sure to save it so you can use it later too.</p>
+            <div class="flex items-center gap-3 bg-slate-50 dark:bg-slate-900/50 p-4 rounded-xl border border-slate-100 dark:border-slate-800">
+                <span id="generatedLink" class="font-mono text-sm text-slate-600 dark:text-slate-300 truncate flex-grow text-left">${url}</span>
+                <button onclick="copyGeneratedLink('${url}')" class="p-2.5 text-blue-600 hover:bg-blue-50 dark:hover:bg-blue-900/20 rounded-xl transition-all">
+                    <i class="fa-solid fa-copy text-lg"></i>
                 </button>
             </div>
         `,
