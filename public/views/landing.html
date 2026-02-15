@@ -330,14 +330,16 @@
 
 
                     <!-- Theme Toggle -->
-                    <button id="themeToggle" class="p-2 rounded-full text-gray-500 hover:bg-gray-100 dark:hover:bg-gray-800 transition-colors focus:outline-none">
-                        <i class="fas fa-sun text-lg md:text-xl"></i>
-                    </button>
+                    <div class="relative flex items-center">
+                        <button id="themeToggle" class="w-10 h-10 md:w-11 md:h-11 rounded-full flex items-center justify-center text-gray-500 dark:text-gray-400 hover:bg-gray-100 dark:hover:bg-gray-800 transition-all duration-300 focus:outline-none border border-transparent hover:border-gray-200 dark:hover:border-gray-700 active:scale-90">
+                            <i class="fas fa-sun text-lg md:text-xl sun-icon"></i>
+                        </button>
+                    </div>
 
                     <!-- Auth/Nav Actions -->
-                     <div class="flex items-center gap-2 md:gap-3 ml-1 md:ml-2">
-                         <a href="/login" class="md:hidden text-gray-600 dark:text-gray-400 hover:text-blue-600 font-medium px-2 text-sm">Log in</a>
-                         <button id="header_join_btn" class="bg-blue-600 text-white px-4 md:px-6 h-10 md:h-11 rounded-[4px] hover:bg-blue-700 font-medium text-sm shadow-sm transition-all active:scale-95 whitespace-nowrap">Join meeting</button>
+                     <div class="flex items-center gap-1.5 md:gap-3 ml-1 md:ml-2">
+                         <a href="/login" class="md:hidden text-gray-600 dark:text-gray-400 hover:text-blue-600 font-medium px-2 text-[13px]">Log in</a>
+                         <button id="header_join_btn" class="bg-blue-600 text-white px-3 md:px-6 h-9 md:h-11 rounded-[4px] hover:bg-blue-700 font-medium text-[13px] md:text-sm shadow-sm transition-all active:scale-95 whitespace-nowrap">Join meeting</button>
                      </div>
                 </div>
             </div>
