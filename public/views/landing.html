@@ -326,7 +326,7 @@
                 <!-- Right: Actions -->
                 <div class="flex items-center gap-2 md:gap-4 flex-shrink-0">
                      <!-- Date & Time -->
-                    <div id="headerDateTime" class="hidden xl:block text-lg text-gray-500 font-normal mr-2"></div>
+                    <div id="headerDateTime" class="hidden xl:block text-[15px] font-medium text-gray-500 mr-2"></div>
 
 
                     <!-- Theme Toggle -->
@@ -339,7 +339,10 @@
                     <!-- Auth/Nav Actions -->
                      <div class="flex items-center gap-1.5 md:gap-3 ml-1 md:ml-2">
                          <a href="/login" class="md:hidden text-gray-600 dark:text-gray-400 hover:text-blue-600 font-medium px-2 text-[13px]">Log in</a>
-                         <button id="header_join_btn" class="bg-blue-600 text-white px-3 md:px-6 h-9 md:h-11 rounded-[4px] hover:bg-blue-700 font-medium text-[13px] md:text-sm shadow-sm transition-all active:scale-95 whitespace-nowrap">Join meeting</button>
+                         <button id="header_join_btn" class="bg-blue-600 text-white px-3 md:px-6 h-9 md:h-11 rounded-[4px] hover:bg-blue-700 font-medium text-[13px] md:text-sm shadow-sm transition-all active:scale-95 whitespace-nowrap">
+                            <span class="md:hidden">Join</span>
+                            <span class="hidden md:inline">Join meeting</span>
+                         </button>
                      </div>
                 </div>
             </div>
