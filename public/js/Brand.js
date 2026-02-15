@@ -39,17 +39,17 @@ const guestJoinRoomButton = document.getElementById('guestJoinRoomButton');
 let BRAND = {
     app: {
         language: 'en',
-        name: 'tawktoo',
+        name: 'Kidokool SFU',
         title: 'Premium video meetings. <br />Now free for everyone.',
         description:
-            'We re-engineered the service we built for secure business meetings, tawktoo, to make it free and available for all.',
+            'We re-engineered the service we built for secure business meetings to make it free and available for all.',
         joinDescription: 'Pick a room name.<br />How about this one?',
         joinButtonLabel: 'JOIN ROOM',
         customizeButtonLabel: 'CUSTOMIZE ROOM',
         joinLastLabel: 'Your recent room:',
     },
     site: {
-        title: 'tawktoo - Free Video Calls, Messaging and Screen Sharing',
+        title: 'Kidokool SFU - Free Video Calls, Messaging and Screen Sharing',
         icon: '../images/logo.svg',
         appleTouchIcon: '../images/logo.svg',
         newRoomTitle: 'Pick name. <br />Share URL. <br />Start conference.',
@@ -58,7 +58,7 @@ let BRAND = {
     },
     meta: {
         description:
-            'tawktoo powered by WebRTC and mediasoup, Real-time Simple Secure Fast video calls, messaging and screen sharing capabilities in the browser.',
+            'Kidokool SFU powered by WebRTC and mediasoup, Real-time Simple Secure Fast video calls, messaging and screen sharing capabilities in the browser.',
         keywords:
             'webrtc, miro, mediasoup, mediasoup-client, self hosted, voip, sip, real-time communications, chat, messaging, meet, webrtc stun, webrtc turn, webrtc p2p, webrtc sfu, video meeting, video chat, video conference, multi video chat, multi video conference, peer to peer, p2p, sfu, rtc, alternative to, zoom, microsoft teams, jitsi, meeting',
     },
@@ -109,7 +109,7 @@ let BRAND = {
             </a>
             <br /><br />
             <hr />
-            <span>&copy; 2026 tawktoo, all rights reserved</span>
+            <span>&copy; 2026 Kidokool SFU, all rights reserved</span>
             <hr />
         `,
     },
@@ -139,7 +139,7 @@ let BRAND = {
                 connectText: 'connect in < 5 seconds',
                 onlineText: 'We are online',
                 offlineText: 'We are offline',
-                poweredBy: 'Powered by tawktoo',
+                poweredBy: 'Powered by Kidokool SFU',
             },
             alert: {
                 enabled: false,
@@ -352,7 +352,7 @@ function customizeFooter() {
         footerEl.innerHTML = `
             <div class="container mx-auto px-5 md:px-10 flex flex-col md:flex-row items-center justify-between py-6 border-t border-gray-100 dark:border-gray-800 mt-10">
                 <div class="text-sm text-gray-500 text-center md:text-left mb-4 md:mb-0">
-                    ${copyright || '&copy; 2026 tawktoo'}
+                    ${copyright || '&copy; 2026 Kidokool SFU'}
                 </div>
                 <div class="flex flex-wrap justify-center md:justify-end items-center gap-6">
                     ${linksHtml}

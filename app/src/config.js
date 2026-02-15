@@ -1012,7 +1012,7 @@ module.exports = {
                 name: process.env.APP_NAME || 'Kidokool SFU',
                 title:
                     process.env.APP_TITLE ||
-                    '<h1>tawktoo</h1> Free browser based Real-time video calls.<br />Simple, Secure, Fast.',
+                    'Free browser based Real-time video calls.<br />Simple, Secure, Fast.',
                 description:
                     process.env.APP_DESCRIPTION ||
                     'Start your next video call with a single click. No download, plug-in, or login is required.',
