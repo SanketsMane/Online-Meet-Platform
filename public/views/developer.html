@@ -38,9 +38,10 @@
             :root { --sidebar-width: 280px; }
             body { font-family: 'Inter', sans-serif; }
             
-            /* High-density table styles */
-            .pro-table th { @apply px-6 py-3 text-left text-xs font-semibold text-slate-500 uppercase tracking-wider bg-slate-50 dark:bg-slate-800/50 dark:text-slate-400; }
-            .pro-table td { @apply px-6 py-4 whitespace-nowrap text-sm text-slate-600 dark:text-slate-300 border-b border-slate-100 dark:border-slate-800; }
+            /* Minimalist table styles */
+            .pro-table th { @apply px-6 py-4 text-left text-[10px] font-bold text-slate-400 uppercase tracking-[0.2em] border-b border-slate-100 dark:border-slate-800; }
+            .pro-table td { @apply px-6 py-5 whitespace-nowrap text-sm text-slate-600 dark:text-slate-300 border-none; }
+            .pro-table tr { @apply transition-all duration-200 hover:bg-slate-50/50 dark:hover:bg-slate-800/30; }
             
             /* Sidebar transitions */
             .sidebar { width: var(--sidebar-width); @apply transition-all duration-300 ease-in-out border-r border-slate-200 dark:border-slate-800 bg-white dark:bg-slate-900; }
@@ -61,8 +62,9 @@
             .code-block { @apply rounded-xl overflow-hidden bg-slate-900 border border-slate-800 shadow-2xl; }
             .code-header { @apply flex items-center justify-between px-4 py-2 bg-slate-800/50 border-b border-slate-800; }
             
-            /* Glassmorphism */
-            .glass-panel { @apply bg-white/70 dark:bg-slate-900/70 backdrop-blur-md border border-white/20 dark:border-slate-800/50 shadow-sm transition-all duration-200 hover:shadow-md; }
+            /* Glassmorphism Refined */
+            .glass-panel { @apply bg-white dark:bg-slate-900 border border-slate-100 dark:border-slate-800 shadow-sm transition-all duration-300; }
+            .glass-panel:hover { @apply shadow-md border-slate-200 dark:border-slate-700; }
         </style>
     </head>
     <body class="dark:bg-slate-950 transition-colors duration-300 antialiased">
@@ -291,28 +293,27 @@
                     </div>
 
                     <!-- Keys Section -->
-                    <div id="section-keys" class="hidden space-y-6">
-                        <div class="flex justify-between items-center">
+                        <div class="flex flex-col md:flex-row justify-between items-start md:items-end gap-4">
                             <div>
-                                <h3 class="text-2xl font-extrabold text-slate-900 dark:text-white tracking-tight">API Keys</h3>
-                                <p class="text-sm font-semibold text-slate-500 lowercase">Manage keys for your applications</p>
+                                <h3 class="text-3xl font-extrabold text-slate-900 dark:text-white mb-1 tracking-tight">API Secrets</h3>
+                                <p class="text-sm font-medium text-slate-400">Authenticating your cloud applications</p>
                             </div>
-                            <button onclick="generateKey()" class="px-6 py-3 rounded-2xl bg-brand-600 hover:bg-brand-700 text-white font-bold text-sm shadow-xl shadow-brand-500/20 transition-all active:scale-95 flex items-center gap-2">
+                            <button onclick="generateKey()" class="px-6 py-3 rounded-2xl bg-brand-600 hover:bg-brand-700 text-white font-bold text-xs transition-all active:scale-95 flex items-center gap-2">
                                 <i class="fas fa-plus"></i>
-                                New Secret Key
+                                Create New Secret
                             </button>
                         </div>
                         
-                        <div class="bg-white dark:bg-slate-900 rounded-3xl shadow-sm border border-slate-100 dark:border-slate-800 overflow-hidden">
+                        <div class="glass-panel rounded-[32px] overflow-hidden">
                             <div class="overflow-x-auto">
                                 <table class="w-full pro-table">
                                     <thead>
                                         <tr>
-                                            <th>Key Name</th>
-                                            <th>Prefix</th>
-                                            <th>Created</th>
+                                            <th>Label</th>
+                                            <th>Internal Prefix</th>
+                                            <th>Issued On</th>
                                             <th>Status</th>
-                                            <th class="text-right">Actions</th>
+                                            <th class="text-right pr-10">Manage</th>
                                         </tr>
                                     </thead>
                                     <tbody id="keysTableBody">
@@ -320,11 +321,14 @@
                                     </tbody>
                                 </table>
                             </div>
-                            <div id="noKeysPlaceholder" class="hidden py-20 text-center space-y-4">
-                                <div class="w-20 h-20 rounded-full bg-slate-50 dark:bg-slate-800 flex items-center justify-center mx-auto text-slate-200 dark:text-slate-700">
-                                    <i class="fas fa-key text-4xl"></i>
+                            <div id="noKeysPlaceholder" class="hidden py-32 text-center space-y-6">
+                                <div class="w-24 h-24 rounded-[32px] bg-slate-50 dark:bg-slate-800/50 flex items-center justify-center mx-auto text-slate-200 dark:text-slate-700 border border-dashed border-slate-200 dark:border-slate-800">
+                                    <i class="fas fa-key text-3xl"></i>
                                 </div>
-                                <p class="text-slate-500 font-bold italic">Safe as a vault. Generate your first key.</p>
+                                <div>
+                                    <p class="text-slate-900 dark:text-white font-bold text-lg">No active secrets found</p>
+                                    <p class="text-slate-400 text-sm italic">Secure your first application by generating a key above.</p>
+                                </div>
                             </div>
                         </div>
                     </div>
@@ -479,20 +483,20 @@
 
                     placeholder.classList.add('hidden');
                     container.innerHTML = keys.map(k => `
-                        <tr class="hover:bg-slate-50 dark:hover:bg-slate-800/20 transition-colors">
-                            <td class="font-bold text-slate-800 dark:text-slate-200">${k.name}</td>
-                            <td><code class="bg-slate-100 dark:bg-slate-800 px-2 py-1 rounded text-xs opacity-80">${k.prefix}...</code></td>
-                            <td class="text-xs italic opacity-60">${new Date(k.createdAt).toLocaleDateString()}</td>
+                        <tr>
+                            <td class="font-bold text-slate-900 dark:text-white">${k.name}</td>
+                            <td><span class="font-mono text-[10px] text-slate-400 bg-slate-100 dark:bg-slate-800/50 px-2 py-1 rounded-lg">${k.prefix}••••</span></td>
+                            <td class="text-xs font-semibold text-slate-400">${new Date(k.createdAt).toLocaleDateString()}</td>
                             <td>
-                                <span class="px-2 py-1 rounded-full text-[10px] font-bold uppercase tracking-widest ${k.is_active ? 'bg-emerald-100 text-emerald-700 dark:bg-emerald-900/40 dark:text-emerald-400' : 'bg-red-100 text-red-700 dark:bg-red-900/40 dark:text-red-400'}">
-                                    ${k.is_active ? 'Active' : 'Revoked'}
+                                <span class="px-3 py-1 rounded-full text-[9px] font-extrabold uppercase tracking-widest ${k.is_active ? 'bg-emerald-50 text-emerald-600 border border-emerald-100 dark:bg-emerald-900/20 dark:text-emerald-400 dark:border-emerald-800/50' : 'bg-slate-100 text-slate-500 border border-slate-200 dark:bg-slate-800 dark:text-slate-500 dark:border-slate-700'}">
+                                    ${k.is_active ? 'Online' : 'Revoked'}
                                 </span>
                             </td>
-                            <td class="text-right">
-                                <div class="flex justify-end gap-1">
-                                    <button onclick="copyPrefix('${k.prefix}')" class="w-8 h-8 flex items-center justify-center rounded-lg hover:bg-slate-100 dark:hover:bg-slate-800 text-slate-400 hover:text-brand-500 transition-all"><i class="fas fa-copy text-xs"></i></button>
-                                    <button onclick="toggleKey('${k.id}', ${k.is_active})" class="w-8 h-8 flex items-center justify-center rounded-lg hover:bg-slate-100 dark:hover:bg-slate-800 text-slate-400 hover:text-orange-500 transition-all"><i class="fas ${k.is_active ? 'fa-ban' : 'fa-check-circle'} text-xs"></i></button>
-                                    <button onclick="deleteKey('${k.id}')" class="w-8 h-8 flex items-center justify-center rounded-lg hover:bg-slate-100 dark:hover:bg-slate-800 text-slate-400 hover:text-red-500 transition-all"><i class="fas fa-trash-alt text-xs"></i></button>
+                            <td class="text-right pr-6">
+                                <div class="flex justify-end items-center gap-2">
+                                    <button onclick="copyPrefix('${k.prefix}')" title="Copy Prefix" class="p-2.5 rounded-xl hover:bg-slate-100 dark:hover:bg-slate-800 text-slate-400 hover:text-brand-500 transition-all"><i class="fas fa-copy text-xs"></i></button>
+                                    <button onclick="toggleKey('${k.id}', ${k.is_active})" title="${k.is_active ? 'Revoke' : 'Restore'}" class="p-2.5 rounded-xl hover:bg-slate-100 dark:hover:bg-slate-800 text-slate-400 ${k.is_active ? 'hover:text-amber-500' : 'hover:text-emerald-500'} transition-all"><i class="fas ${k.is_active ? 'fa-shield-slash' : 'fa-check-circle'} text-xs"></i></button>
+                                    <button onclick="deleteKey('${k.id}')" title="Delete Permanently" class="p-2.5 rounded-xl hover:bg-slate-100 dark:hover:bg-slate-800 text-slate-400 hover:text-red-500 transition-all"><i class="fas fa-trash-alt text-xs"></i></button>
                                 </div>
                             </td>
                         </tr>
