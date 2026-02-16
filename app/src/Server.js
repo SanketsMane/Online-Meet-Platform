@@ -185,6 +185,8 @@ const loginLimiter = rateLimit({
 // Branding configuration - Author: Sanket
 // Read from environment variable to allow runtime control via .env
 const brandHtmlInjection = process.env.BRAND_HTML_INJECTION === 'true';
+console.log('DEBUG: BRAND_HTML_INJECTION env:', process.env.BRAND_HTML_INJECTION);
+console.log('DEBUG: brandHtmlInjection boolean:', brandHtmlInjection);
 const webhook = config?.api?.webhook;
 
 // Incoming Stream to RTPM
