@@ -182,8 +182,9 @@ const loginLimiter = rateLimit({
     keyGenerator: (req) => req.body?.username || ipKeyGenerator(req),
 });
 
-// Branding configuration
-const brandHtmlInjection = config?.ui?.brand?.htmlInjection ?? true;
+// Branding configuration - Author: Sanket
+// Read from environment variable to allow runtime control via .env
+const brandHtmlInjection = process.env.BRAND_HTML_INJECTION === 'true';
 const webhook = config?.api?.webhook;
 
 // Incoming Stream to RTPM
