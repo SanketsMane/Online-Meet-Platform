@@ -185,8 +185,6 @@ const loginLimiter = rateLimit({
 // Branding configuration - Author: Sanket
 // Read from environment variable to allow runtime control via .env
 const brandHtmlInjection = process.env.BRAND_HTML_INJECTION === 'true';
-console.log('DEBUG: BRAND_HTML_INJECTION env:', process.env.BRAND_HTML_INJECTION);
-console.log('DEBUG: brandHtmlInjection boolean:', brandHtmlInjection);
 const webhook = config?.api?.webhook;
 
 // Incoming Stream to RTPM
@@ -648,10 +646,9 @@ function startServer() {
             if (settings.LOGO_CONFIG) branding.logo_config = settings.LOGO_CONFIG;
             if (settings.FOOTER_CONFIG) branding.footer_config = settings.FOOTER_CONFIG;
 
-            // res.status(200).json({ message: brandHtmlInjection ? branding : false });
-            res.status(200).json({ debug: 'SANKET_FIX_ACTIVE', brandHtmlInjection });
+            res.status(200).json({ message: brandHtmlInjection ? branding : false });
         } catch (e) {
-            res.status(200).json({ error: e.message, brandHtmlInjection });
+            res.status(200).json({ message: brandHtmlInjection ? config?.ui?.brand : false });
         }
     });
 
