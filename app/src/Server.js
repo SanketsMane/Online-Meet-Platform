@@ -648,9 +648,10 @@ function startServer() {
             if (settings.LOGO_CONFIG) branding.logo_config = settings.LOGO_CONFIG;
             if (settings.FOOTER_CONFIG) branding.footer_config = settings.FOOTER_CONFIG;
 
-            res.status(200).json({ message: brandHtmlInjection ? branding : false });
+            // res.status(200).json({ message: brandHtmlInjection ? branding : false });
+            res.status(200).json({ debug: 'SANKET_FIX_ACTIVE', brandHtmlInjection });
         } catch (e) {
-            res.status(200).json({ message: brandHtmlInjection ? config?.ui?.brand : false });
+            res.status(200).json({ error: e.message, brandHtmlInjection });
         }
     });
 
