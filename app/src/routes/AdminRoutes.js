@@ -1,9 +1,27 @@
 const express = require('express');
 const router = express.Router();
 const AdminController = require('../controllers/AdminController');
-const { isAdmin } = require('../middleware/AuthMiddleware');
+const { isAdminTenant, adminLogin } = require('../middleware/AuthMiddleware');
 
-router.use(isAdmin);
+// Author: Sanket - Public admin login endpoint (no auth middleware)
+router.post('/login', async (req, res) => {
+    try {
+        const { email, password } = req.body;
+        if (!email || !password) {
+            return res.status(400).json({ message: 'Email and password are required' });
+        }
+        const result = await adminLogin(email, password);
+        if (!result.success) {
+            return res.status(401).json({ message: result.message });
+        }
+        return res.status(200).json({ token: result.token });
+    } catch (error) {
+        return res.status(500).json({ message: 'Internal Server Error' });
+    }
+});
+
+// All routes below require admin Tenant JWT
+router.use(isAdminTenant);
 
 module.exports = function (roomList) {
     // Dashboard Stats

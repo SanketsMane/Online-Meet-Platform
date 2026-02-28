@@ -1,0 +1,63 @@
+/* 
+  tawktoo Unified Design System 
+  Style: Google Meet Mimic 
+  Author: Sanket
+*/
+
+:root {
+    /* Color Palette */
+    --google-blue: #1a73e8;
+    --google-blue-hover: #174ea6;
+    --google-red: #ea4335;
+    --google-green: #34a853;
+    --google-yellow: #fbbc04;
+
+    /* Backgrounds */
+    --bg-light: #ffffff;
+    --bg-dark: #15181d;
+    --bg-dark-secondary: #1d2026;
+
+    /* Text */
+    --text-light-primary: #202124;
+    --text-light-secondary: #5f6368;
+    --text-dark-primary: #e8eaed;
+    --text-dark-secondary: #9aa0a6;
+
+    /* Borders */
+    --border-light: #dadce0;
+    --border-dark: #3c4043;
+
+    /* Fonts */
+    --font-heading: 'Outfit', sans-serif;
+    --font-body: 'Inter', sans-serif;
+
+    /* Accents */
+    --glass-bg: rgba(255, 255, 255, 0.7);
+    --glass-bg-dark: rgba(21, 24, 29, 0.7);
+}
+
+/* Global Transition Utility */
+.transition-standard {
+    transition: all 0.2s ease-in-out;
+}
+
+/* Google Meet Style Button Base */
+.btn-google {
+    font-family: var(--font-body);
+    font-weight: 500;
+    padding: 10px 24px;
+    border-radius: 4px;
+    cursor: pointer;
+    border: none;
+    transition: background-color 0.2s, box-shadow 0.2s;
+}
+
+.btn-google-primary {
+    background-color: var(--google-blue);
+    color: white;
+}
+
+.btn-google-primary:hover {
+    background-color: var(--google-blue-hover);
+    box-shadow: 0 1px 2px 0 rgba(60,64,67,.30), 0 1px 3px 1px rgba(60,64,67,.15);
+}

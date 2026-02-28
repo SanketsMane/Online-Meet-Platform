@@ -38,41 +38,38 @@
         <link rel="stylesheet" href="https://fonts.googleapis.com/css?family=IBM+Plex+Sans:400,600" />
         <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.1.1/css/all.min.css" />
         <link rel="stylesheet" type="text/css" href="../css/landing.css" />
+        <link rel="stylesheet" type="text/css" href="../css/theme.css" />
+
+        <!-- Tailwind Configuration -->
+        <script src="https://cdn.tailwindcss.com"></script>
+        <script>
+            tailwind.config = {
+                darkMode: 'class',
+                theme: {
+                    extend: {
+                        fontFamily: { 
+                            sans: ['Inter', 'sans-serif'],
+                            heading: ['Outfit', 'sans-serif']
+                        },
+                        colors: {
+                            brand: { 50: '#f5f7ff', 100: '#ebf0fe', 200: '#ced9fd', 300: '#b1c2fc', 400: '#7695fa', 500: '#3b68f8', 600: '#355de0', 700: '#2c4ebb', 800: '#233e95', 900: '#1d337a' },
+                            slate: { 900: '#0f172a', 800: '#1e293b', 700: '#334155' }
+                        }
+                    }
+                }
+            }
+        </script>
 
         <!-- Js scripts -->
 
         <script defer src="../js/Brand.js"></script>
+        <script defer src="../js/components.js"></script>
         <script async src="../js/Stats.js"></script>
-
-        <script defer src="https://cdn.jsdelivr.net/npm/sweetalert2@11.4.8"></script>
-        <script src="https://unpkg.com/animejs@3.0.1/lib/anime.min.js"></script>
-        <script src="https://unpkg.com/scrollreveal@4.0.0/dist/scrollreveal.min.js"></script>
-        <script src="https://cdn.jsdelivr.net/npm/xss/dist/xss.min.js"></script>
         <script defer src="../js/Theme.js"></script>
     </head>
     <body class="is-boxed has-animations">
         <div class="body-wrap">
-            <header class="site-header">
-                <div class="container">
-                    <div class="site-header-inner">
-                        <div class="brand header-brand">
-                            <h1 class="m-0">
-                                <a href="/">
-                                    <img
-                                        class="header-logo-image"
-                                        src="../images/logo.svg"
-                                        alt="tawktoo-webrtc-logo"
-                                    />
-
-                                </a>
-                                <button id="themeToggle" class="button button-sm" style="background: transparent; border: 1px solid var(--divider-color); color: var(--heading-color); min-width: auto; padding: 0 12px; margin-left: 20px;">
-                                    <i class="fas fa-sun"></i>
-                                </button>
-                            </h1>
-                        </div>
-                    </div>
-                </div>
-            </header>
+            <header class="site-header site-header-shared"></header>
 
             <main>
                 <section class="hero">
@@ -149,27 +146,7 @@
                 </section>
             </main>
 
-            <footer id="footer" class="site-footer">
-                <div class="container">
-                    <div class="site-footer-inner">
-                        <div class="brand footer-brand">
-                            <a href="/">
-                                <img class="header-logo-image" src="../images/logo.svg" alt="Logo" />
-                            </a>
-                        </div>
-                        <ul class="footer-links list-reset">
-                            <li>
-                                <a href="/about">About</a>
-                            </li>
-                            <li>
-                                <a href="/privacy">Privacy Policy</a>
-                            </li>
-                        </ul>
-
-                        <div class="footer-copyright">&copy; 2026 tawktoo, all rights reserved</div>
-                    </div>
-                </div>
-            </footer>
+            <footer class="site-footer-shared"></footer>
         </div>
 
         <script defer src="../js/Utils.js"></script>

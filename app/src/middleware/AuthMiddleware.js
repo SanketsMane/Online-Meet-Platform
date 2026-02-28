@@ -3,6 +3,7 @@
 const { ApiKey, Tenant } = require('../db/models');
 const crypto = require('crypto');
 const jwt = require('jsonwebtoken');
+const bcrypt = require('bcrypt');
 const CryptoJS = require('crypto-js');
 const config = require('../config');
 const Logger = require('../Logger');
@@ -146,4 +147,51 @@ async function isAdmin(req, res, next) {
     }
 }
 
-module.exports = { validateApiKey, isAdmin };
+// Author: Sanket - Tenant-based admin login: verify email/password against DB, return JWT
+async function adminLogin(email, password) {
+    const tenant = await Tenant.findOne({ where: { email } });
+    if (!tenant) {
+        return { success: false, message: 'Invalid credentials' };
+    }
+    if (tenant.role !== 'admin') {
+        return { success: false, message: 'Admin access required' };
+    }
+    if (tenant.status !== 'active') {
+        return { success: false, message: 'Account is not active' };
+    }
+    const isMatch = await bcrypt.compare(password, tenant.password_hash);
+    if (!isMatch) {
+        return { success: false, message: 'Invalid credentials' };
+    }
+    const secret = process.env.JWT_SECRET;
+    const token = jwt.sign({ tenantId: tenant.id, email: tenant.email, role: tenant.role }, secret, { expiresIn: '24h' });
+    return { success: true, token };
+}
+
+// Author: Sanket - Middleware to verify Tenant JWT for admin-only routes
+async function isAdminTenant(req, res, next) {
+    try {
+        const authHeader = req.headers.authorization;
+        if (!authHeader || !authHeader.startsWith('Bearer ')) {
+            return res.status(401).json({ message: 'Admin access required' });
+        }
+        const token = authHeader.substring(7);
+        const secret = process.env.JWT_SECRET;
+        let decoded;
+        try {
+            decoded = jwt.verify(token, secret);
+        } catch {
+            return res.status(401).json({ message: 'Invalid or expired token' });
+        }
+        if (!decoded.tenantId || decoded.role !== 'admin') {
+            return res.status(403).json({ message: 'Admin access required' });
+        }
+        req.admin = decoded;
+        next();
+    } catch (error) {
+        log.error('[isAdminTenant] Auth error:', error);
+        return res.status(401).json({ message: 'Invalid token' });
+    }
+}
+
+module.exports = { validateApiKey, isAdmin, isAdminTenant, adminLogin };
