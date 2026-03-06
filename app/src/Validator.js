@@ -62,10 +62,20 @@ function isValidEmail(email) {
 }
 
 function isValidData(data) {
-    if (!data || typeof data !== 'object') {
+    if (!data || typeof data !== 'object' || Array.isArray(data)) {
         return false;
     }
-    return Object.keys(data).length > 0;
+    // Deep check: Ensure no nested path traversal patterns in values
+    const entries = Object.entries(data);
+    if (entries.length === 0) return false;
+
+    for (const [key, value] of entries) {
+        if (typeof value === 'string' && hasPathTraversal(value)) {
+            return false;
+        }
+    }
+
+    return true;
 }
 
 module.exports = {

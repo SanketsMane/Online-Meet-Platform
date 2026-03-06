@@ -8,6 +8,8 @@ const Logger = require('../Logger');
 const settingsService = require('../services/SettingsService');
 const log = new Logger('AiRoutes');
 
+const { isAdminTenant } = require('../middleware/AuthMiddleware');
+
 /**
  * Helper to get OpenAI instance with latest settings
  */
@@ -30,8 +32,9 @@ async function getOpenAI() {
 /**
  * POST /api/v1/ai/summarize
  * Generates a meeting summary from transcripts
+ * Protected by admin authentication
  */
-router.post('/summarize', async (req, res) => {
+router.post('/summarize', isAdminTenant, async (req, res) => {
     try {
         const { roomId, transcripts } = req.body;
         const openai = await getOpenAI();
@@ -91,7 +94,5 @@ router.post('/summarize', async (req, res) => {
         });
     }
 });
-
-module.exports = router;
 
 module.exports = router;

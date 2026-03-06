@@ -191,6 +191,14 @@ const User = sequelize.define('User', {
         allowNull: false,
         unique: true,
     },
+    email: {
+        type: DataTypes.STRING,
+        allowNull: true,
+        unique: true,
+        validate: {
+            isEmail: true,
+        },
+    },
     password_hash: {
         type: DataTypes.STRING,
         allowNull: false,
@@ -210,6 +218,14 @@ const User = sequelize.define('User', {
     status: {
         type: DataTypes.STRING,
         defaultValue: 'active',
+    },
+    otp_code: {
+        type: DataTypes.STRING,
+        allowNull: true,
+    },
+    otp_expiry: {
+        type: DataTypes.DATE,
+        allowNull: true,
     },
 });
 

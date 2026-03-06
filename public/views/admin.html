@@ -869,6 +869,32 @@
                                             class="w-full p-3 rounded-lg bg-gray-50 dark:bg-gray-800/50 border border-gray-200 dark:border-gray-700 outline-none font-mono text-xs"
                                         />
                                     </div>
+                                    <div class="md:col-span-2 pt-4 border-t border-gray-100 dark:border-gray-800">
+                                        <h4 class="text-lg font-bold mb-4 flex items-center gap-2">
+                                            <i class="fas fa-address-book text-google-blue"></i>
+                                            Contact Information
+                                        </h4>
+                                        <div class="grid grid-cols-1 md:grid-cols-2 gap-4">
+                                            <div>
+                                                <label class="block text-sm font-semibold mb-2">Public Phone Number</label>
+                                                <input
+                                                    type="text"
+                                                    id="setting_contact_phone"
+                                                    placeholder="+1 (555) 000-0000"
+                                                    class="w-full p-3 rounded-lg bg-gray-50 dark:bg-gray-800/50 border border-gray-200 dark:border-gray-700 outline-none"
+                                                />
+                                            </div>
+                                            <div>
+                                                <label class="block text-sm font-semibold mb-2">Physical Office Address</label>
+                                                <input
+                                                    type="text"
+                                                    id="setting_contact_address"
+                                                    placeholder="123 Tech Avenue, Silicon Valley, CA"
+                                                    class="w-full p-3 rounded-lg bg-gray-50 dark:bg-gray-800/50 border border-gray-200 dark:border-gray-700 outline-none"
+                                                />
+                                            </div>
+                                        </div>
+                                    </div>
                                 </div>
                             </div>
 
@@ -1512,24 +1538,109 @@
                 } catch (e) {}
             }
 
+            const logoSlider = document.getElementById('setting_logo_width');
+            if (logoSlider) {
+                logoSlider.addEventListener('input', (e) => {
+                    document.getElementById('logo_size_value').innerText = e.target.value + 'px';
+                });
+            }
+
+            // --- FOOTER & CONTACT MANAGEMENT ---
+            function addFooterLinkRow(label = '', url = '') {
+                const container = document.getElementById('footer_links_container');
+                const row = document.createElement('div');
+                row.className = 'footer-link-row flex gap-3 animate-in slide-in-from-left-2 duration-300';
+                row.innerHTML = `
+                    <input type="text" placeholder="Label (e.g. Terms)" value="${label}" class="flex-1 p-2.5 text-sm rounded-lg bg-gray-50 dark:bg-gray-800 border border-gray-200 dark:border-gray-700 outline-none" />
+                    <input type="text" placeholder="URL (e.g. /terms)" value="${url}" class="flex-[1.5] p-2.5 text-sm rounded-lg bg-gray-50 dark:bg-gray-800 border border-gray-200 dark:border-gray-700 outline-none font-mono" />
+                    <button type="button" onclick="this.parentElement.remove()" class="p-2.5 text-red-500 hover:bg-red-50 dark:hover:bg-red-900/10 rounded-lg transition-colors">
+                        <i class="fas fa-trash-alt"></i>
+                    </button>
+                `;
+                container.appendChild(row);
+            }
+
+            const footerForm = document.getElementById('footerForm');
+            if (footerForm) {
+                footerForm.addEventListener('submit', async (e) => {
+                    e.preventDefault();
+                    const btn = document.getElementById('saveFooterBtn');
+                    const originalText = btn.innerHTML;
+                    btn.disabled = true;
+                    btn.innerHTML = '<i class="fas fa-spinner fa-spin mr-2"></i> Deploying...';
+
+                    const links = [];
+                    document.querySelectorAll('.footer-link-row').forEach(row => {
+                        const inputs = row.querySelectorAll('input');
+                        if (inputs[0].value && inputs[1].value) {
+                            links.push({ label: inputs[0].value, url: inputs[1].value });
+                        }
+                    });
+
+                    const payload = {
+                        FOOTER_CONFIG: {
+                            copyright: document.getElementById('footer_copyright').value,
+                            contactEmail: document.getElementById('footer_contactEmail').value,
+                            links: links
+                        },
+                        CONTACT_INFO: {
+                            phone: document.getElementById('setting_contact_phone').value,
+                            address: document.getElementById('setting_contact_address').value
+                        }
+                    };
+
+                    try {
+                        await axios.post('/api/v1/admin/settings', payload, {
+                            headers: { Authorization: `Bearer ${adminToken}` }
+                        });
+                        Swal.fire({ title: 'Footer Deployed', icon: 'success', toast: true, position: 'top-end', showConfirmButton: false, timer: 3000 });
+                        loadSettings();
+                    } catch (err) {
+                        Swal.fire({ title: 'Deployment Failed', text: err.response?.data?.message || 'Error', icon: 'error', toast: true, position: 'top-end', showConfirmButton: false, timer: 3000 });
+                    } finally {
+                        btn.innerHTML = originalText;
+                        btn.disabled = false;
+                    }
+                });
+            }
+
+            // Author: Sanket - Enhanced loadSettings to handle complex objects
             async function loadSettings() {
                 try {
                     const res = await axios.get(`${API_BASE}/settings`, {
                         headers: { Authorization: `Bearer ${adminToken}` },
                     });
                     const s = res.data;
+                    
+                    // Reset footer links container
+                    const footerContainer = document.getElementById('footer_links_container');
+                    if (footerContainer) footerContainer.innerHTML = '';
+
                     for (let [k, v] of Object.entries(s)) {
                         const el = document.getElementById(`setting_${k}`);
                         if (el) {
                             if (el.type === 'checkbox') {
                                 el.checked = v === 'true' || v === true;
                             } else {
-                                el.value = v;
+                                el.value = typeof v === 'object' ? JSON.stringify(v) : v;
                             }
                         }
+                        
+                        // Specialized handling
                         if (k === 'brand_color') {
                             document.getElementById('setting_brand_color_picker').value = v || '#1a73e8';
                             document.getElementById('setting_brand_color').value = v || '#1a73e8';
+                        }
+                        if (k === 'FOOTER_CONFIG' && v) {
+                            document.getElementById('footer_copyright').value = v.copyright || '';
+                            document.getElementById('footer_contactEmail').value = v.contactEmail || '';
+                            if (v.links && Array.isArray(v.links)) {
+                                v.links.forEach(l => addFooterLinkRow(l.label, l.url));
+                            }
+                        }
+                        if (k === 'CONTACT_INFO' && v) {
+                            document.getElementById('setting_contact_phone').value = v.phone || '';
+                            document.getElementById('setting_contact_address').value = v.address || '';
                         }
                     }
                     if (s.LOGO_CONFIG) {
@@ -1540,30 +1651,6 @@
                     applyBranding(s);
                 } catch (e) {}
             }
-
-            function applyBranding(s) {
-                if (s.app_name) {
-                    document.title = `${s.app_name} | Admin Hub`;
-                    document.querySelectorAll('.sidebar-brand').forEach((el) => (el.textContent = `${s.app_name} Hub`));
-                }
-                if (s.brand_color) document.documentElement.style.setProperty('--google-blue', s.brand_color);
-                
-                if (s.logo_url) {
-                    document.querySelectorAll('.sidebar-logo').forEach((img) => {
-                        img.src = s.logo_url;
-                    });
-                }
-                
-                // Author: Sanket - Apply Logo Width dynamically to admin UI
-                if (s.LOGO_CONFIG && s.LOGO_CONFIG.width) {
-                    document.querySelectorAll('img[alt="tawktoo"], .sidebar-logo, .header-logo').forEach((img) => {
-                        img.style.width = s.LOGO_CONFIG.width;
-                        img.style.height = 'auto';
-                    });
-                }
-            }
-
-            // Settings Form Handler
             const settingsForm = document.getElementById('settingsForm');
             if (settingsForm) {
                 settingsForm.addEventListener('submit', async (e) => {
@@ -1574,7 +1661,7 @@
                     btn.disabled = true;
 
                     const payload = {
-                        CHATGPT_ENABLED: document.getElementById('setting_CHATGPT_ENABLED').checked,
+                        CHATGPT_ENABLED: document.getElementById('setting_CHATGPT_ENABLED').value === 'true',
                         CHATGPT_API_KEY: document.getElementById('setting_CHATGPT_API_KEY').value,
                         CHATGPT_MAX_TOKENS: document.getElementById('setting_CHATGPT_MAX_TOKENS').value,
                         CHATGPT_TEMPERATURE: document.getElementById('setting_CHATGPT_TEMPERATURE').value,
@@ -1582,39 +1669,43 @@
                         brand_color: document.getElementById('setting_brand_color').value,
                         logo_url: document.getElementById('setting_logo_url').value,
                         favicon_url: document.getElementById('setting_favicon_url').value,
-                        LOGO_CONFIG: { width: document.getElementById('setting_logo_width').value + 'px' }
+                        LOGO_CONFIG: { width: document.getElementById('setting_logo_width').value + 'px' },
+                        CONTACT_INFO: {
+                            phone: document.getElementById('setting_contact_phone').value,
+                            address: document.getElementById('setting_contact_address').value
+                        }
                     };
 
                     try {
                         await axios.post('/api/v1/admin/settings', payload, {
                             headers: { Authorization: `Bearer ${adminToken}` }
                         });
-                        Swal.fire({
-                            title: 'Settings Deployed',
-                            text: 'Configurations updated successfully.',
-                            icon: 'success',
-                            toast: true,
-                            position: 'top-end',
-                            showConfirmButton: false,
-                            timer: 3000
-                        });
-                        // Re-fetch and apply new branding immediately
+                        Swal.fire({ title: 'Settings Deployed', icon: 'success', toast: true, position: 'top-end', showConfirmButton: false, timer: 3000 });
                         loadSettings();
                     } catch (err) {
-                        Swal.fire({
-                            title: 'Deployment Failed',
-                            text: err.response?.data?.message || 'Error saving settings.',
-                            icon: 'error',
-                            toast: true,
-                            position: 'top-end',
-                            showConfirmButton: false,
-                            timer: 4000
-                        });
+                        Swal.fire({ title: 'Deployment Failed', text: err.response?.data?.message || 'Error', icon: 'error', toast: true, position: 'top-end', showConfirmButton: false, timer: 3000 });
                     } finally {
                         btn.innerHTML = originalText;
                         btn.disabled = false;
                     }
                 });
+            }
+
+            function applyBranding(s) {
+                if (s.app_name) {
+                    document.title = `${s.app_name} | Admin Hub`;
+                    document.querySelectorAll('.sidebar-brand').forEach((el) => (el.textContent = `${s.app_name} Hub`));
+                }
+                if (s.brand_color) document.documentElement.style.setProperty('--google-blue', s.brand_color);
+                if (s.logo_url) {
+                    document.querySelectorAll('.sidebar-logo').forEach((img) => { img.src = s.logo_url; });
+                }
+                if (s.LOGO_CONFIG && s.LOGO_CONFIG.width) {
+                    document.querySelectorAll('img[alt="tawktoo"], .sidebar-logo, .header-logo').forEach((img) => {
+                        img.style.width = s.LOGO_CONFIG.width;
+                        img.style.height = 'auto';
+                    });
+                }
             }
 
             function logout() {
@@ -1623,20 +1714,12 @@
                 showLogin();
             }
 
-            // Color sync
             const colorPicker = document.getElementById('setting_brand_color_picker');
             const colorInput = document.getElementById('setting_brand_color');
             if (colorPicker && colorInput) {
                 colorPicker.addEventListener('input', (e) => (colorInput.value = e.target.value));
                 colorInput.addEventListener('input', (e) => {
                     if (/^#[0-9A-F]{6}$/i.test(e.target.value)) colorPicker.value = e.target.value;
-                });
-            }
-
-            const logoSlider = document.getElementById('setting_logo_width');
-            if (logoSlider) {
-                logoSlider.addEventListener('input', (e) => {
-                    document.getElementById('logo_size_value').innerText = e.target.value + 'px';
                 });
             }
         </script>

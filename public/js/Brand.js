@@ -278,11 +278,11 @@ function customizeSite() {
     if (title && BRAND.site?.title) {
         title.textContent = BRAND.site?.title;
     }
-    if (icon && BRAND.site?.icon) {
-        icon.href = BRAND.site?.icon;
+    if (icon && (BRAND.site?.icon || BRAND.favicon_url)) {
+        icon.href = BRAND.favicon_url || BRAND.site.icon;
     }
-    if (appleTouchIcon && BRAND.site?.appleTouchIcon) {
-        appleTouchIcon.href = BRAND.site.appleTouchIcon;
+    if (appleTouchIcon && (BRAND.site?.appleTouchIcon || BRAND.favicon_url)) {
+        appleTouchIcon.href = BRAND.favicon_url || BRAND.site.appleTouchIcon;
     }
     if (newRoomTitle && BRAND.site?.newRoomTitle) {
         newRoomTitle.innerHTML = BRAND.site?.newRoomTitle;
@@ -293,6 +293,7 @@ function customizeSite() {
     if (BRAND.brand_color) {
         document.documentElement.style.setProperty('--link-color', BRAND.brand_color);
         document.documentElement.style.setProperty('--primary-color', BRAND.brand_color);
+        document.documentElement.style.setProperty('--google-blue', BRAND.brand_color);
     }
 }
 
@@ -325,10 +326,20 @@ function customizeLogo() {
     if (BRAND.logo_config?.width) {
         const width = BRAND.logo_config.width;
         // Target all logo images that match common patterns
-        const images = document.querySelectorAll('header img[src*="logo"], .sidebar-logo, img[alt*="logo" i]');
+        const images = document.querySelectorAll(
+            'header img[src*="logo"], .sidebar-logo, img[alt*="logo" i], .navbar-brand img'
+        );
         images.forEach((img) => {
             img.style.width = width;
             img.style.height = 'auto';
+
+            // Author: Sanket - If there's a redirect URL, wrap the image in a link or update existing link
+            if (BRAND.logo_redirect_url) {
+                const parentA = img.closest('a');
+                if (parentA) {
+                    parentA.href = BRAND.logo_redirect_url;
+                }
+            }
         });
     }
 }
@@ -337,6 +348,7 @@ function customizeFooter() {
     const footerEl = document.getElementById('site-footer');
     if (footerEl && BRAND.footer_config) {
         const { copyright, links, contactEmail } = BRAND.footer_config;
+        const contactInfo = BRAND.contact_info || {};
 
         let linksHtml = '';
         if (links && Array.isArray(links)) {
@@ -348,17 +360,35 @@ function customizeFooter() {
                 .join('');
         }
 
+        let contactHtml = '';
         if (contactEmail) {
-            linksHtml += `<a href="mailto:${contactEmail}" class="text-sm text-gray-500 hover:text-blue-600 transition-colors"><i class="fas fa-envelope mr-1"></i> Contact</a>`;
+            contactHtml += `<a href="mailto:${contactEmail}" class="text-sm text-gray-500 hover:text-blue-600 transition-colors"><i class="fas fa-envelope mr-1"></i> ${contactEmail}</a>`;
+        }
+        if (contactInfo.phone) {
+            contactHtml += `<span class="text-sm text-gray-500"><i class="fas fa-phone mr-1"></i> ${contactInfo.phone}</span>`;
+        }
+        if (contactInfo.address) {
+            contactHtml += `<span class="text-sm text-gray-500"><i class="fas fa-map-marker-alt mr-1"></i> ${contactInfo.address}</span>`;
         }
 
         footerEl.innerHTML = `
-            <div class="container mx-auto px-5 md:px-10 flex flex-col md:flex-row items-center justify-between py-6 border-t border-gray-100 dark:border-gray-800 mt-10">
-                <div class="text-sm text-gray-500 text-center md:text-left mb-4 md:mb-0">
-                    ${copyright || '&copy; 2026 tawktoo SFU'}
+            <div class="container mx-auto px-5 md:px-10 flex flex-col items-center justify-between py-10 border-t border-gray-100 dark:border-gray-800 mt-10 space-y-6 md:space-y-0 md:flex-row">
+                <div class="flex flex-col items-center md:items-start space-y-2">
+                    <div class="text-sm font-bold text-gray-900 dark:text-white uppercase tracking-widest mb-1">
+                        ${BRAND.app?.name || 'tawktoo'}
+                    </div>
+                    <div class="text-xs text-gray-500 max-w-xs text-center md:text-left">
+                        ${copyright || '&copy; 2026 tawktoo SFU'}
+                    </div>
                 </div>
-                <div class="flex flex-wrap justify-center md:justify-end items-center gap-6">
-                    ${linksHtml}
+                
+                <div class="flex flex-col items-center md:items-end space-y-4">
+                    <div class="flex flex-wrap justify-center md:justify-end items-center gap-6">
+                        ${linksHtml}
+                    </div>
+                    <div class="flex flex-wrap justify-center md:justify-end items-center gap-4 text-xs">
+                        ${contactHtml}
+                    </div>
                 </div>
             </div>
         `;

@@ -59,10 +59,12 @@ class SettingsService {
             'DEEPSEEK_API_KEY',
             'FOOTER_CONFIG',
             'LOGO_CONFIG',
+            'CONTACT_INFO',
             'app_name',
             'logo_url',
             'favicon_url',
             'brand_color',
+            'LOGO_REDIRECT_URL',
         ];
 
         const settings = {};
@@ -121,6 +123,17 @@ class SettingsService {
             case 'LOGO_CONFIG':
                 return {
                     width: '150px',
+                };
+            case 'LOGO_REDIRECT_URL':
+                return '/';
+            case 'CONTACT_INFO':
+                return {
+                    phone: '+1 (555) 000-0000',
+                    address: '123 Tech Avenue, Silicon Valley, CA',
+                    socials: [
+                        { platform: 'Twitter', url: '#' },
+                        { platform: 'GitHub', url: 'https://github.com/SanketsMane' }
+                    ]
                 };
             default:
                 return null;

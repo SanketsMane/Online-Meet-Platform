@@ -70,7 +70,8 @@ dev dependencies: {
  */
 
 const config = require('./config');
-const { UsageLog, Feedback, User, AuditLog, GlobalSetting, WebhookLog, ApiKey } = require('./db/models');
+const { sequelize, User, AuditLog, WebhookLog, Page, GlobalSetting, Feedback, UsageLog, ApiKey, Tenant } = require('./db/models');
+const { Op } = require('sequelize');
 
 /**
  * Log Admin Action
@@ -181,6 +182,11 @@ const loginLimiter = rateLimit({
     message: 'Too many login attempts, please try again later.',
     keyGenerator: (req) => req.body?.username || ipKeyGenerator(req),
 });
+
+// Author: Sanket - Simple in-memory rate limiter for AI socket events
+const aiRateLimit = new Map();
+const AI_WINDOW_MS = 60 * 1000; // 1 minute
+const AI_MAX_PER_WINDOW = 5;
 
 // Branding configuration - Author: Sanket
 // Read from environment variable to allow runtime control via .env
@@ -639,14 +645,12 @@ function startServer() {
                 branding.site.appleTouchIcon = settings.logo_url;
                 if (branding.about) branding.about.imageUrl = settings.logo_url;
             }
-            if (settings.favicon_url && branding.site) {
-                branding.site.icon = settings.favicon_url;
-            }
-            if (settings.brand_color) {
-                branding.brand_color = settings.brand_color;
-            }
+            // Author: Sanket - Merge specific db settings into brand config
+            if (settings.brand_color) branding.brand_color = settings.brand_color;
+            if (settings.favicon_url && branding.site) branding.site.icon = settings.favicon_url;
             if (settings.LOGO_CONFIG) branding.logo_config = settings.LOGO_CONFIG;
             if (settings.FOOTER_CONFIG) branding.footer_config = settings.FOOTER_CONFIG;
+            if (settings.LOGO_REDIRECT_URL) branding.logo_redirect_url = settings.LOGO_REDIRECT_URL;
 
             res.status(200).json({ message: brandHtmlInjection ? branding : false });
         } catch (e) {
@@ -1024,7 +1028,85 @@ function startServer() {
             const allowedRooms = await getUserAllowedRooms(username, password);
             return res.status(200).json({ message: token, allowedRooms: allowedRooms });
         } else {
-            return res.status(401).json({ message: 'unauthorized' });
+            return res.status(401).json({ message: 'Invalid credentials' });
+        }
+    });
+
+    // ####################################################
+    // HOST OTP ROUTES - Author: Sanket
+    // ####################################################
+
+    app.post('/api/v1/auth/host/otp/send', loginLimiter, async (req, res) => {
+        try {
+            const { username } = req.body;
+            if (!username) return res.status(400).json({ message: 'Username or Email is required' });
+
+            // Try to find user by username or email
+            let user = await User.findOne({ 
+                where: { 
+                    [Op.or]: [
+                        { username: username },
+                        { email: username }
+                    ]
+                } 
+            });
+
+            if (!user) {
+                return res.status(404).json({ message: 'Account not found. Please register first.' });
+            }
+
+            if (!user.email && !username.includes('@')) {
+                return res.status(400).json({ message: 'No email associated with this account for OTP.' });
+            }
+
+            const targetEmail = user.email || user.username;
+            const otpCode = Math.floor(100000 + Math.random() * 900000).toString();
+            const otpExpiry = new Date(Date.now() + 10 * 60 * 1000); // 10 minutes
+
+            await user.update({ otp_code: otpCode, otp_expiry: otpExpiry });
+
+            // Send OTP
+            EmailService.sendOTP({ email: targetEmail, name: user.displayname || user.username }, otpCode)
+                .catch(err => log.error('Host OTP Send Error:', err));
+
+            res.json({ message: 'Identity verification code sent to ' + targetEmail });
+        } catch (err) {
+            log.error('OTP Send Route Error:', err);
+            res.status(500).json({ message: 'System failure during OTP generation' });
+        }
+    });
+
+    app.post('/api/v1/auth/host/otp/login', loginLimiter, async (req, res) => {
+        try {
+            const { username, otp } = req.body;
+            if (!username || !otp) return res.status(400).json({ message: 'Missing credentials' });
+
+            const user = await User.findOne({ 
+                where: { 
+                    [Op.or]: [{ username }, { email: username }],
+                    otp_code: otp,
+                    otp_expiry: { [Op.gt]: new Date() }
+                } 
+            });
+
+            if (!user) {
+                return res.status(401).json({ message: 'Invalid or expired verification code' });
+            }
+
+            // Clear OTP
+            await user.update({ otp_code: null, otp_expiry: null });
+
+            const isPresenter = Boolean(
+                hostCfg?.presenters?.join_first || hostCfg?.presenters?.list?.includes(user.username)
+            );
+
+            const token = encodeToken({ username: user.username, password: 'OTP_LOGIN', presenter: isPresenter });
+            const allowedRooms = await getUserAllowedRooms(user.username, 'OTP_LOGIN');
+
+            res.json({ message: token, displayname: user.displayname, allowedRooms });
+        } catch (err) {
+            log.error('OTP Login Route Error:', err);
+            res.status(500).json({ message: 'Authentication process failed' });
         }
     });
 
@@ -1533,17 +1615,24 @@ function startServer() {
         try {
             const dbSettings = await GlobalSetting.findAll({
                 where: {
-                    key: ['app_name', 'brand_color', 'logo_url', 'favicon_url'],
+                    key: ['app_name', 'brand_color', 'logo_url', 'favicon_url', 'LOGO_CONFIG', 'FOOTER_CONFIG', 'CONTACT_INFO'],
                 },
             });
             const branding = {
-                app_name: 'MiroTalk SFU', // Default
-                brand_color: '#0270d7',
+                app_name: 'tawktoo', // Default
+                brand_color: '#1a73e8',
                 logo_url: '../images/logo.svg',
-                favicon_url: '../images/favicon.png',
+                favicon_url: '../images/logo.svg',
+                LOGO_CONFIG: { width: '150px' },
+                FOOTER_CONFIG: { copyright: '© 2026 tawktoo', links: [] },
+                CONTACT_INFO: { phone: '', address: '' }
             };
             dbSettings.forEach((s) => {
-                branding[s.key] = s.value;
+                try {
+                    branding[s.key] = JSON.parse(s.value);
+                } catch (e) {
+                    branding[s.key] = s.value;
+                }
             });
             res.json(branding);
         } catch (e) {
@@ -2560,6 +2649,22 @@ function startServer() {
 
             const room = getRoom(socket);
 
+            // Author: Sanket - Secure roomLobby event: only presenters can accept/reject participants
+            const isPresenter = isPeerPresenter(
+                socket.room_id,
+                socket.id,
+                data.from_peer_name,
+                data.from_peer_uuid
+            );
+
+            if (!isPresenter) {
+                log.warn('[roomLobby] Unauthorized attempt to perform lobby action', {
+                    room: socket.room_id,
+                    peer: data.from_peer_name,
+                });
+                return;
+            }
+
             data.room = room.toJson();
 
             log.debug('Room lobby', {
@@ -2582,7 +2687,7 @@ function startServer() {
             if (data.lobby_status === 'accept') {
                 for (const peer_id of pears_id) {
                     const peer = room.getPeer(peer_id);
-                    if (!peer.peer_lobby) continue;
+                    if (!peer || !peer.peer_lobby) continue;
 
                     peer.updatePeerInfo({ type: 'lobby', status: false });
 
@@ -2820,6 +2925,12 @@ function startServer() {
 
             const data = checkXSS(dataObject);
 
+            if (!Validator.isValidData(data)) return;
+
+            // Author: Sanket - Only presenter can send whiteboard state
+            const isPresenter = isPeerPresenter(socket.room_id, socket.id, data.peer_name, data.peer_uuid);
+            if (!isPresenter) return;
+
             const room = getRoom(socket);
 
             // const objLength = bytesToSize(Object.keys(data).length);
@@ -2836,6 +2947,12 @@ function startServer() {
 
             if (!Validator.isValidData(data)) return;
 
+            // Author: Sanket - Secure whiteboard: sensitive actions like clearing should be presenter-only
+            if (['clear', 'undo', 'reset'].includes(data.action)) {
+                const isPresenter = isPeerPresenter(socket.room_id, socket.id, data.peer_name, data.peer_uuid);
+                if (!isPresenter) return;
+            }
+
             const room = getRoom(socket);
 
             log.debug('Whiteboard', data);
@@ -2849,9 +2966,19 @@ function startServer() {
 
             if (!Validator.isValidData(data)) return;
 
-            log.debug('Video off data', data.peer_name);
+            const { room, peer } = getRoomAndPeer(socket);
+            
+            // Author: Sanket - Verify sender identity to prevent impersonation
+            if (peer && data.peer_name !== peer.peer_info.peer_name) {
+                log.warn('Identity mismatch in setVideoOff', {
+                    socketId: socket.id,
+                    realName: peer.peer_info.peer_name,
+                    claimedName: data.peer_name
+                });
+                return;
+            }
 
-            const room = getRoom(socket);
+            log.debug('Video off data', data.peer_name);
 
             room.broadCast(socket.id, 'setVideoOff', data);
         });
@@ -2862,6 +2989,19 @@ function startServer() {
             const data = checkXSS(dataObject);
 
             if (!Validator.isValidData(data)) return;
+
+            // Author: Sanket - Enforce host_only_recording if configured
+            const hostOnlyRecording = config?.ui?.settings?.host_only_recording;
+            if (hostOnlyRecording) {
+                const isPresenter = isPeerPresenter(socket.room_id, socket.id, data.peer_name, data.peer_uuid);
+                if (!isPresenter) {
+                    log.warn('[recordingAction] Non-presenter attempt to control recording', {
+                        room: socket.room_id,
+                        peer: data.peer_name,
+                    });
+                    return;
+                }
+            }
 
             log.debug('Recording action', data);
 
@@ -2923,6 +3063,17 @@ function startServer() {
             if (!config?.integrations?.chatGPT?.enabled) {
                 return cb({ message: 'ChatGPT integration is disabled. Please try again later!' });
             }
+
+            // Author: Sanket - AI Rate Limiting
+            const now = Date.now();
+            const peerId = socket.id;
+            const rates = aiRateLimit.get(peerId) || [];
+            const validRates = rates.filter((t) => now - t < AI_WINDOW_MS);
+            if (validRates.length >= AI_MAX_PER_WINDOW) {
+                return cb({ message: 'AI rate limit exceeded. Please wait a minute!' });
+            }
+            validRates.push(now);
+            aiRateLimit.set(peerId, validRates);
 
             // https://platform.openai.com/docs/api-reference/completions/create
             try {
@@ -2987,6 +3138,17 @@ function startServer() {
             if (!config?.integrations?.deepSeek?.enabled) {
                 return cb({ message: 'DeepSeek integration is disabled. Please try again later!' });
             }
+
+            // Author: Sanket - AI Rate Limiting
+            const now = Date.now();
+            const peerId = socket.id;
+            const rates = aiRateLimit.get(peerId) || [];
+            const validRates = rates.filter((t) => now - t < AI_WINDOW_MS);
+            if (validRates.length >= AI_MAX_PER_WINDOW) {
+                return cb({ message: 'AI rate limit exceeded. Please wait a minute!' });
+            }
+            validRates.push(now);
+            aiRateLimit.set(peerId, validRates);
 
             try {
                 if (!prompt || !Array.isArray(context)) {

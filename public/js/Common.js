@@ -187,11 +187,11 @@ const lastRoomName = window.localStorage.lastRoom ? window.localStorage.lastRoom
 if (lastRoomContainer && lastRoom && lastRoomName) {
     lastRoomContainer.style.display = 'inline-flex';
     lastRoom.setAttribute('href', '/join/?room=' + lastRoomName);
-    
-    // Author: Sanket - Truncate legacy UUIDs visually so they don't break the UI
+
+    // Author: Sanket - Refined truncation for long room names/UUIDs to prevent mobile overflow
     let displayText = lastRoomName;
-    if (displayText.length > 20) {
-        displayText = displayText.substring(0, 8) + '...' + displayText.substring(displayText.length - 8);
+    if (displayText.length > 25) {
+        displayText = displayText.substring(0, 10) + '...' + displayText.substring(displayText.length - 10);
     }
     lastRoom.innerText = displayText;
 }

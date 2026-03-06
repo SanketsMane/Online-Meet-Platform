@@ -4,6 +4,7 @@ const { Tenant, ApiKey, Feedback, GlobalSetting, AuditLog, WebhookLog, Page } = 
 const settingsService = require('../services/SettingsService');
 const statsService = require('../services/StatsService');
 const EmailService = require('../services/EmailService');
+const checkXSS = require('../XSS');
 const Logger = require('../Logger');
 const log = new Logger('AdminController');
 
@@ -70,8 +71,12 @@ class AdminController {
      */
     static async getTenants(req, res) {
         try {
+            const limit = parseInt(req.query.limit) || 50;
+            const offset = parseInt(req.query.offset) || 0;
             const tenants = await Tenant.findAll({
                 attributes: ['id', 'name', 'email', 'role', 'plan', 'status', 'createdAt'],
+                limit: limit,
+                offset: offset,
                 order: [['createdAt', 'DESC']],
             });
             res.json(tenants);
@@ -152,7 +157,11 @@ class AdminController {
      */
     static async getFeedbacks(req, res) {
         try {
+            const limit = parseInt(req.query.limit) || 50;
+            const offset = parseInt(req.query.offset) || 0;
             const feedbacks = await Feedback.findAll({
+                limit: limit,
+                offset: offset,
                 order: [['timestamp', 'DESC']],
             });
             res.json(feedbacks);
@@ -205,8 +214,12 @@ class AdminController {
      */
     static async getApiKeys(req, res) {
         try {
+            const limit = parseInt(req.query.limit) || 50;
+            const offset = parseInt(req.query.offset) || 0;
             const keys = await ApiKey.findAll({
                 include: [{ model: Tenant, attributes: ['name', 'email'] }],
+                limit: limit,
+                offset: offset,
                 order: [['createdAt', 'DESC']],
             });
             res.json(keys);
@@ -249,8 +262,11 @@ class AdminController {
      */
     static async getWebhookLogs(req, res) {
         try {
+            const limit = parseInt(req.query.limit) || 100;
+            const offset = parseInt(req.query.offset) || 0;
             const logs = await WebhookLog.findAll({
-                limit: 100,
+                limit: limit,
+                offset: offset,
                 order: [['timestamp', 'DESC']],
             });
             res.json(logs);
@@ -293,7 +309,13 @@ class AdminController {
      */
     static async getPages(req, res) {
         try {
-            const pages = await Page.findAll({ order: [['updatedAt', 'DESC']] });
+            const limit = parseInt(req.query.limit) || 50;
+            const offset = parseInt(req.query.offset) || 0;
+            const pages = await Page.findAll({
+                limit: limit,
+                offset: offset,
+                order: [['updatedAt', 'DESC']]
+            });
             res.json(pages);
         } catch (err) {
             log.error('Error fetching pages:', err.message);
@@ -314,7 +336,12 @@ class AdminController {
 
     static async createPage(req, res) {
         try {
-            const { title, slug, content, is_published } = req.body;
+            let { title, slug, content, is_published } = req.body;
+            
+            // Author: Sanket - Sanitize content for XSS prevention
+            content = checkXSS(content);
+            if (content === null) throw new Error('Invalid content detected');
+
             const page = await Page.create({ title, slug, content, is_published });
             await logAdminAction(req, 'CREATE_PAGE', slug, `Title: ${title}`);
             res.json(page);
@@ -327,7 +354,12 @@ class AdminController {
     static async updatePage(req, res) {
         try {
             const { id } = req.params;
-            const { title, slug, content, is_published } = req.body;
+            let { title, slug, content, is_published } = req.body;
+            
+            // Author: Sanket - Sanitize content for XSS prevention
+            content = checkXSS(content);
+            if (content === null) throw new Error('Invalid content detected');
+
             const page = await Page.findByPk(id);
             if (!page) return res.status(404).json({ message: 'Page not found' });
 
