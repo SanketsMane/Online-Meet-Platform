@@ -1342,11 +1342,76 @@
                     document.querySelectorAll('.sidebar-brand').forEach((el) => (el.textContent = `${s.app_name} Hub`));
                 }
                 if (s.brand_color) document.documentElement.style.setProperty('--google-blue', s.brand_color);
-                if (s.logo_url) document.querySelectorAll('.sidebar-logo').forEach((img) => (img.src = s.logo_url));
+                
+                if (s.logo_url) {
+                    document.querySelectorAll('.sidebar-logo').forEach((img) => {
+                        img.src = s.logo_url;
+                    });
+                }
+                
+                // Author: Sanket - Apply Logo Width dynamically to admin UI
+                if (s.LOGO_CONFIG && s.LOGO_CONFIG.width) {
+                    document.querySelectorAll('img[alt="tawktoo"], .sidebar-logo, .header-logo').forEach((img) => {
+                        img.style.width = s.LOGO_CONFIG.width;
+                        img.style.height = 'auto';
+                    });
+                }
             }
 
-            // Settings Form & Footer Form handlers preserved similarly
-            // ... (preserving the rest of the submit handlers previously analyzed)
+            // Settings Form Handler
+            const settingsForm = document.getElementById('settingsForm');
+            if (settingsForm) {
+                settingsForm.addEventListener('submit', async (e) => {
+                    e.preventDefault();
+                    const btn = e.target.querySelector('button[type="submit"]');
+                    const originalText = btn.innerHTML;
+                    btn.innerHTML = '<i class="fas fa-spinner fa-spin mr-2"></i> Deploying...';
+                    btn.disabled = true;
+
+                    const payload = {
+                        CHATGPT_ENABLED: document.getElementById('setting_CHATGPT_ENABLED').value,
+                        CHATGPT_MODEL: document.getElementById('setting_CHATGPT_MODEL').value,
+                        CHATGPT_API_KEY: document.getElementById('setting_CHATGPT_API_KEY').value,
+                        CHATGPT_MAX_TOKENS: document.getElementById('setting_CHATGPT_MAX_TOKENS').value,
+                        CHATGPT_TEMPERATURE: document.getElementById('setting_CHATGPT_TEMPERATURE').value,
+                        app_name: document.getElementById('setting_app_name').value,
+                        brand_color: document.getElementById('setting_brand_color').value,
+                        logo_url: document.getElementById('setting_logo_url').value,
+                        favicon_url: document.getElementById('setting_favicon_url').value,
+                        LOGO_CONFIG: { width: document.getElementById('setting_logo_width').value }
+                    };
+
+                    try {
+                        await axios.post('/api/v1/admin/settings', payload, {
+                            headers: { Authorization: `Bearer ${adminToken}` }
+                        });
+                        Swal.fire({
+                            title: 'Settings Deployed',
+                            text: 'Configurations updated successfully.',
+                            icon: 'success',
+                            toast: true,
+                            position: 'top-end',
+                            showConfirmButton: false,
+                            timer: 3000
+                        });
+                        // Re-fetch and apply new branding immediately
+                        loadSettings();
+                    } catch (err) {
+                        Swal.fire({
+                            title: 'Deployment Failed',
+                            text: err.response?.data?.message || 'Error saving settings.',
+                            icon: 'error',
+                            toast: true,
+                            position: 'top-end',
+                            showConfirmButton: false,
+                            timer: 4000
+                        });
+                    } finally {
+                        btn.innerHTML = originalText;
+                        btn.disabled = false;
+                    }
+                });
+            }
 
             function logout() {
                 delete window.sessionStorage.admin_token;
