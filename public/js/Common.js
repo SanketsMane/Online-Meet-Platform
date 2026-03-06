@@ -187,7 +187,13 @@ const lastRoomName = window.localStorage.lastRoom ? window.localStorage.lastRoom
 if (lastRoomContainer && lastRoom && lastRoomName) {
     lastRoomContainer.style.display = 'inline-flex';
     lastRoom.setAttribute('href', '/join/?room=' + lastRoomName);
-    lastRoom.innerText = lastRoomName;
+    
+    // Author: Sanket - Truncate legacy UUIDs visually so they don't break the UI
+    let displayText = lastRoomName;
+    if (displayText.length > 20) {
+        displayText = displayText.substring(0, 8) + '...' + displayText.substring(displayText.length - 8);
+    }
+    lastRoom.innerText = displayText;
 }
 
 const genRoomButton = document.getElementById('genRoomButton');
@@ -269,9 +275,11 @@ function genRoom() {
 }
 
 function getUUID4() {
-    return ([1e7] + -1e3 + -4e3 + -8e3 + -1e11).replace(/[018]/g, (c) =>
-        (c ^ (crypto.getRandomValues(new Uint8Array(1))[0] & (15 >> (c / 4)))).toString(16)
-    );
+    // Author: Sanket - Changed from long UUID to a shorter Google Meet style code (abc-defg-hij)
+    // to prevent mobile overflow and improve user experience.
+    const chars = 'abcdefghijklmnopqrstuvwxyz';
+    const getChars = (len) => Array.from({length: len}, () => chars[Math.floor(Math.random() * chars.length)]).join('');
+    return `${getChars(3)}-${getChars(4)}-${getChars(3)}`;
 }
 
 function joinRoom() {
