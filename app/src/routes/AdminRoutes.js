@@ -55,5 +55,12 @@ module.exports = function (roomList) {
     router.get('/settings', (req, res) => AdminController.getSettings(req, res));
     router.put('/settings', (req, res) => AdminController.updateSettings(req, res));
 
+    // Page Management (CMS)
+    router.get('/pages', (req, res) => AdminController.getPages(req, res));
+    router.get('/pages/:id', (req, res) => AdminController.getPage(req, res));
+    router.post('/pages', (req, res) => AdminController.createPage(req, res));
+    router.put('/pages/:id', (req, res) => AdminController.updatePage(req, res));
+    router.delete('/pages/:id', (req, res) => AdminController.deletePage(req, res));
+
     return router;
 };

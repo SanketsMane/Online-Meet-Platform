@@ -293,4 +293,29 @@ const WebhookLog = sequelize.define('WebhookLog', {
     },
 });
 
-module.exports = { Tenant, ApiKey, Webhook, UsageLog, Feedback, GlobalSetting, User, AuditLog, WebhookLog };
+const Page = sequelize.define('Page', {
+    id: {
+        type: DataTypes.UUID,
+        defaultValue: DataTypes.UUIDV4,
+        primaryKey: true,
+    },
+    title: {
+        type: DataTypes.STRING,
+        allowNull: false,
+    },
+    slug: {
+        type: DataTypes.STRING,
+        allowNull: false,
+        unique: true,
+    },
+    content: {
+        type: DataTypes.TEXT,
+        allowNull: false,
+    },
+    is_published: {
+        type: DataTypes.BOOLEAN,
+        defaultValue: true,
+    },
+});
+
+module.exports = { Tenant, ApiKey, Webhook, UsageLog, Feedback, GlobalSetting, User, AuditLog, WebhookLog, Page };

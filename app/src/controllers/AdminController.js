@@ -1,6 +1,6 @@
 'use strict';
 
-const { Tenant, ApiKey, Feedback, GlobalSetting, AuditLog, WebhookLog } = require('../db/models');
+const { Tenant, ApiKey, Feedback, GlobalSetting, AuditLog, WebhookLog, Page } = require('../db/models');
 const settingsService = require('../services/SettingsService');
 const statsService = require('../services/StatsService');
 const EmailService = require('../services/EmailService');
@@ -284,6 +284,75 @@ class AdminController {
         } catch (err) {
             log.error('Error kicking room:', err.message);
             res.status(500).json({ message: 'Error closing room' });
+        }
+    }
+
+    /**
+     * CMS Page Management
+     * Author: Sanket
+     */
+    static async getPages(req, res) {
+        try {
+            const pages = await Page.findAll({ order: [['updatedAt', 'DESC']] });
+            res.json(pages);
+        } catch (err) {
+            log.error('Error fetching pages:', err.message);
+            res.status(500).json({ message: 'Error fetching pages' });
+        }
+    }
+
+    static async getPage(req, res) {
+        try {
+            const page = await Page.findByPk(req.params.id);
+            if (!page) return res.status(404).json({ message: 'Page not found' });
+            res.json(page);
+        } catch (err) {
+            log.error('Error fetching page:', err.message);
+            res.status(500).json({ message: 'Error fetching page' });
+        }
+    }
+
+    static async createPage(req, res) {
+        try {
+            const { title, slug, content, is_published } = req.body;
+            const page = await Page.create({ title, slug, content, is_published });
+            await logAdminAction(req, 'CREATE_PAGE', slug, `Title: ${title}`);
+            res.json(page);
+        } catch (err) {
+            log.error('Error creating page:', err.message);
+            res.status(500).json({ message: 'Error creating page (Slug might already exist)' });
+        }
+    }
+
+    static async updatePage(req, res) {
+        try {
+            const { id } = req.params;
+            const { title, slug, content, is_published } = req.body;
+            const page = await Page.findByPk(id);
+            if (!page) return res.status(404).json({ message: 'Page not found' });
+
+            await page.update({ title, slug, content, is_published });
+            await logAdminAction(req, 'UPDATE_PAGE', slug, `Title: ${title}`);
+            res.json(page);
+        } catch (err) {
+            log.error('Error updating page:', err.message);
+            res.status(500).json({ message: 'Error updating page' });
+        }
+    }
+
+    static async deletePage(req, res) {
+        try {
+            const { id } = req.params;
+            const page = await Page.findByPk(id);
+            if (!page) return res.status(404).json({ message: 'Page not found' });
+
+            const slug = page.slug;
+            await page.destroy();
+            await logAdminAction(req, 'DELETE_PAGE', slug);
+            res.json({ message: 'Page deleted successfully' });
+        } catch (err) {
+            log.error('Error deleting page:', err.message);
+            res.status(500).json({ message: 'Error deleting page' });
         }
     }
 }

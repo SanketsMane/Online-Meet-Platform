@@ -304,6 +304,7 @@ const views = {
     customizeRoom: path.join(__dirname, '../../', 'public/views/customizeRoom.html'),
     newRoom: path.join(__dirname, '../../', 'public/views/newroom.html'),
     notFound: path.join(__dirname, '../../', 'public/views/404.html'),
+    page: path.join(__dirname, '../../public/views/page.html'),
     permission: path.join(__dirname, '../../', 'public/views/permission.html'),
     privacy: path.join(__dirname, '../../', 'public/views/privacy.html'),
     terms: path.join(__dirname, '../../', 'public/views/terms.html'),
@@ -327,6 +328,7 @@ const filesPath = [
     views.admin,
     views.developer,
     views.feedbacks,
+    views.page, // Added for public pages
 ];
 
 const htmlInjector = new HtmlInjector(filesPath, config.ui.brand);
@@ -953,6 +955,22 @@ function startServer() {
     // Author: Sanket - Developer portal page for API key management and integration
     app.get('/developer', (req, res) => {
         res.sendFile(views.developer);
+    });
+
+    // Author: Sanket - CMS Public Pages
+    app.get('/p/:slug', (req, res) => {
+        res.sendFile(views.page);
+    });
+
+    app.get('/api/v1/public/pages/:slug', async (req, res) => {
+        try {
+            const { slug } = req.params;
+            const page = await Page.findOne({ where: { slug, is_published: true } });
+            if (!page) return res.status(404).json({ message: 'Page not found' });
+            res.json(page);
+        } catch (e) {
+            res.status(500).json({ message: 'Internal Server Error' });
+        }
     });
 
     // ####################################################
