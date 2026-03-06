@@ -14,7 +14,7 @@ const seed = async () => {
     // 1. Create Admin
     const adminEmail = 'bksun170882@gmail.com';
     const adminPassword = 'Kidokool@3030';
-    
+
     let admin = await Tenant.findOne({ where: { email: adminEmail } });
     if (!admin) {
         const hash = await bcrypt.hash(adminPassword, 10);
@@ -23,7 +23,7 @@ const seed = async () => {
             email: adminEmail,
             password_hash: hash,
             role: 'admin',
-            plan: 'unlimited'
+            plan: 'unlimited',
         });
         log.info('Created Admin:', adminEmail);
     } else {
@@ -42,7 +42,7 @@ const seed = async () => {
             email: devEmail,
             password_hash: hash,
             role: 'user',
-            plan: 'free'
+            plan: 'free',
         });
         log.info('Created Developer:', devEmail);
     } else {
@@ -62,7 +62,7 @@ const seed = async () => {
             prefix: prefix,
             key_hash: key_hash,
             scopes: ['room:create', 'stats:read'],
-            is_active: true
+            is_active: true,
         });
         log.info('Created API Key for Developer:', rawKey);
         log.info('(Save this key, it is only shown once!)');
@@ -73,7 +73,7 @@ const seed = async () => {
     process.exit(0);
 };
 
-seed().catch(err => {
+seed().catch((err) => {
     log.error('Seed failed', err);
     process.exit(1);
 });

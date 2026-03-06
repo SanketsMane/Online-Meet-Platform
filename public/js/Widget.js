@@ -756,9 +756,7 @@ class tawktooWidget {
 
 window.tawktooWidgetAction = function (action, element) {
     try {
-        const widgetElement = element.closest(
-            '.tawktoo-support-widget, .tawktoo-minimized-btn, .tawktoo-reopener-btn'
-        );
+        const widgetElement = element.closest('.tawktoo-support-widget, .tawktoo-minimized-btn, .tawktoo-reopener-btn');
 
         if (!widgetElement) {
             console.error('Widget element not found');

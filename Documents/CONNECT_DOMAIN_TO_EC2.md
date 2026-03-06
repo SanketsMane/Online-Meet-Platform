@@ -32,20 +32,20 @@ This guide will help you connect your GoDaddy domain to your AWS EC2 instance ru
 
 1. Click **Add** (or edit existing A record)
 2. Set the following:
-   - **Type**: `A`
-   - **Name**: `@` (this represents your root domain)
-   - **Value**: `15.134.88.100` (your EC2 IP)
-   - **TTL**: `600` (10 minutes) or `3600` (1 hour)
+    - **Type**: `A`
+    - **Name**: `@` (this represents your root domain)
+    - **Value**: `15.134.88.100` (your EC2 IP)
+    - **TTL**: `600` (10 minutes) or `3600` (1 hour)
 3. Click **Save**
 
 **For WWW Subdomain:**
 
 1. Click **Add** again
 2. Set the following:
-   - **Type**: `A`
-   - **Name**: `www`
-   - **Value**: `15.134.88.100` (your EC2 IP)
-   - **TTL**: `600` (10 minutes) or `3600` (1 hour)
+    - **Type**: `A`
+    - **Name**: `www`
+    - **Value**: `15.134.88.100` (your EC2 IP)
+    - **TTL**: `600` (10 minutes) or `3600` (1 hour)
 3. Click **Save**
 
 ### D. Remove Conflicting Records (if any)
@@ -54,6 +54,7 @@ This guide will help you connect your GoDaddy domain to your AWS EC2 instance ru
 > If you see existing A records pointing to different IPs or CNAME records for @ or www, DELETE them first.
 
 Common records to remove:
+
 - Old A records with different IPs
 - CNAME records for @ or www
 - Parked domain records
@@ -110,17 +111,17 @@ server {
     location / {
         proxy_pass http://tawktoo_backend;
         proxy_http_version 1.1;
-        
+
         # WebSocket support (critical for video calls)
         proxy_set_header Upgrade $http_upgrade;
         proxy_set_header Connection "upgrade";
-        
+
         # Headers
         proxy_set_header Host $host;
         proxy_set_header X-Real-IP $remote_addr;
         proxy_set_header X-Forwarded-For $proxy_add_x_forwarded_for;
         proxy_set_header X-Forwarded-Proto $scheme;
-        
+
         # Timeouts
         proxy_connect_timeout 60s;
         proxy_send_timeout 60s;
@@ -163,11 +164,11 @@ You need to allow HTTP and HTTPS traffic to your EC2 instance.
 
 Click **Edit inbound rules** and add:
 
-| Type  | Protocol | Port Range | Source    | Description          |
-|-------|----------|------------|-----------|----------------------|
-| HTTP  | TCP      | 80         | 0.0.0.0/0 | Allow HTTP traffic   |
-| HTTPS | TCP      | 443        | 0.0.0.0/0 | Allow HTTPS traffic  |
-| SSH   | TCP      | 22         | Your IP   | SSH access           |
+| Type  | Protocol | Port Range | Source    | Description         |
+| ----- | -------- | ---------- | --------- | ------------------- |
+| HTTP  | TCP      | 80         | 0.0.0.0/0 | Allow HTTP traffic  |
+| HTTPS | TCP      | 443        | 0.0.0.0/0 | Allow HTTPS traffic |
+| SSH   | TCP      | 22         | Your IP   | SSH access          |
 
 Click **Save rules**
 
@@ -226,18 +227,19 @@ DNS changes can take time to propagate:
 Use online tools to check if DNS has propagated:
 
 1. **whatsmydns.net**: https://www.whatsmydns.net/
-   - Enter your domain
-   - Select "A" record type
-   - Should show `15.134.88.100`
+    - Enter your domain
+    - Select "A" record type
+    - Should show `15.134.88.100`
 
 2. **Command line** (on your Mac):
-   ```bash
-   # Check DNS resolution
-   nslookup yourdomain.com
-   
-   # Should return:
-   # Address: 15.134.88.100
-   ```
+
+    ```bash
+    # Check DNS resolution
+    nslookup yourdomain.com
+
+    # Should return:
+    # Address: 15.134.88.100
+    ```
 
 ## Step 6: Test Your Domain
 
@@ -246,10 +248,10 @@ Once DNS has propagated:
 1. Open browser and go to: `http://yourdomain.com`
 2. You should see your tawktoo application
 3. Test functionality:
-   - ✅ Landing page loads
-   - ✅ Navbar is styled correctly
-   - ✅ Can join a room
-   - ✅ Video calls work
+    - ✅ Landing page loads
+    - ✅ Navbar is styled correctly
+    - ✅ Can join a room
+    - ✅ Video calls work
 
 ## Step 7: Install SSL Certificate (HTTPS)
 
@@ -275,6 +277,7 @@ sudo certbot --nginx -d yourdomain.com -d www.yourdomain.com
 ```
 
 Certbot will automatically:
+
 - Generate SSL certificates
 - Update Nginx configuration
 - Set up auto-renewal
@@ -367,6 +370,7 @@ pm2 restart tawktoo-sfu
 
 > [!WARNING]
 > Common reasons:
+>
 > - DNS not fully propagated yet (wait 1-2 hours)
 > - Port 80 not open in Security Group
 > - Nginx not running
@@ -406,10 +410,10 @@ sudo systemctl restart nginx
 
 ### DNS Records in GoDaddy
 
-| Type | Name | Value           | TTL  |
-|------|------|-----------------|------|
-| A    | @    | 15.134.88.100   | 600  |
-| A    | www  | 15.134.88.100   | 600  |
+| Type | Name | Value         | TTL |
+| ---- | ---- | ------------- | --- |
+| A    | @    | 15.134.88.100 | 600 |
+| A    | www  | 15.134.88.100 | 600 |
 
 ### Useful Commands
 
@@ -438,13 +442,13 @@ sudo certbot renew --dry-run
 
 ## Timeline
 
-| Step | Time Required |
-|------|---------------|
-| Configure DNS in GoDaddy | 5 minutes |
-| DNS Propagation | 30 min - 2 hours |
-| Configure Nginx on EC2 | 10 minutes |
-| Install SSL Certificate | 5 minutes |
-| **Total** | **1-3 hours** |
+| Step                     | Time Required    |
+| ------------------------ | ---------------- |
+| Configure DNS in GoDaddy | 5 minutes        |
+| DNS Propagation          | 30 min - 2 hours |
+| Configure Nginx on EC2   | 10 minutes       |
+| Install SSL Certificate  | 5 minutes        |
+| **Total**                | **1-3 hours**    |
 
 ---
 

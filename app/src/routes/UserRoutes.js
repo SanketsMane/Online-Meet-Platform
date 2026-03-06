@@ -10,7 +10,7 @@ const config = require('../config');
 router.post('/register', async (req, res) => {
     try {
         const { username, password, displayname } = req.body;
-        
+
         if (!username || !password) {
             return res.status(400).json({ message: 'Username and password are required' });
         }
@@ -21,13 +21,13 @@ router.post('/register', async (req, res) => {
         }
 
         const password_hash = await bcrypt.hash(password, 10);
-        
+
         // Create user with default allowed_rooms = ['*']
         const user = await User.create({
             username,
             password_hash,
             displayname: displayname || username,
-            allowed_rooms: ['*']
+            allowed_rooms: ['*'],
         });
 
         res.status(201).json({ message: 'Registration successful', username: user.username });

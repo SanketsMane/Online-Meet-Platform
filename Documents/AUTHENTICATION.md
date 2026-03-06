@@ -69,9 +69,9 @@ HOST_USERS=username:password,presenter:pass123
 
 1. Click "Register" tab
 2. Fill in:
-   - Company Name
-   - Email
-   - Password (minimum 8 characters)
+    - Company Name
+    - Email
+    - Password (minimum 8 characters)
 3. Click "Create Account"
 
 ### Login
@@ -192,18 +192,21 @@ If you already have an admin JWT token, enter it directly in the admin portal.
 #### API Endpoints
 
 **Get System Stats:**
+
 ```bash
 GET /api/v1/admin/stats
 Authorization: Bearer YOUR_ADMIN_JWT_TOKEN
 ```
 
 **Get All Developers:**
+
 ```bash
 GET /api/v1/admin/tenants
 Authorization: Bearer YOUR_ADMIN_JWT_TOKEN
 ```
 
 **Update Developer Status:**
+
 ```bash
 PUT /api/v1/admin/tenants/:id/status
 Authorization: Bearer YOUR_ADMIN_JWT_TOKEN
@@ -296,11 +299,13 @@ host: {
 ### "Unauthorized" Error
 
 **For Developers:**
+
 - Check if your API key is correct
 - Verify the key is active (not revoked)
 - Ensure you're using the `Authorization` header
 
 **For Admins:**
+
 - Check if your JWT token is expired
 - Verify you have admin role in database
 - Try logging in again to get a fresh token
@@ -308,6 +313,7 @@ host: {
 ### "Invalid Credentials" Error
 
 **For Hosts:**
+
 - Verify username and password in `.env` file
 - Check if `HOST_USER_AUTH=true` is set
 - Ensure credentials match exactly (case-sensitive)
@@ -323,18 +329,19 @@ host: {
 
 ## Quick Reference
 
-| User Type | URL | Authentication Method |
-|-----------|-----|----------------------|
-| Regular User | `/` | None required |
-| Host/Presenter | `/login` | Username + Password |
-| Developer | `/developer` | Email + Password → JWT |
-| Admin | `/admin` | JWT Token (admin role) |
+| User Type      | URL          | Authentication Method  |
+| -------------- | ------------ | ---------------------- |
+| Regular User   | `/`          | None required          |
+| Host/Presenter | `/login`     | Username + Password    |
+| Developer      | `/developer` | Email + Password → JWT |
+| Admin          | `/admin`     | JWT Token (admin role) |
 
 ---
 
 ## Support
 
 For issues or questions:
+
 - Check the [GitHub Issues](https://github.com/SanketsMane/Online-Meet-Platform.git/issues)
 - Review the [Official Documentation](https://docs.tawktoo.com)
 - Contact support: sanketmane7170@gmail.com

@@ -46,11 +46,11 @@ const validateApiKey = async (req, res, next) => {
         }
 
         if (keyRecord.Tenant.status !== 'active') {
-             return res.status(403).json({ message: 'Tenant account suspended' });
+            return res.status(403).json({ message: 'Tenant account suspended' });
         }
 
         // Update usage stats (async, don't await)
-        keyRecord.update({ last_used_at: new Date() }).catch(err => log.error('Failed to update key usage', err));
+        keyRecord.update({ last_used_at: new Date() }).catch((err) => log.error('Failed to update key usage', err));
 
         req.tenant = keyRecord.Tenant;
         req.apiKey = keyRecord;
@@ -71,7 +71,7 @@ function decodeToken(jwtToken) {
             console.error('CRITICAL: JWT_SECRET not set.');
             return null;
         }
-        
+
         // Verify and decode the JWT token
         const decodedToken = jwt.verify(jwtToken, secret);
         if (!decodedToken || !decodedToken.data) {
@@ -95,19 +95,19 @@ function decodeToken(jwtToken) {
 // Format: username:password:displayName:allowedRooms separated by |
 async function isAuthPeer(username, password) {
     const hostUsers = process.env.HOST_USERS;
-    
+
     if (!hostUsers) {
         console.error('[isAuthPeer] No HOST_USERS defined');
         return false;
     }
-    
+
     // Split by pipe (|) not comma
-    const users = hostUsers.split('|').map(user => {
+    const users = hostUsers.split('|').map((user) => {
         const parts = user.trim().split(':');
         return { username: parts[0], password: parts[1] };
     });
-    
-    const isValid = users.some(user => user.username === username && user.password === password);
+
+    const isValid = users.some((user) => user.username === username && user.password === password);
     console.log('[isAuthPeer] Checking', username, 'against', users.length, 'users - Result:', isValid);
     return isValid;
 }
@@ -116,14 +116,14 @@ async function isAuthPeer(username, password) {
 async function isAdmin(req, res, next) {
     try {
         const authHeader = req.headers.authorization;
-        
+
         if (!authHeader || !authHeader.startsWith('Bearer ')) {
             return res.status(401).json({ message: 'Admin access required' });
         }
 
         const token = authHeader.substring(7);
         const decoded = decodeToken(token);
-        
+
         // console.log('[isAdmin] Decoded token:', JSON.stringify(decoded)); // REDACTED SENSITIVE LOG
 
         if (!decoded || !decoded.username || !decoded.password) {
@@ -133,7 +133,7 @@ async function isAdmin(req, res, next) {
 
         // Verify user is in HOST_USERS list
         const isPeerValid = await isAuthPeer(decoded.username, decoded.password);
-        
+
         if (!isPeerValid) {
             console.error('[isAdmin] Validation failed for:', decoded.username);
             return res.status(403).json({ message: 'Admin access required' });
@@ -164,7 +164,9 @@ async function adminLogin(email, password) {
         return { success: false, message: 'Invalid credentials' };
     }
     const secret = process.env.JWT_SECRET;
-    const token = jwt.sign({ tenantId: tenant.id, email: tenant.email, role: tenant.role }, secret, { expiresIn: '24h' });
+    const token = jwt.sign({ tenantId: tenant.id, email: tenant.email, role: tenant.role }, secret, {
+        expiresIn: '24h',
+    });
     return { success: true, token };
 }
 

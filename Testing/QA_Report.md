@@ -17,21 +17,25 @@ The initial QA audit of the Online Meeting Platform has revealed several **CRITI
 ## 1. High-Severity Vulnerabilities (Critical Risk)
 
 ### 1.1 Stored XSS in Admin Feedback View (FIXED)
+
 - **Location:** [feedbacks.html](file:///Users/sanket/Documents/Online-Meeting/public/views/admin/feedbacks.html) / [AdminRoutes.js](file:///Users/sanket/Documents/Online-Meeting/app/src/routes/AdminRoutes.js)
 - **Description:** Feedback submitted by users is stored in the database and then rendered in the admin view using `.innerHTML` without any sanitization on the frontend.
 - **Remediation:** Replaced `innerHTML` with `textContent` and `createElement` for safe DOM manipulation.
 
 ### 1.2 Hardcoded Default JWT Secrets (FIXED)
+
 - **Location:** [Server.js](file:///Users/sanket/Documents/Online-Meeting/app/src/Server.js), [ServerApi.js](file:///Users/sanket/Documents/Online-Meeting/app/src/ServerApi.js)
 - **Description:** The system defaults to `kidokoolsfu_jwt_secret` if `JWT_SECRET` is not set in environment variables.
 - **Remediation:** Removed default secret fallback. The server now crashes if `JWT_SECRET` is not set in the environment.
 
 ### 1.3 Fail-Open XSS Sanitization Logic (FIXED)
+
 - **Location:** [XSS.js](file:///Users/sanket/Documents/Online-Meeting/app/src/XSS.js)
 - **Description:** The `checkXSS` function is wrapped in a `try...catch` block. If an error occurs during sanitization, the function returns the **original, unsanitized data**.
 - **Remediation:** Logic updated to return `null` on error, implementing a "fail-closed" security model.
 
 ### 1.4 Sensitive Data Leakage in Logs (FIXED)
+
 - **Location:** [AuthMiddleware.js](file:///Users/sanket/Documents/Online-Meeting/app/src/middleware/AuthMiddleware.js)
 - **Description:** When `isAdmin` validation fails, the system logs the **decoded credentials** (username and password) to the console/logs.
 - **Remediation:** Sensitive data removed from logs.
@@ -41,11 +45,13 @@ The initial QA audit of the Online Meeting Platform has revealed several **CRITI
 ## 2. API & Backend Integrity
 
 ### 2.1 JWT Secret Hijacking via Sanitizer (FIXED)
+
 - **Location:** `app/src/XSS.js`
-- **Finding:** The `sanitizeData` function recursively traverses objects. If it's passed an object that includes a sensitive key (like a config object containing a secret), and the sanitization fails, it returns the original object. 
+- **Finding:** The `sanitizeData` function recursively traverses objects. If it's passed an object that includes a sensitive key (like a config object containing a secret), and the sanitization fails, it returns the original object.
 - **Remediation:** Fixed via the fail-closed logic update in `XSS.js`.
 
 ### 2.2 Insecure Default Admin Credentials
+
 - **Finding:** The system often relies on `HOST_USERS` in `config.js` or env vars. If left at defaults (e.g., `admin:admin123`), the entire platform is at risk.
 - **Recommendation:** Rotate `HOST_USERS` credentials immediately.
 
@@ -54,11 +60,13 @@ The initial QA audit of the Online Meeting Platform has revealed several **CRITI
 ## 3. UI/UX & Logic Problems
 
 ### 3.1 Unhandled `innerHTML` in RoomClient.js (FIXED)
+
 - **Location:** `RoomClient.js` (appendMessage / processMessage)
 - **Finding:** While `filterXSS` is used on the raw message, the `processMessage` function reconstructs HTML for code blocks and then sets `innerHTML`. If the `xss` library is bypassed or misconfigured, this remains a vector.
 - **Remediation:** Implemented HTML escaping within code block processing.
 
 ### 3.2 Missing Validations
+
 - **Finding:** `Tenant.create` in `DeveloperRoutes.js` does basic checks but lacks a complex password policy, allowing weak credentials for developers.
 
 ---

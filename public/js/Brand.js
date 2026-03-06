@@ -162,7 +162,7 @@ async function initialize() {
     customizeWidget();
 
     customizeWhoAreYou();
-    
+
     customizeLogo();
     customizeFooter();
 
@@ -326,9 +326,9 @@ function customizeLogo() {
         const width = BRAND.logo_config.width;
         // Target all logo images that match common patterns
         const images = document.querySelectorAll('header img[src*="logo"], .sidebar-logo, img[alt*="logo" i]');
-        images.forEach(img => {
+        images.forEach((img) => {
             img.style.width = width;
-            img.style.height = 'auto'; 
+            img.style.height = 'auto';
         });
     }
 }
@@ -337,12 +337,15 @@ function customizeFooter() {
     const footerEl = document.getElementById('site-footer');
     if (footerEl && BRAND.footer_config) {
         const { copyright, links, contactEmail } = BRAND.footer_config;
-        
+
         let linksHtml = '';
         if (links && Array.isArray(links)) {
-            linksHtml = links.map(l => 
-                `<a href="${l.url}" class="text-sm text-gray-500 hover:text-blue-600 transition-colors">${l.label}</a>`
-            ).join('');
+            linksHtml = links
+                .map(
+                    (l) =>
+                        `<a href="${l.url}" class="text-sm text-gray-500 hover:text-blue-600 transition-colors">${l.label}</a>`
+                )
+                .join('');
         }
 
         if (contactEmail) {

@@ -14,7 +14,7 @@ class SettingsService {
 
     /**
      * Get a setting by key, with fallback to config.js
-     * @param {string} key 
+     * @param {string} key
      * @returns {any}
      */
     async get(key) {
@@ -36,7 +36,7 @@ class SettingsService {
                 // Fallback to config.js
                 this.cache[key] = this.getFallback(key);
             }
-            
+
             this.lastFetch = Date.now();
             return this.cache[key];
         } catch (error) {
@@ -74,8 +74,8 @@ class SettingsService {
 
     /**
      * Update a setting
-     * @param {string} key 
-     * @param {any} value 
+     * @param {string} key
+     * @param {any} value
      */
     async set(key, value) {
         try {
@@ -115,12 +115,12 @@ class SettingsService {
                     links: [
                         { label: 'Home', url: '/' },
                         { label: 'About', url: '/about' },
-                        { label: 'Privacy', url: '/privacy' }
-                    ]
+                        { label: 'Privacy', url: '/privacy' },
+                    ],
                 };
             case 'LOGO_CONFIG':
                 return {
-                    width: '150px'
+                    width: '150px',
                 };
             default:
                 return null;

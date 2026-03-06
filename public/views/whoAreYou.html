@@ -1,93 +1,129 @@
-<!DOCTYPE html>
+<!doctype html>
 <html lang="en" class="no-js">
-<head>
-    <title>tawktoo - Who are you?</title>
-    <link rel="shortcut icon" href="../images/logo.svg" />
-    <meta charset="utf-8" />
-    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-    
-    <!-- Premium Fonts & Icons -->
-    <link rel="preconnect" href="https://fonts.googleapis.com">
-    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
-    <link href="https://fonts.googleapis.com/css2?family=Outfit:wght@300;400;500;600;700&family=Inter:wght@300;400;500;600&display=swap" rel="stylesheet">
-    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.2/css/all.min.css" />
-    
-    <!-- Tailwind and Shared Styles -->
-    <script src="https://cdn.tailwindcss.com"></script>
-    <script>
-        tailwind.config = {
-            darkMode: 'class',
-            theme: {
-                extend: {
-                    fontFamily: { 
-                        sans: ['Inter', 'sans-serif'],
-                        heading: ['Outfit', 'sans-serif']
+    <head>
+        <title>tawktoo - Who are you?</title>
+        <link rel="shortcut icon" href="../images/logo.svg" />
+        <meta charset="utf-8" />
+        <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+
+        <!-- Premium Fonts & Icons -->
+        <link rel="preconnect" href="https://fonts.googleapis.com" />
+        <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+        <link
+            href="https://fonts.googleapis.com/css2?family=Outfit:wght@300;400;500;600;700&family=Inter:wght@300;400;500;600&display=swap"
+            rel="stylesheet"
+        />
+        <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.2/css/all.min.css" />
+
+        <!-- Tailwind and Shared Styles -->
+        <script src="https://cdn.tailwindcss.com"></script>
+        <script>
+            tailwind.config = {
+                darkMode: 'class',
+                theme: {
+                    extend: {
+                        fontFamily: {
+                            sans: ['Inter', 'sans-serif'],
+                            heading: ['Outfit', 'sans-serif'],
+                        },
+                        colors: {
+                            brand: {
+                                50: '#f5f7ff',
+                                100: '#ebf0fe',
+                                200: '#ced9fd',
+                                300: '#b1c2fc',
+                                400: '#7695fa',
+                                500: '#3b68f8',
+                                600: '#355de0',
+                                700: '#2c4ebb',
+                                800: '#233e95',
+                                900: '#1d337a',
+                            },
+                            slate: { 900: '#0f172a', 800: '#1e293b', 700: '#334155' },
+                        },
                     },
-                    colors: {
-                        brand: { 50: '#f5f7ff', 100: '#ebf0fe', 200: '#ced9fd', 300: '#b1c2fc', 400: '#7695fa', 500: '#3b68f8', 600: '#355de0', 700: '#2c4ebb', 800: '#233e95', 900: '#1d337a' },
-                        slate: { 900: '#0f172a', 800: '#1e293b', 700: '#334155' }
-                    }
-                }
-            }
-        }
-    </script>
-    <link rel="stylesheet" href="/css/theme.css">
-    
-    <!-- Scripts -->
-    <script defer src="../js/Brand.js"></script>
-    <script defer src="../js/components.js"></script>
-    <script defer src="../js/Translate.js"></script>
-    <script src="https://cdn.jsdelivr.net/npm/axios/dist/axios.min.js"></script>
-</head>
-<body class="dark:bg-slate-950 transition-colors duration-300 antialiased min-h-screen flex flex-col">
-    
-    <header class="site-header-shared"></header>
+                },
+            };
+        </script>
+        <link rel="stylesheet" href="/css/theme.css" />
 
-    <main class="flex-1 flex items-center justify-center p-6 bg-[radial-gradient(circle_at_top_right,_var(--tw-gradient-stops))] from-blue-50 via-white to-slate-50 dark:from-slate-900 dark:via-slate-950 dark:to-slate-900">
-        <div class="max-w-4xl w-full grid grid-cols-1 lg:grid-cols-2 gap-12 items-center animate-in fade-in slide-in-from-bottom-8 duration-700">
-            
-            <div class="space-y-8">
-                <div>
-                    <h1 id="whoAreYouTitle" class="text-5xl md:text-6xl font-heading font-extrabold tracking-tight mb-6 text-slate-900 dark:text-white">Who are you?</h1>
-                    <p id="whoAreYouDescription" class="text-lg text-slate-500 dark:text-slate-400 font-medium leading-relaxed">
-                        If you're the presenter, please log in now.<br />
-                        Otherwise, kindly wait for the presenter to join.
-                    </p>
-                </div>
+        <!-- Scripts -->
+        <script defer src="../js/Brand.js"></script>
+        <script defer src="../js/components.js"></script>
+        <script defer src="../js/Translate.js"></script>
+        <script src="https://cdn.jsdelivr.net/npm/axios/dist/axios.min.js"></script>
+    </head>
+    <body class="dark:bg-slate-950 transition-colors duration-300 antialiased min-h-screen flex flex-col">
+        <header class="site-header-shared"></header>
 
-                <div class="flex flex-col sm:flex-row gap-4">
-                    <a id="presenterLoginButton" href="/login" class="px-8 py-4 bg-brand-500 hover:bg-brand-600 text-white font-bold rounded-xl text-center shadow-lg shadow-brand-500/20 transition-all active:scale-95 text-sm uppercase tracking-wider">
-                        Presenter Login
-                    </a>
-                    <a id="guestJoinRoomButton" href="javascript:void(0)" class="px-8 py-4 bg-white dark:bg-slate-900 border border-slate-200 dark:border-slate-800 hover:border-brand-500 dark:hover:border-brand-500 text-slate-900 dark:text-white font-bold rounded-xl text-center transition-all active:scale-95 text-sm uppercase tracking-wider shadow-sm">
-                        Join as Guest
-                    </a>
-                </div>
-            </div>
-
-            <!-- Visual Decoration -->
-            <div class="hidden lg:block relative">
-                <div class="absolute inset-0 bg-brand-500/10 blur-[100px] rounded-full"></div>
-                <div class="relative grid grid-cols-3 gap-4 p-8 bg-white dark:bg-slate-900/50 rounded-[48px] border border-slate-100 dark:border-slate-800 shadow-2xl backdrop-blur-xl">
-                    <div class="aspect-square bg-slate-50 dark:bg-slate-800 rounded-2xl animate-pulse"></div>
-                    <div class="aspect-square bg-brand-50/50 dark:bg-brand-900/10 rounded-2xl"></div>
-                    <div class="aspect-square bg-slate-50 dark:bg-slate-800 rounded-2xl"></div>
-                    <div class="aspect-square bg-brand-50/50 dark:bg-brand-900/10 rounded-2xl animate-pulse"></div>
-                    <div class="aspect-square bg-brand-500 rounded-2xl flex items-center justify-center text-white text-2xl shadow-lg shadow-brand-500/20">
-                        <i class="fas fa-video"></i>
+        <main
+            class="flex-1 flex items-center justify-center p-6 bg-[radial-gradient(circle_at_top_right,_var(--tw-gradient-stops))] from-blue-50 via-white to-slate-50 dark:from-slate-900 dark:via-slate-950 dark:to-slate-900"
+        >
+            <div
+                class="max-w-4xl w-full grid grid-cols-1 lg:grid-cols-2 gap-12 items-center animate-in fade-in slide-in-from-bottom-8 duration-700"
+            >
+                <div class="space-y-8">
+                    <div>
+                        <h1
+                            id="whoAreYouTitle"
+                            class="text-5xl md:text-6xl font-heading font-extrabold tracking-tight mb-6 text-slate-900 dark:text-white"
+                        >
+                            Who are you?
+                        </h1>
+                        <p
+                            id="whoAreYouDescription"
+                            class="text-lg text-slate-500 dark:text-slate-400 font-medium leading-relaxed"
+                        >
+                            If you're the presenter, please log in now.<br />
+                            Otherwise, kindly wait for the presenter to join.
+                        </p>
                     </div>
-                    <div class="aspect-square bg-brand-50/50 dark:bg-brand-900/10 rounded-2xl"></div>
-                    <div class="aspect-square bg-slate-50 dark:bg-slate-800 rounded-2xl"></div>
-                    <div class="aspect-square bg-brand-50/50 dark:bg-brand-900/10 rounded-2xl animate-pulse"></div>
-                    <div class="aspect-square bg-slate-50 dark:bg-slate-800 rounded-2xl"></div>
+
+                    <div class="flex flex-col sm:flex-row gap-4">
+                        <a
+                            id="presenterLoginButton"
+                            href="/login"
+                            class="px-8 py-4 bg-brand-500 hover:bg-brand-600 text-white font-bold rounded-xl text-center shadow-lg shadow-brand-500/20 transition-all active:scale-95 text-sm uppercase tracking-wider"
+                        >
+                            Presenter Login
+                        </a>
+                        <a
+                            id="guestJoinRoomButton"
+                            href="javascript:void(0)"
+                            class="px-8 py-4 bg-white dark:bg-slate-900 border border-slate-200 dark:border-slate-800 hover:border-brand-500 dark:hover:border-brand-500 text-slate-900 dark:text-white font-bold rounded-xl text-center transition-all active:scale-95 text-sm uppercase tracking-wider shadow-sm"
+                        >
+                            Join as Guest
+                        </a>
+                    </div>
+                </div>
+
+                <!-- Visual Decoration -->
+                <div class="hidden lg:block relative">
+                    <div class="absolute inset-0 bg-brand-500/10 blur-[100px] rounded-full"></div>
+                    <div
+                        class="relative grid grid-cols-3 gap-4 p-8 bg-white dark:bg-slate-900/50 rounded-[48px] border border-slate-100 dark:border-slate-800 shadow-2xl backdrop-blur-xl"
+                    >
+                        <div class="aspect-square bg-slate-50 dark:bg-slate-800 rounded-2xl animate-pulse"></div>
+                        <div class="aspect-square bg-brand-50/50 dark:bg-brand-900/10 rounded-2xl"></div>
+                        <div class="aspect-square bg-slate-50 dark:bg-slate-800 rounded-2xl"></div>
+                        <div class="aspect-square bg-brand-50/50 dark:bg-brand-900/10 rounded-2xl animate-pulse"></div>
+                        <div
+                            class="aspect-square bg-brand-500 rounded-2xl flex items-center justify-center text-white text-2xl shadow-lg shadow-brand-500/20"
+                        >
+                            <i class="fas fa-video"></i>
+                        </div>
+                        <div class="aspect-square bg-brand-50/50 dark:bg-brand-900/10 rounded-2xl"></div>
+                        <div class="aspect-square bg-slate-50 dark:bg-slate-800 rounded-2xl"></div>
+                        <div class="aspect-square bg-brand-50/50 dark:bg-brand-900/10 rounded-2xl animate-pulse"></div>
+                        <div class="aspect-square bg-slate-50 dark:bg-slate-800 rounded-2xl"></div>
+                    </div>
                 </div>
             </div>
-        </div>
-    </main>
+        </main>
 
-    <footer class="site-footer-shared"></footer>
+        <footer class="site-footer-shared"></footer>
 
-    <script async src="../js/WhoAreYou.js"></script>
-    <script defer src="../js/Landing.js"></script>
-</body>
+        <script async src="../js/WhoAreYou.js"></script>
+        <script defer src="../js/Landing.js"></script>
+    </body>
 </html>

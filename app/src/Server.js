@@ -69,22 +69,21 @@ dev dependencies: {
  *
  */
 
-
 const config = require('./config');
 const { UsageLog, Feedback, User, AuditLog, GlobalSetting, WebhookLog, ApiKey } = require('./db/models');
 
 /**
  * Log Admin Action
- * @param {object} req 
- * @param {string} action 
- * @param {string} target 
- * @param {string} details 
+ * @param {object} req
+ * @param {string} action
+ * @param {string} target
+ * @param {string} details
  */
 async function logAdminAction(req, action, target, details = '') {
     try {
         const ip = req.headers['x-forwarded-for'] || req.socket.remoteAddress;
         let adminId = 'System';
-        
+
         // Try to get adminId from auth session if possible
         if (req.session && req.session.adminId) {
             adminId = req.session.adminId;
@@ -97,7 +96,7 @@ async function logAdminAction(req, action, target, details = '') {
             action: action,
             target: target,
             details: details,
-            ip_address: ip
+            ip_address: ip,
         });
     } catch (e) {
         console.error('Failed to log admin action:', e);
@@ -105,7 +104,9 @@ async function logAdminAction(req, action, target, details = '') {
 }
 
 if (!process.env.JWT_SECRET) {
-    console.error('CRITICAL: JWT_SECRET is not defined in the environment variables. The server cannot start securely.');
+    console.error(
+        'CRITICAL: JWT_SECRET is not defined in the environment variables. The server cannot start securely.'
+    );
     process.exit(1);
 }
 
@@ -163,7 +164,6 @@ const dir = {
     rec: path.join(__dirname, '../rec'),
     rtmp: path.join(__dirname, '../rtmp'),
 };
-
 
 // Login attempts limit
 const rateLimit = require('express-rate-limit');
@@ -240,7 +240,7 @@ const options = {
 const server = httpolyglot.createServer(options, app);
 // ...
 
-app.use(express.json({ limit: '50mb' })); 
+app.use(express.json({ limit: '50mb' }));
 app.use(express.urlencoded({ extended: true, limit: '50mb' }));
 
 // Mount AI Routes
@@ -624,8 +624,8 @@ function startServer() {
     app.get('/brand', async (req, res) => {
         try {
             const settings = await settingsService.getAll();
-            const branding = JSON.parse(JSON.stringify(config.ui.brand)); 
-            
+            const branding = JSON.parse(JSON.stringify(config.ui.brand));
+
             if (settings.app_name && branding.app) {
                 branding.app.name = settings.app_name;
                 if (branding.site) {
@@ -663,7 +663,7 @@ function startServer() {
             return htmlInjector.injectHtml(views.landing, res);
         }
     });
-    
+
     // Public footer configuration
     app.get('/api/v1/footer', async (req, res) => {
         try {
@@ -1018,7 +1018,7 @@ function startServer() {
     async function verifyAdminToken(req, res, next) {
         try {
             log.debug('[AdminAuth] Starting token verification...');
-            
+
             const authHeader = req.headers.authorization;
             if (!authHeader || !authHeader.startsWith('Bearer ')) {
                 log.debug('[AdminAuth] No authorization header or invalid format');
@@ -1027,7 +1027,7 @@ function startServer() {
 
             const token = authHeader.substring(7);
             log.debug('[AdminAuth] Token received:', token.substring(0, 50) + '...');
-            
+
             // Author: Sanket - Decode and validate the JWT token
             let decoded;
             try {
@@ -1037,18 +1037,18 @@ function startServer() {
                 log.error('[AdminAuth] Token decode error:', error.message);
                 return res.status(401).json({ message: 'Invalid token' });
             }
-            
+
             if (!decoded || !decoded.username || !decoded.password) {
                 log.error('[AdminAuth] Token missing credentials:', decoded);
                 return res.status(401).json({ message: 'Invalid token structure' });
             }
 
             log.debug('[AdminAuth] Verifying credentials for user:', decoded.username);
-            
+
             // Verify user is in HOST_USERS list
             const isPeerValid = await isAuthPeer(decoded.username, decoded.password);
             log.debug('[AdminAuth] isAuthPeer result:', isPeerValid);
-            
+
             if (!isPeerValid) {
                 log.error('[AdminAuth] Admin verification failed for user:', decoded.username);
                 return res.status(403).json({ message: 'Admin access required' });
@@ -1062,7 +1062,6 @@ function startServer() {
             return res.status(401).json({ message: 'Invalid token' });
         }
     }
-
 
     // ####################################################
     // RECORDING UTILITY
@@ -1341,15 +1340,15 @@ function startServer() {
                 error: 'Endpoint disabled',
             });
         }
-        
+
         // Legacy check
         const { host, authorization = config.api.keySecret } = req.headers;
         const api = new ServerApi(host, authorization);
 
-        // For this purely informational endpoint, we can stick to legacy check 
+        // For this purely informational endpoint, we can stick to legacy check
         // OR upgrade it to apiAuth if we want external devs to see this.
         // Keeping legacy for now to avoid breaking existing monitoring.
-        
+
         const activeRooms = api.getActiveRooms(roomList);
         res.json({ activeRooms: activeRooms });
 
@@ -1418,7 +1417,7 @@ function startServer() {
                     tenant_id: req.tenant.id,
                     api_key_id: req.apiKey.id,
                     action: 'create_meeting',
-                    status: 'success'
+                    status: 'success',
                 });
             } catch (err) {
                 log.error('Failed to log usage entry', err);
@@ -1434,17 +1433,17 @@ function startServer() {
         const response = api.getJoinURL(req.body);
         res.status(200).send({ join: response });
     });
-    
+
     app.post(restApi.basePath + '/getRoomId', (req, res) => {
         const roomId = uuidV4();
         res.status(200).send({ roomId: roomId });
     });
 
     app.post(restApi.basePath + '/token', checkApiSecret, (req, res) => {
-         const { token } = checkXSS(req.body);
-         const api = new ServerApi(req.headers.host, req.headers.authorization);
-         const response = api.getToken(req.body);
-         res.status(200).send({ token: response });
+        const { token } = checkXSS(req.body);
+        const api = new ServerApi(req.headers.host, req.headers.authorization);
+        const response = api.getToken(req.body);
+        res.status(200).send({ token: response });
     });
 
     // ####################################################
@@ -1516,16 +1515,16 @@ function startServer() {
         try {
             const dbSettings = await GlobalSetting.findAll({
                 where: {
-                    key: ['app_name', 'brand_color', 'logo_url', 'favicon_url']
-                }
+                    key: ['app_name', 'brand_color', 'logo_url', 'favicon_url'],
+                },
             });
             const branding = {
                 app_name: 'MiroTalk SFU', // Default
                 brand_color: '#0270d7',
                 logo_url: '../images/logo.svg',
-                favicon_url: '../images/favicon.png'
+                favicon_url: '../images/favicon.png',
             };
-            dbSettings.forEach(s => {
+            dbSettings.forEach((s) => {
                 branding[s.key] = s.value;
             });
             res.json(branding);
@@ -1537,7 +1536,7 @@ function startServer() {
     // ####################################################
     // Admin Management Routes (Refactored to AdminRoutes)
     // ####################################################
-    
+
     app.use('/api/v1/admin', adminRoutes(roomList));
 
     // ####################################################
@@ -1852,7 +1851,7 @@ function startServer() {
             log.debug('Join event received', {
                 room_id: socket.room_id,
                 user_auth: hostCfg.user_auth,
-                peer_info: data.peer_info
+                peer_info: data.peer_info,
             });
 
             if (!Validator.isValidRoomName(socket.room_id)) {
@@ -1919,8 +1918,7 @@ function startServer() {
                         });
                         return cb('unauthorized');
                     }
-                }
- else {
+                } else {
                     if (!hostCfg.users_from_db) return cb('unauthorized');
                 }
 
@@ -3967,7 +3965,9 @@ function startServer() {
         }
 
         // Decrypt the payload using AES decryption
-        const decryptedPayload = CryptoJS.AES.decrypt(decodedToken.data, process.env.JWT_SECRET).toString(CryptoJS.enc.Utf8);
+        const decryptedPayload = CryptoJS.AES.decrypt(decodedToken.data, process.env.JWT_SECRET).toString(
+            CryptoJS.enc.Utf8
+        );
 
         // Parse the decrypted payload as JSON
         const payload = JSON.parse(decryptedPayload);

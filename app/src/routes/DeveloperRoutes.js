@@ -29,7 +29,7 @@ router.post('/auth/register', async (req, res) => {
         const tenant = await Tenant.create({ name, email, password_hash });
 
         // Author: Sanket - Send Welcome Email
-        EmailService.sendWelcome(tenant).catch(err => console.error('Welcome email failed:', err));
+        EmailService.sendWelcome(tenant).catch((err) => console.error('Welcome email failed:', err));
 
         res.status(201).json({ message: 'Registered successfully', id: tenant.id });
     } catch (err) {
@@ -51,11 +51,7 @@ router.post('/auth/login', async (req, res) => {
             return res.status(403).json({ message: 'Account suspended. Please contact support.' });
         }
 
-        const token = jwt.sign(
-            { id: tenant.id, role: tenant.role },
-            config.security.jwt.key,
-            { expiresIn: '24h' }
-        );
+        const token = jwt.sign({ id: tenant.id, role: tenant.role }, config.security.jwt.key, { expiresIn: '24h' });
 
         res.json({ token, role: tenant.role, name: tenant.name });
     } catch (err) {
@@ -82,7 +78,7 @@ router.post('/auth/otp/send', async (req, res) => {
         await tenant.update({ otp_code: otp, otp_expiry });
 
         // Send OTP via Email
-        EmailService.sendOTP(tenant, otp).catch(err => console.error('OTP email failed:', err));
+        EmailService.sendOTP(tenant, otp).catch((err) => console.error('OTP email failed:', err));
 
         res.json({ message: 'OTP sent successfully' });
     } catch (err) {
@@ -104,11 +100,7 @@ router.post('/auth/otp/login', async (req, res) => {
         // Clear OTP after successful use
         await tenant.update({ otp_code: null, otp_expiry: null });
 
-        const token = jwt.sign(
-            { id: tenant.id, role: tenant.role },
-            config.security.jwt.key,
-            { expiresIn: '24h' }
-        );
+        const token = jwt.sign({ id: tenant.id, role: tenant.role }, config.security.jwt.key, { expiresIn: '24h' });
 
         res.json({ token, role: tenant.role, name: tenant.name });
     } catch (err) {
@@ -131,7 +123,7 @@ router.post('/auth/password/reset', async (req, res) => {
         await tenant.update({
             password_hash,
             otp_code: null,
-            otp_expiry: null
+            otp_expiry: null,
         });
 
         res.json({ message: 'Password reset successfully' });
@@ -201,7 +193,7 @@ router.post('/keys', async (req, res) => {
 
         res.json({ apiKey: rawKey, message: 'Save this key now! It will not be shown again.' });
     } catch (err) {
-         res.status(500).json({ message: 'Failed to generate key', error: err.message });
+        res.status(500).json({ message: 'Failed to generate key', error: err.message });
     }
 });
 
@@ -234,7 +226,7 @@ router.patch('/keys/:id', async (req, res) => {
         const { is_active } = req.body;
 
         const key = await ApiKey.findOne({
-            where: { id: req.params.id, tenant_id: decoded.id }
+            where: { id: req.params.id, tenant_id: decoded.id },
         });
 
         if (!key) return res.status(404).json({ message: 'Key not found' });
@@ -244,8 +236,9 @@ router.patch('/keys/:id', async (req, res) => {
         // Author: Sanket - Send Security Alert
         const tenant = await Tenant.findByPk(decoded.id);
         if (tenant) {
-            EmailService.sendSecurityAlert(tenant, is_active ? 'Activated' : 'Revoked', key.name)
-                .catch(err => console.error('Security alert email failed:', err));
+            EmailService.sendSecurityAlert(tenant, is_active ? 'Activated' : 'Revoked', key.name).catch((err) =>
+                console.error('Security alert email failed:', err)
+            );
         }
 
         res.json({ message: `Key ${is_active ? 'activated' : 'deactivated'} successfully` });
@@ -262,9 +255,9 @@ router.delete('/keys/:id', async (req, res) => {
 
     try {
         const decoded = jwt.verify(token, config.security.jwt.key);
-        
+
         const key = await ApiKey.findOne({
-            where: { id: req.params.id, tenant_id: decoded.id }
+            where: { id: req.params.id, tenant_id: decoded.id },
         });
 
         if (!key) return res.status(404).json({ message: 'Key not found' });
@@ -275,8 +268,9 @@ router.delete('/keys/:id', async (req, res) => {
         // Author: Sanket - Send Security Alert
         const tenant = await Tenant.findByPk(decoded.id);
         if (tenant) {
-            EmailService.sendSecurityAlert(tenant, 'Deleted', keyName)
-                .catch(err => console.error('Security alert email failed:', err));
+            EmailService.sendSecurityAlert(tenant, 'Deleted', keyName).catch((err) =>
+                console.error('Security alert email failed:', err)
+            );
         }
 
         res.json({ message: 'Key deleted successfully' });

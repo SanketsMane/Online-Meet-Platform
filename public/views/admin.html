@@ -1,746 +1,1149 @@
-<!DOCTYPE html>
+<!doctype html>
 <html lang="en">
-<head>
-    <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <!-- Author: Sanket - Cache busting to force browser refresh -->
-    <meta http-equiv="Cache-Control" content="no-cache, no-store, must-revalidate">
-    <meta http-equiv="Pragma" content="no-cache">
-    <meta http-equiv="Expires" content="0">
-    <title>tawktoo - Admin Hub</title>
-    <link rel="shortcut icon" href="../images/logo.svg" />
-    
-    <!-- Fonts and Icons -->
-    <link rel="preconnect" href="https://fonts.googleapis.com">
-    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
-    <link href="https://fonts.googleapis.com/css2?family=Outfit:wght@300;400;500;600;700&family=Inter:wght@300;400;500;600&display=swap" rel="stylesheet">
-    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.2/css/all.min.css" />
-    
-    <!-- Tailwind and Shared Styles -->
-    <script src="https://cdn.tailwindcss.com"></script>
-    <script>
-        tailwind.config = {
-            darkMode: 'class',
-            theme: {
-                extend: {
-                    fontFamily: { 
-                        sans: ['Inter', 'sans-serif'],
-                        heading: ['Outfit', 'sans-serif']
+    <head>
+        <meta charset="UTF-8" />
+        <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+        <!-- Author: Sanket - Cache busting to force browser refresh -->
+        <meta http-equiv="Cache-Control" content="no-cache, no-store, must-revalidate" />
+        <meta http-equiv="Pragma" content="no-cache" />
+        <meta http-equiv="Expires" content="0" />
+        <title>tawktoo - Admin Hub</title>
+        <link rel="shortcut icon" href="../images/logo.svg" />
+
+        <!-- Fonts and Icons -->
+        <link rel="preconnect" href="https://fonts.googleapis.com" />
+        <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+        <link
+            href="https://fonts.googleapis.com/css2?family=Outfit:wght@300;400;500;600;700&family=Inter:wght@300;400;500;600&display=swap"
+            rel="stylesheet"
+        />
+        <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.2/css/all.min.css" />
+
+        <!-- Tailwind and Shared Styles -->
+        <script src="https://cdn.tailwindcss.com"></script>
+        <script>
+            tailwind.config = {
+                darkMode: 'class',
+                theme: {
+                    extend: {
+                        fontFamily: {
+                            sans: ['Inter', 'sans-serif'],
+                            heading: ['Outfit', 'sans-serif'],
+                        },
+                        colors: {
+                            brand: {
+                                50: '#f5f7ff',
+                                100: '#ebf0fe',
+                                200: '#ced9fd',
+                                300: '#b1c2fc',
+                                400: '#7695fa',
+                                500: '#3b68f8',
+                                600: '#355de0',
+                                700: '#2c4ebb',
+                                800: '#233e95',
+                                900: '#1d337a',
+                            },
+                            slate: { 900: '#0f172a', 800: '#1e293b', 700: '#334155' },
+                            google: {
+                                blue: '#1a73e8',
+                                blueHover: '#174ea6',
+                                red: '#ea4335',
+                                green: '#34a853',
+                                yellow: '#fbbc04',
+                            },
+                        },
                     },
-                    colors: {
-                        brand: { 50: '#f5f7ff', 100: '#ebf0fe', 200: '#ced9fd', 300: '#b1c2fc', 400: '#7695fa', 500: '#3b68f8', 600: '#355de0', 700: '#2c4ebb', 800: '#233e95', 900: '#1d337a' },
-                        slate: { 900: '#0f172a', 800: '#1e293b', 700: '#334155' },
-                        google: {
-                            blue: '#1a73e8',
-                            blueHover: '#174ea6',
-                            red: '#ea4335',
-                            green: '#34a853',
-                            yellow: '#fbbc04',
-                        }
-                    }
-                }
+                },
+            };
+        </script>
+        <link rel="stylesheet" href="/css/theme.css" />
+
+        <!-- Scripts -->
+        <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
+        <script defer src="../js/Brand.js"></script>
+        <script defer src="../js/Theme.js"></script>
+        <script src="https://cdn.jsdelivr.net/npm/axios/dist/axios.min.js"></script>
+        <script defer src="https://cdn.jsdelivr.net/npm/sweetalert2@11.4.8"></script>
+
+        <style>
+            /* Custom Scrollbar */
+            ::-webkit-scrollbar {
+                width: 6px;
             }
-        }
-    </script>
-    <link rel="stylesheet" href="/css/theme.css">
-    
-    <!-- Scripts -->
-    <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
-    <script defer src="../js/Brand.js"></script>
-    <script defer src="../js/Theme.js"></script>
-    <script src="https://cdn.jsdelivr.net/npm/axios/dist/axios.min.js"></script>
-    <script defer src="https://cdn.jsdelivr.net/npm/sweetalert2@11.4.8"></script>
+            ::-webkit-scrollbar-track {
+                background: transparent;
+            }
+            ::-webkit-scrollbar-thumb {
+                background: rgba(0, 0, 0, 0.1);
+                border-radius: 10px;
+            }
+            .dark ::-webkit-scrollbar-thumb {
+                background: rgba(255, 255, 255, 0.1);
+            }
 
-    <style>
-        /* Custom Scrollbar */
-        ::-webkit-scrollbar { width: 6px; }
-        ::-webkit-scrollbar-track { background: transparent; }
-        ::-webkit-scrollbar-thumb { background: rgba(0,0,0,0.1); border-radius: 10px; }
-        .dark ::-webkit-scrollbar-thumb { background: rgba(255,255,255,0.1); }
+            .sidebar-transition {
+                transition:
+                    width 0.3s ease,
+                    transform 0.3s ease;
+            }
+            .nav-item-active {
+                background-color: rgba(26, 115, 232, 0.1);
+                color: #1a73e8;
+            }
+            .dark .nav-item-active {
+                background-color: rgba(26, 115, 232, 0.2);
+                color: #8ab4f8;
+            }
 
-        .sidebar-transition { transition: width 0.3s ease, transform 0.3s ease; }
-        .nav-item-active { background-color: rgba(26, 115, 232, 0.1); color: #1a73e8; }
-        .dark .nav-item-active { background-color: rgba(26, 115, 232, 0.2); color: #8ab4f8; }
-        
-        body { font-family: 'Inter', sans-serif; }
-        h1, h2, h3, h4 { font-family: 'Outfit', sans-serif; }
+            body {
+                font-family: 'Inter', sans-serif;
+            }
+            h1,
+            h2,
+            h3,
+            h4 {
+                font-family: 'Outfit', sans-serif;
+            }
 
-        .glass-card {
-            background: rgba(255, 255, 255, 0.8);
-            backdrop-filter: blur(10px);
-            border: 1px solid rgba(0,0,0,0.05);
-        }
-        .dark .glass-card {
-            background: rgba(21, 24, 29, 0.8);
-            border: 1px solid rgba(255,255,255,0.05);
-        }
-    </style>
-</head>
-<body class="bg-gray-50 dark:bg-[#15181d] text-gray-900 dark:text-gray-100 min-h-screen overflow-x-hidden">
-    
-    <!-- Login Section -->
-    <div id="loginSection" class="fixed inset-0 z-[2000] flex items-center justify-center bg-white dark:bg-[#15181d] overflow-hidden">
-        <div class="absolute inset-0 bg-blue-50/50 dark:bg-blue-900/5 -z-10"></div>
-        <div class="w-full max-w-md px-6 animate-in fade-in zoom-in duration-500">
-            <div class="bg-white dark:bg-[#1d2026] p-8 md:p-10 rounded-2xl shadow-2xl border border-gray-100 dark:border-gray-800">
-                <div class="text-center mb-10">
-                    <img src="../images/logo.svg" alt="tawktoo" class="w-16 h-16 mx-auto mb-6">
-                    <h2 class="text-3xl font-heading font-bold mb-2">Admin Hub</h2>
-                    <p class="text-gray-500 dark:text-gray-400">Secure gateway for tawktoo administrators</p>
-                </div>
-
-                <div id="loginError" class="hidden mb-6 p-4 rounded-lg bg-red-50 dark:bg-red-900/20 border border-red-100 dark:border-red-800 text-red-600 dark:text-red-400 text-sm font-medium text-center"></div>
-
-                <form id="loginForm" class="space-y-6">
-                    <div>
-                        <label class="block text-sm font-semibold mb-2">Username</label>
-                        <div class="relative">
-                            <i class="fas fa-user-shield absolute left-4 top-1/2 -translate-y-1/2 text-gray-400"></i>
-                            <input type="text" id="username" placeholder="Admin handle" required 
-                                class="w-full pl-11 pr-4 py-3 rounded-lg bg-gray-50 dark:bg-gray-800/50 border border-gray-200 dark:border-gray-700 focus:ring-2 focus:ring-google-blue/20 focus:border-google-blue outline-none transition-all">
-                        </div>
+            .glass-card {
+                background: rgba(255, 255, 255, 0.8);
+                backdrop-filter: blur(10px);
+                border: 1px solid rgba(0, 0, 0, 0.05);
+            }
+            .dark .glass-card {
+                background: rgba(21, 24, 29, 0.8);
+                border: 1px solid rgba(255, 255, 255, 0.05);
+            }
+        </style>
+    </head>
+    <body class="bg-gray-50 dark:bg-[#15181d] text-gray-900 dark:text-gray-100 min-h-screen overflow-x-hidden">
+        <!-- Login Section -->
+        <div
+            id="loginSection"
+            class="fixed inset-0 z-[2000] flex items-center justify-center bg-white dark:bg-[#15181d] overflow-hidden"
+        >
+            <div class="absolute inset-0 bg-blue-50/50 dark:bg-blue-900/5 -z-10"></div>
+            <div class="w-full max-w-md px-6 animate-in fade-in zoom-in duration-500">
+                <div
+                    class="bg-white dark:bg-[#1d2026] p-8 md:p-10 rounded-2xl shadow-2xl border border-gray-100 dark:border-gray-800"
+                >
+                    <div class="text-center mb-10">
+                        <img src="../images/logo.svg" alt="tawktoo" class="w-16 h-16 mx-auto mb-6" />
+                        <h2 class="text-3xl font-heading font-bold mb-2">Admin Hub</h2>
+                        <p class="text-gray-500 dark:text-gray-400">Secure gateway for tawktoo administrators</p>
                     </div>
-                    <div>
-                        <label class="block text-sm font-semibold mb-2">Password</label>
-                        <div class="relative">
-                            <i class="fas fa-lock absolute left-4 top-1/2 -translate-y-1/2 text-gray-400"></i>
-                            <input type="password" id="password" placeholder="••••••••" required 
-                                class="w-full pl-11 pr-12 py-3 rounded-lg bg-gray-50 dark:bg-gray-800/50 border border-gray-200 dark:border-gray-700 focus:ring-2 focus:ring-google-blue/20 focus:border-google-blue outline-none transition-all">
-                            <i class="fas fa-eye absolute right-4 top-1/2 -translate-y-1/2 cursor-pointer text-gray-400 hover:text-gray-600" id="toggleLoginPassword"></i>
-                        </div>
-                    </div>
-                    <button type="submit" id="loginBtn" class="w-full py-3.5 bg-google-blue hover:bg-google-blueHover text-white rounded-lg font-bold text-base transition-all shadow-lg shadow-blue-500/20 active:scale-[0.98]">
-                        Sign In to Hub
-                    </button>
-                </form>
-            </div>
-        </div>
-    </div>
 
-    <!-- Layout Container -->
-    <div id="adminLayout" class="hidden flex min-h-screen">
-        <!-- Sidebar -->
-        <aside id="sidebar" class="sidebar-transition w-[280px] fixed lg:static inset-y-0 left-0 z-50 bg-white dark:bg-[#1d2026] border-r border-gray-200 dark:border-gray-800 flex flex-col -translate-x-full lg:translate-x-0">
-            <div class="h-16 flex items-center px-6 gap-3 border-b border-gray-100 dark:border-gray-800">
-                <img src="../images/logo.svg" alt="tawktoo" class="w-8 h-8 sidebar-logo">
-                <span class="font-heading font-bold text-lg sidebar-brand">tawktoo Hub</span>
-            </div>
-            
-            <nav class="flex-1 overflow-y-auto p-4 space-y-2">
-                <div class="nav-item cursor-pointer flex items-center gap-4 px-4 py-3 rounded-lg transition-colors nav-item-active" data-module="dashboard">
-                    <i class="fas fa-chart-pie w-5"></i>
-                    <span class="font-medium">Dashboard</span>
-                </div>
-                <div class="nav-item cursor-pointer flex items-center gap-4 px-4 py-3 rounded-lg hover:bg-gray-100 dark:hover:bg-gray-800 transition-colors" data-module="tenants">
-                    <i class="fas fa-users w-5"></i>
-                    <span class="font-medium">Developers</span>
-                </div>
-                <div class="nav-item cursor-pointer flex items-center gap-4 px-4 py-3 rounded-lg hover:bg-gray-100 dark:hover:bg-gray-800 transition-colors" data-module="apikeys">
-                    <i class="fas fa-key w-5"></i>
-                    <span class="font-medium">API & Keys</span>
-                </div>
-                <div class="nav-item cursor-pointer flex items-center gap-4 px-4 py-3 rounded-lg hover:bg-gray-100 dark:hover:bg-gray-800 transition-colors" data-module="rooms">
-                    <i class="fas fa-video w-5"></i>
-                    <span class="font-medium">Active Rooms</span>
-                </div>
-                <div class="nav-item cursor-pointer flex items-center gap-4 px-4 py-3 rounded-lg hover:bg-gray-100 dark:hover:bg-gray-800 transition-colors" data-module="feedbacks">
-                    <i class="fas fa-star w-5"></i>
-                    <span class="font-medium">Reviews</span>
-                </div>
-                <div class="nav-item cursor-pointer flex items-center gap-4 px-4 py-3 rounded-lg hover:bg-gray-100 dark:hover:bg-gray-800 transition-colors" data-module="audit">
-                    <i class="fas fa-fingerprint w-5"></i>
-                    <span class="font-medium">Audit Logs</span>
-                </div>
-                <div class="nav-item cursor-pointer flex items-center gap-4 px-4 py-3 rounded-lg hover:bg-gray-100 dark:hover:bg-gray-800 transition-colors" data-module="settings">
-                    <i class="fas fa-cog w-5"></i>
-                    <span class="font-medium">Settings</span>
-                </div>
-                <div class="nav-item cursor-pointer flex items-center gap-4 px-4 py-3 rounded-lg hover:bg-gray-100 dark:hover:bg-gray-800 transition-colors" data-module="footer">
-                    <i class="fas fa-paint-brush w-5"></i>
-                    <span class="font-medium">Branding</span>
-                </div>
-            </nav>
+                    <div
+                        id="loginError"
+                        class="hidden mb-6 p-4 rounded-lg bg-red-50 dark:bg-red-900/20 border border-red-100 dark:border-red-800 text-red-600 dark:text-red-400 text-sm font-medium text-center"
+                    ></div>
 
-            <div class="p-4 border-t border-gray-100 dark:border-gray-800">
-                <button onclick="logout()" class="w-full flex items-center gap-4 px-4 py-3 rounded-lg text-red-500 hover:bg-red-50 dark:hover:bg-red-900/10 transition-colors">
-                    <i class="fas fa-sign-out-alt w-5"></i>
-                    <span class="font-medium">Sign Out</span>
-                </button>
-            </div>
-        </aside>
-
-        <!-- Main Content -->
-        <div class="flex-1 flex flex-col min-w-0">
-            <!-- Header -->
-            <header class="h-16 bg-white dark:bg-[#1d2026] border-b border-gray-200 dark:border-gray-800 flex items-center justify-between px-6 sticky top-0 z-40">
-                <div class="flex items-center gap-4">
-                    <button id="sidebarToggle" class="lg:hidden p-2 hover:bg-gray-100 dark:hover:bg-gray-800 rounded-lg">
-                        <i class="fas fa-bars"></i>
-                    </button>
-                    <div class="text-sm font-medium text-gray-500">
-                        System / <span id="currentModuleTitle" class="text-gray-900 dark:text-white">Dashboard</span>
-                    </div>
-                </div>
-                
-                <div class="flex items-center gap-4">
-                    <button id="themeToggle" class="p-2.5 rounded-lg hover:bg-gray-100 dark:hover:bg-gray-800 text-gray-500 transition-all">
-                        <i class="fas fa-moon dark:hidden"></i>
-                        <i class="fas fa-sun hidden dark:block"></i>
-                    </button>
-                    <div class="h-8 w-[1px] bg-gray-200 dark:bg-gray-700 mx-2"></div>
-                    <div class="flex items-center gap-3">
-                        <div class="w-9 h-9 bg-google-blue rounded-full flex items-center justify-center text-white font-bold text-sm">
-                            <i class="fas fa-user-shield"></i>
-                        </div>
-                        <span id="adminDisplayName" class="hidden sm:inline font-medium text-sm">Administrator</span>
-                    </div>
-                </div>
-            </header>
-
-            <!-- Module Container -->
-            <main class="flex-1 overflow-x-hidden p-6 lg:p-10">
-                
-                <!-- Dashboard Module -->
-                <section id="module-dashboard" class="module-section space-y-8 animate-in fade-in slide-in-from-bottom-4 duration-500">
-                    <div class="flex flex-col md:flex-row md:items-end justify-between gap-4">
+                    <form id="loginForm" class="space-y-6">
                         <div>
-                            <h2 class="text-3xl font-heading font-bold">System Overview</h2>
-                            <p class="text-gray-500 dark:text-gray-400">Live platform performance and vital metrics</p>
-                        </div>
-                        <div class="flex gap-3">
-                            <span class="bg-google-green/10 text-google-green px-4 py-2 rounded-full text-xs font-bold flex items-center gap-2">
-                                <span class="w-2 h-2 bg-google-green rounded-full animate-pulse"></span>
-                                SERVICES ONLINE
-                            </span>
-                        </div>
-                    </div>
-
-                    <div class="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-6">
-                        <div class="bg-white dark:bg-[#1d2026] p-6 rounded-2xl border border-gray-100 dark:border-gray-800 shadow-sm transition-all hover:shadow-md">
-                            <div class="flex items-start justify-between mb-4">
-                                <div class="w-12 h-12 bg-blue-50 dark:bg-blue-900/20 text-blue-600 rounded-xl flex items-center justify-center text-xl">
-                                    <i class="fas fa-users-gear"></i>
-                                </div>
-                                <span class="text-xs font-bold text-google-green cursor-default">+12%</span>
-                            </div>
-                            <h3 class="text-gray-500 dark:text-gray-400 text-sm font-semibold uppercase tracking-wider mb-1">Total Developers</h3>
-                            <div class="text-3xl font-bold" id="stat-tenants">0</div>
-                        </div>
-                        <div class="bg-white dark:bg-[#1d2026] p-6 rounded-2xl border border-gray-100 dark:border-gray-800 shadow-sm transition-all hover:shadow-md">
-                            <div class="flex items-start justify-between mb-4">
-                                <div class="w-12 h-12 bg-purple-50 dark:bg-purple-900/20 text-purple-600 rounded-xl flex items-center justify-center text-xl">
-                                    <i class="fas fa-video"></i>
-                                </div>
-                                <span class="text-xs font-bold text-google-green cursor-default">LIVE</span>
-                            </div>
-                            <h3 class="text-gray-500 dark:text-gray-400 text-sm font-semibold uppercase tracking-wider mb-1">Active Rooms</h3>
-                            <div class="text-3xl font-bold" id="stat-rooms">0</div>
-                        </div>
-                        <div class="bg-white dark:bg-[#1d2026] p-6 rounded-2xl border border-gray-100 dark:border-gray-800 shadow-sm transition-all hover:shadow-md">
-                            <div class="flex items-start justify-between mb-4">
-                                <div class="w-12 h-12 bg-amber-50 dark:bg-amber-900/20 text-amber-600 rounded-xl flex items-center justify-center text-xl">
-                                    <i class="fas fa-star"></i>
-                                </div>
-                                <span class="text-xs font-bold text-google-blue cursor-default">NEW</span>
-                            </div>
-                            <h3 class="text-gray-500 dark:text-gray-400 text-sm font-semibold uppercase tracking-wider mb-1">Total Reviews</h3>
-                            <div class="text-3xl font-bold" id="stat-feedbacks">0</div>
-                        </div>
-                        <div class="bg-white dark:bg-[#1d2026] p-6 rounded-2xl border border-gray-100 dark:border-gray-800 shadow-sm transition-all hover:shadow-md">
-                            <div class="flex items-start justify-between mb-4">
-                                <div class="w-12 h-12 bg-green-50 dark:bg-green-900/20 text-green-600 rounded-xl flex items-center justify-center text-xl">
-                                    <i class="fas fa-key"></i>
-                                </div>
-                                <span class="text-xs font-bold text-gray-400 cursor-default">SECURE</span>
-                            </div>
-                            <h3 class="text-gray-500 dark:text-gray-400 text-sm font-semibold uppercase tracking-wider mb-1">Active Keys</h3>
-                            <div class="text-3xl font-bold" id="stat-keys">0</div>
-                        </div>
-                    </div>
-
-                    <div class="grid grid-cols-1 lg:grid-cols-3 gap-8">
-                        <div class="lg:col-span-2 bg-white dark:bg-[#1d2026] p-8 rounded-2xl border border-gray-100 dark:border-gray-800 shadow-sm">
-                            <div class="flex items-center justify-between mb-8">
-                                <h3 class="text-xl font-bold">Platform Traffic</h3>
-                                <div class="flex gap-2">
-                                    <button class="px-3 py-1 bg-gray-50 dark:bg-gray-800 rounded-md text-xs font-bold">7D</button>
-                                    <button class="px-3 py-1 bg-google-blue text-white rounded-md text-xs font-bold">24H</button>
-                                </div>
-                            </div>
-                            <div class="h-[300px]">
-                                <canvas id="systemChart"></canvas>
+                            <label class="block text-sm font-semibold mb-2">Username</label>
+                            <div class="relative">
+                                <i
+                                    class="fas fa-user-shield absolute left-4 top-1/2 -translate-y-1/2 text-gray-400"
+                                ></i>
+                                <input
+                                    type="text"
+                                    id="username"
+                                    placeholder="Admin handle"
+                                    required
+                                    class="w-full pl-11 pr-4 py-3 rounded-lg bg-gray-50 dark:bg-gray-800/50 border border-gray-200 dark:border-gray-700 focus:ring-2 focus:ring-google-blue/20 focus:border-google-blue outline-none transition-all"
+                                />
                             </div>
                         </div>
-                        
-                        <div class="space-y-6">
-                            <div class="bg-google-blue p-8 rounded-2xl text-white shadow-xl shadow-blue-500/20 relative overflow-hidden group">
-                                <i class="fas fa-bullhorn absolute -right-4 -bottom-4 text-8xl opacity-10 group-hover:scale-110 transition-transform duration-500"></i>
-                                <h3 class="text-xl font-bold mb-2">Emergency Broadcast</h3>
-                                <p class="text-blue-100 text-sm mb-6 leading-relaxed">Instantly reach all active participants across every meeting room on the platform.</p>
-                                <button onclick="showBroadcastModal()" class="w-full py-3 bg-white text-google-blue rounded-lg font-bold hover:shadow-lg transition-all active:scale-95">
-                                    Start Broadcast
-                                </button>
-                            </div>
-                            
-                            <div class="bg-white dark:bg-[#1d2026] p-8 rounded-2xl border border-gray-100 dark:border-gray-800 shadow-sm">
-                                <h3 class="text-lg font-bold mb-4">Quick Links</h3>
-                                <div class="space-y-3">
-                                    <button onclick="changeModule('tenants')" class="w-full flex items-center justify-between p-4 bg-gray-50 dark:bg-gray-800 rounded-xl hover:bg-google-blue hover:text-white transition-all group">
-                                        <span class="font-medium">User Management</span>
-                                        <i class="fas fa-chevron-right text-xs opacity-50 group-hover:translate-x-1 transition-transform"></i>
-                                    </button>
-                                    <button onclick="changeModule('settings')" class="w-full flex items-center justify-between p-4 bg-gray-50 dark:bg-gray-800 rounded-xl hover:bg-google-blue hover:text-white transition-all group">
-                                        <span class="font-medium">System Configuration</span>
-                                        <i class="fas fa-chevron-right text-xs opacity-50 group-hover:translate-x-1 transition-transform"></i>
-                                    </button>
-                                </div>
-                            </div>
-                        </div>
-                    </div>
-                </section>
-
-                <!-- Developers Module -->
-                <section id="module-tenants" class="module-section hidden space-y-6 animate-in fade-in slide-in-from-bottom-4">
-                    <div class="flex items-end justify-between">
                         <div>
-                            <h2 class="text-3xl font-heading font-bold">Developer Records</h2>
-                            <p class="text-gray-500 dark:text-gray-400">Manage tenant accounts and portal access</p>
-                        </div>
-                    </div>
-
-                    <div class="bg-white dark:bg-[#1d2026] rounded-2xl border border-gray-100 dark:border-gray-800 shadow-sm overflow-hidden">
-                        <div class="overflow-x-auto">
-                            <table class="w-full text-left border-collapse">
-                                <thead>
-                                    <tr class="bg-gray-50/50 dark:bg-gray-800/50">
-                                        <th class="px-6 py-4 text-xs font-bold text-gray-500 uppercase tracking-wider">Developer</th>
-                                        <th class="px-6 py-4 text-xs font-bold text-gray-500 uppercase tracking-wider">Organization</th>
-                                        <th class="px-6 py-4 text-xs font-bold text-gray-500 uppercase tracking-wider">Auth Method</th>
-                                        <th class="px-6 py-4 text-xs font-bold text-gray-500 uppercase tracking-wider">Status</th>
-                                        <th class="px-6 py-4 text-xs font-bold text-gray-500 uppercase tracking-wider text-right">Actions</th>
-                                    </tr>
-                                </thead>
-                                <tbody id="tenantsTableBody" class="divide-y divide-gray-100 dark:divide-gray-800">
-                                    <!-- Dynamic -->
-                                </tbody>
-                            </table>
-                        </div>
-                    </div>
-                </section>
-
-                <!-- API Keys Module -->
-                <section id="module-apikeys" class="module-section hidden space-y-6 animate-in fade-in slide-in-from-bottom-4">
-                    <div class="flex items-end justify-between">
-                        <div>
-                            <h2 class="text-3xl font-heading font-bold">API Management</h2>
-                            <p class="text-gray-500 dark:text-gray-400">Control keys and monitor system quotas</p>
-                        </div>
-                    </div>
-
-                    <div class="bg-white dark:bg-[#1d2026] rounded-2xl border border-gray-100 dark:border-gray-800 shadow-sm overflow-hidden">
-                        <div class="overflow-x-auto">
-                            <table class="w-full text-left border-collapse">
-                                <thead>
-                                    <tr class="bg-gray-50/50 dark:bg-gray-800/50">
-                                        <th class="px-6 py-4 text-xs font-bold text-gray-500 uppercase tracking-wider">Key Prefix</th>
-                                        <th class="px-6 py-4 text-xs font-bold text-gray-500 uppercase tracking-wider">Owner</th>
-                                        <th class="px-6 py-4 text-xs font-bold text-gray-500 uppercase tracking-wider">Quota Usage</th>
-                                        <th class="px-6 py-4 text-xs font-bold text-gray-500 uppercase tracking-wider">Active Status</th>
-                                        <th class="px-6 py-4 text-xs font-bold text-gray-500 uppercase tracking-wider text-right">Actions</th>
-                                    </tr>
-                                </thead>
-                                <tbody id="apiKeysTableBody" class="divide-y divide-gray-100 dark:divide-gray-800">
-                                    <!-- Dynamic -->
-                                </tbody>
-                            </table>
-                        </div>
-                    </div>
-                </section>
-
-                <!-- Rooms Module -->
-                <section id="module-rooms" class="module-section hidden space-y-6 animate-in fade-in slide-in-from-bottom-4">
-                    <div class="flex items-end justify-between">
-                        <div>
-                            <h2 class="text-3xl font-heading font-bold">Live Meetings</h2>
-                            <p class="text-gray-500 dark:text-gray-400">Real-time room monitoring and moderation</p>
-                        </div>
-                    </div>
-
-                    <div class="bg-white dark:bg-[#1d2026] rounded-2xl border border-gray-100 dark:border-gray-800 shadow-sm overflow-hidden">
-                        <div class="overflow-x-auto">
-                            <table class="w-full text-left border-collapse">
-                                <thead>
-                                    <tr class="bg-gray-50/50 dark:bg-gray-800/50">
-                                        <th class="px-6 py-4 text-xs font-bold text-gray-500 uppercase tracking-wider">Room ID</th>
-                                        <th class="px-6 py-4 text-xs font-bold text-gray-500 uppercase tracking-wider">Peers</th>
-                                        <th class="px-6 py-4 text-xs font-bold text-gray-500 uppercase tracking-wider">Privacy</th>
-                                        <th class="px-6 py-4 text-xs font-bold text-gray-500 uppercase tracking-wider">Created</th>
-                                        <th class="px-6 py-4 text-xs font-bold text-gray-500 uppercase tracking-wider text-right">Actions</th>
-                                    </tr>
-                                </thead>
-                                <tbody id="roomsTableBody" class="divide-y divide-gray-100 dark:divide-gray-800">
-                                    <!-- Dynamic -->
-                                </tbody>
-                            </table>
-                        </div>
-                    </div>
-                </section>
-
-                <!-- Feedback Module -->
-                <section id="module-feedbacks" class="module-section hidden space-y-6 animate-in fade-in slide-in-from-bottom-4">
-                    <h2 class="text-3xl font-heading font-bold">User Experience Report</h2>
-                    <div class="bg-white dark:bg-[#1d2026] rounded-2xl border border-gray-100 dark:border-gray-800 shadow-sm overflow-hidden">
-                        <div class="overflow-x-auto">
-                            <table class="w-full text-left border-collapse">
-                                <thead>
-                                    <tr class="bg-gray-50/50 dark:bg-gray-800/50">
-                                        <th class="px-6 py-4 text-xs font-bold text-gray-500 uppercase tracking-wider">User</th>
-                                        <th class="px-6 py-4 text-xs font-bold text-gray-500 uppercase tracking-wider">Rating</th>
-                                        <th class="px-6 py-4 text-xs font-bold text-gray-500 uppercase tracking-wider">Message</th>
-                                        <th class="px-6 py-4 text-xs font-bold text-gray-500 uppercase tracking-wider">Date</th>
-                                    </tr>
-                                </thead>
-                                <tbody id="feedbackTableBody" class="divide-y divide-gray-100 dark:divide-gray-800">
-                                    <!-- Dynamic -->
-                                </tbody>
-                            </table>
-                        </div>
-                    </div>
-                </section>
-
-                <!-- Audit Logs Module -->
-                <section id="module-audit" class="module-section hidden space-y-6 animate-in fade-in slide-in-from-bottom-4">
-                    <h2 class="text-3xl font-heading font-bold">System Accountability</h2>
-                    <div class="bg-white dark:bg-[#1d2026] rounded-2xl border border-gray-100 dark:border-gray-800 shadow-sm overflow-hidden">
-                        <div class="overflow-x-auto">
-                            <table class="w-full text-left border-collapse">
-                                <thead>
-                                    <tr class="bg-gray-50/50 dark:bg-gray-800/50">
-                                        <th class="px-6 py-4 text-xs font-bold text-gray-500 uppercase tracking-wider">Timestamp</th>
-                                        <th class="px-6 py-4 text-xs font-bold text-gray-500 uppercase tracking-wider">Admin</th>
-                                        <th class="px-6 py-4 text-xs font-bold text-gray-500 uppercase tracking-wider">Action</th>
-                                        <th class="px-6 py-4 text-xs font-bold text-gray-500 uppercase tracking-wider">Target</th>
-                                        <th class="px-6 py-4 text-xs font-bold text-gray-500 uppercase tracking-wider text-right">Details</th>
-                                    </tr>
-                                </thead>
-                                <tbody id="auditTableBody" class="divide-y divide-gray-100 dark:divide-gray-800 text-sm">
-                                    <!-- Dynamic -->
-                                </tbody>
-                            </table>
-                        </div>
-                    </div>
-                </section>
-
-                <!-- Settings Module -->
-                <section id="module-settings" class="module-section hidden animate-in fade-in slide-in-from-bottom-4">
-                    <form id="settingsForm" class="max-w-4xl space-y-10">
-                        <div>
-                            <h2 class="text-3xl font-heading font-bold mb-8 flex items-center gap-3">
-                                <i class="fas fa-brain text-google-blue"></i>
-                                AI Core Configuration
-                            </h2>
-                            <div class="grid grid-cols-1 md:grid-cols-2 gap-6 p-8 bg-white dark:bg-[#1d2026] rounded-2xl border border-gray-100 dark:border-gray-800">
-                                <div class="md:col-span-2">
-                                    <label class="block text-sm font-semibold mb-2">Engine Status</label>
-                                    <select id="setting_CHATGPT_ENABLED" class="w-full p-3 rounded-lg bg-gray-50 dark:bg-gray-800/50 border border-gray-200 dark:border-gray-700 outline-none">
-                                        <option value="true">Active (Generative Mode)</option>
-                                        <option value="false">Disabled (Native Only)</option>
-                                    </select>
-                                </div>
-                                <div>
-                                    <label class="block text-sm font-semibold mb-2">Primary Model</label>
-                                    <input type="text" id="setting_CHATGPT_MODEL" placeholder="gpt-4-turbo" class="w-full p-3 rounded-lg bg-gray-50 dark:bg-gray-800/50 border border-gray-200 dark:border-gray-700 outline-none">
-                                </div>
-                                <div>
-                                    <label class="block text-sm font-semibold mb-2">API Secret Key</label>
-                                    <div class="relative">
-                                        <input type="password" id="setting_CHATGPT_API_KEY" class="w-full p-3 pr-12 rounded-lg bg-gray-50 dark:bg-gray-800/50 border border-gray-200 dark:border-gray-700 outline-none">
-                                        <i class="fas fa-eye absolute right-4 top-1/2 -translate-y-1/2 cursor-pointer text-gray-400" id="toggleApiKey"></i>
-                                    </div>
-                                </div>
-                                <div>
-                                    <label class="block text-sm font-semibold mb-2">Max Tokens</label>
-                                    <input type="number" id="setting_CHATGPT_MAX_TOKENS" class="w-full p-3 rounded-lg bg-gray-50 dark:bg-gray-800/50 border border-gray-200 dark:border-gray-700 outline-none">
-                                </div>
-                                <div>
-                                    <label class="block text-sm font-semibold mb-2">Creativity (Temp)</label>
-                                    <input type="number" step="0.1" id="setting_CHATGPT_TEMPERATURE" class="w-full p-3 rounded-lg bg-gray-50 dark:bg-gray-800/50 border border-gray-200 dark:border-gray-700 outline-none">
-                                </div>
+                            <label class="block text-sm font-semibold mb-2">Password</label>
+                            <div class="relative">
+                                <i class="fas fa-lock absolute left-4 top-1/2 -translate-y-1/2 text-gray-400"></i>
+                                <input
+                                    type="password"
+                                    id="password"
+                                    placeholder="••••••••"
+                                    required
+                                    class="w-full pl-11 pr-12 py-3 rounded-lg bg-gray-50 dark:bg-gray-800/50 border border-gray-200 dark:border-gray-700 focus:ring-2 focus:ring-google-blue/20 focus:border-google-blue outline-none transition-all"
+                                />
+                                <i
+                                    class="fas fa-eye absolute right-4 top-1/2 -translate-y-1/2 cursor-pointer text-gray-400 hover:text-gray-600"
+                                    id="toggleLoginPassword"
+                                ></i>
                             </div>
                         </div>
-
-                        <div>
-                            <h2 class="text-3xl font-heading font-bold mb-8 flex items-center gap-3">
-                                <i class="fas fa-swatchbook text-google-blue"></i>
-                                Professional Branding
-                            </h2>
-                            <div class="grid grid-cols-1 md:grid-cols-2 gap-6 p-8 bg-white dark:bg-[#1d2026] rounded-2xl border border-gray-100 dark:border-gray-800">
-                                <div class="md:col-span-2">
-                                    <label class="block text-sm font-semibold mb-2">Application Identifier</label>
-                                    <input type="text" id="setting_app_name" class="w-full p-3 rounded-lg bg-gray-50 dark:bg-gray-800/50 border border-gray-200 dark:border-gray-700 outline-none">
-                                </div>
-                                <div>
-                                    <label class="block text-sm font-semibold mb-2">Thematic Primary Color</label>
-                                    <div class="flex gap-2">
-                                        <input type="color" id="setting_brand_color_picker" class="h-12 w-12 p-1 bg-white dark:bg-gray-800 rounded-lg border border-gray-200 dark:border-gray-700 cursor-pointer">
-                                        <input type="text" id="setting_brand_color" class="flex-1 p-3 rounded-lg bg-gray-50 dark:bg-gray-800/50 border border-gray-200 dark:border-gray-700 outline-none font-mono">
-                                    </div>
-                                </div>
-                                <div>
-                                    <label class="block text-sm font-semibold mb-2">Logo Dimension (Width)</label>
-                                    <div class="flex items-center gap-4 py-2">
-                                        <input type="range" id="setting_logo_width" min="50" max="400" step="5" class="flex-1 h-2 bg-gray-200 rounded-lg appearance-none cursor-pointer">
-                                        <span id="logo_size_value" class="text-sm font-bold w-12">150px</span>
-                                    </div>
-                                </div>
-                                <div>
-                                    <label class="block text-sm font-semibold mb-2">SVG Logo Endpoint</label>
-                                    <input type="text" id="setting_logo_url" class="w-full p-3 rounded-lg bg-gray-50 dark:bg-gray-800/50 border border-gray-200 dark:border-gray-700 outline-none font-mono text-xs">
-                                </div>
-                                <div>
-                                    <label class="block text-sm font-semibold mb-2">Favicon Location</label>
-                                    <input type="text" id="setting_favicon_url" class="w-full p-3 rounded-lg bg-gray-50 dark:bg-gray-800/50 border border-gray-200 dark:border-gray-700 outline-none font-mono text-xs">
-                                </div>
-                            </div>
-                        </div>
-
-                        <div class="pt-6 border-t border-gray-100 dark:border-gray-800">
-                            <button type="submit" class="w-full py-4 bg-google-blue hover:bg-google-blueHover text-white rounded-xl font-bold text-lg shadow-xl shadow-blue-500/20 transition-all active:scale-[0.98]">
-                                <i class="fas fa-save mr-2"></i> Deploy System Changes
-                            </button>
-                        </div>
-                    </form>
-                </section>
-
-                <!-- Branding Module -->
-                <section id="module-footer" class="module-section hidden animate-in fade-in slide-in-from-bottom-4">
-                    <form id="footerForm" class="max-w-4xl space-y-8">
-                        <h2 class="text-3xl font-heading font-bold mb-8">Infrastructure Branding</h2>
-                        
-                        <div class="p-8 bg-white dark:bg-[#1d2026] rounded-2xl border border-gray-100 dark:border-gray-800 space-y-6">
-                            <div>
-                                <label class="block text-sm font-semibold mb-2">Legal Copyright Notice</label>
-                                <input type="text" id="footer_copyright" class="w-full p-3 rounded-lg bg-gray-50 dark:bg-gray-800/50 border border-gray-200 dark:border-gray-700 outline-none">
-                            </div>
-                            <div>
-                                <label class="block text-sm font-semibold mb-2">Support & Operations Email</label>
-                                <input type="email" id="footer_contactEmail" class="w-full p-3 rounded-lg bg-gray-50 dark:bg-gray-800/50 border border-gray-200 dark:border-gray-700 outline-none">
-                            </div>
-
-                            <div class="space-y-4">
-                                <div class="flex items-center justify-between">
-                                    <label class="block text-sm font-semibold text-google-blue">Global Navigation Shortcuts</label>
-                                    <button type="button" onclick="addFooterLinkRow()" class="text-xs font-bold bg-google-blue/10 text-google-blue px-3 py-1.5 rounded-lg hover:bg-google-blue hover:text-white transition-all">
-                                        <i class="fas fa-plus mr-1"></i> Add Resource
-                                    </button>
-                                </div>
-                                <div id="footer_links_container" class="space-y-3">
-                                    <!-- Dynamic Rows -->
-                                </div>
-                            </div>
-                        </div>
-
-                        <button type="submit" id="saveFooterBtn" class="w-full py-4 bg-gray-900 dark:bg-white text-white dark:text-gray-950 rounded-xl font-bold text-lg transition-all active:scale-[0.98]">
-                            <i class="fas fa-save mr-2"></i> Update Site Perimeter
+                        <button
+                            type="submit"
+                            id="loginBtn"
+                            class="w-full py-3.5 bg-google-blue hover:bg-google-blueHover text-white rounded-lg font-bold text-base transition-all shadow-lg shadow-blue-500/20 active:scale-[0.98]"
+                        >
+                            Sign In to Hub
                         </button>
                     </form>
-                </section>
-            </main>
-        </div>
-    </div>
-
-    <!-- Peek Room Modal -->
-    <div id="peekModal" class="hidden fixed inset-0 z-[100] bg-black/80 backdrop-blur-md flex items-center justify-center p-6">
-        <div class="bg-white dark:bg-[#15181d] w-full max-w-6xl h-[85vh] rounded-[32px] overflow-hidden flex flex-col items-center">
-            <div class="w-full p-4 flex items-center justify-between border-b border-gray-100 dark:border-gray-800">
-                <div class="flex items-center gap-3 ml-4">
-                    <span class="w-3 h-3 bg-red-500 rounded-full animate-pulse"></span>
-                    <span class="font-bold">Silent Observation: </span>
-                    <span id="peekRoomId" class="font-mono text-gray-500"></span>
                 </div>
-                <button onclick="closePeek()" class="w-10 h-10 flex items-center justify-center hover:bg-red-50 hover:text-red-500 dark:hover:bg-red-900/10 rounded-full transition-all text-xl">
-                    <i class="fas fa-times"></i>
-                </button>
             </div>
-            <iframe id="peekFrame" class="w-full flex-1 border-none"></iframe>
         </div>
-    </div>
 
-    <script>
-        // AUTHENTICATION LOGIC PRESERVED
-        const API_BASE = '/api/v1/admin';
-        let adminToken = '';
+        <!-- Layout Container -->
+        <div id="adminLayout" class="hidden flex min-h-screen">
+            <!-- Sidebar -->
+            <aside
+                id="sidebar"
+                class="sidebar-transition w-[280px] fixed lg:static inset-y-0 left-0 z-50 bg-white dark:bg-[#1d2026] border-r border-gray-200 dark:border-gray-800 flex flex-col -translate-x-full lg:translate-x-0"
+            >
+                <div class="h-16 flex items-center px-6 gap-3 border-b border-gray-100 dark:border-gray-800">
+                    <img src="../images/logo.svg" alt="tawktoo" class="w-8 h-8 sidebar-logo" />
+                    <span class="font-heading font-bold text-lg sidebar-brand">tawktoo Hub</span>
+                </div>
 
-        // UI Initialization
-        document.addEventListener('DOMContentLoaded', () => {
-            const token = window.sessionStorage.admin_token || localStorage.getItem('token');
-            if (token) {
-                adminToken = token;
-                showDashboard();
-            } else {
-                showLogin();
-            }
-        });
+                <nav class="flex-1 overflow-y-auto p-4 space-y-2">
+                    <div
+                        class="nav-item cursor-pointer flex items-center gap-4 px-4 py-3 rounded-lg transition-colors nav-item-active"
+                        data-module="dashboard"
+                    >
+                        <i class="fas fa-chart-pie w-5"></i>
+                        <span class="font-medium">Dashboard</span>
+                    </div>
+                    <div
+                        class="nav-item cursor-pointer flex items-center gap-4 px-4 py-3 rounded-lg hover:bg-gray-100 dark:hover:bg-gray-800 transition-colors"
+                        data-module="tenants"
+                    >
+                        <i class="fas fa-users w-5"></i>
+                        <span class="font-medium">Developers</span>
+                    </div>
+                    <div
+                        class="nav-item cursor-pointer flex items-center gap-4 px-4 py-3 rounded-lg hover:bg-gray-100 dark:hover:bg-gray-800 transition-colors"
+                        data-module="apikeys"
+                    >
+                        <i class="fas fa-key w-5"></i>
+                        <span class="font-medium">API & Keys</span>
+                    </div>
+                    <div
+                        class="nav-item cursor-pointer flex items-center gap-4 px-4 py-3 rounded-lg hover:bg-gray-100 dark:hover:bg-gray-800 transition-colors"
+                        data-module="rooms"
+                    >
+                        <i class="fas fa-video w-5"></i>
+                        <span class="font-medium">Active Rooms</span>
+                    </div>
+                    <div
+                        class="nav-item cursor-pointer flex items-center gap-4 px-4 py-3 rounded-lg hover:bg-gray-100 dark:hover:bg-gray-800 transition-colors"
+                        data-module="feedbacks"
+                    >
+                        <i class="fas fa-star w-5"></i>
+                        <span class="font-medium">Reviews</span>
+                    </div>
+                    <div
+                        class="nav-item cursor-pointer flex items-center gap-4 px-4 py-3 rounded-lg hover:bg-gray-100 dark:hover:bg-gray-800 transition-colors"
+                        data-module="audit"
+                    >
+                        <i class="fas fa-fingerprint w-5"></i>
+                        <span class="font-medium">Audit Logs</span>
+                    </div>
+                    <div
+                        class="nav-item cursor-pointer flex items-center gap-4 px-4 py-3 rounded-lg hover:bg-gray-100 dark:hover:bg-gray-800 transition-colors"
+                        data-module="settings"
+                    >
+                        <i class="fas fa-cog w-5"></i>
+                        <span class="font-medium">Settings</span>
+                    </div>
+                    <div
+                        class="nav-item cursor-pointer flex items-center gap-4 px-4 py-3 rounded-lg hover:bg-gray-100 dark:hover:bg-gray-800 transition-colors"
+                        data-module="footer"
+                    >
+                        <i class="fas fa-paint-brush w-5"></i>
+                        <span class="font-medium">Branding</span>
+                    </div>
+                </nav>
 
-        const sidebar = document.getElementById('sidebar');
-        const sidebarToggle = document.getElementById('sidebarToggle');
-        if (sidebarToggle) {
-            sidebarToggle.addEventListener('click', () => {
-                sidebar.classList.toggle('-translate-x-full');
-            });
-        }
+                <div class="p-4 border-t border-gray-100 dark:border-gray-800">
+                    <button
+                        onclick="logout()"
+                        class="w-full flex items-center gap-4 px-4 py-3 rounded-lg text-red-500 hover:bg-red-50 dark:hover:bg-red-900/10 transition-colors"
+                    >
+                        <i class="fas fa-sign-out-alt w-5"></i>
+                        <span class="font-medium">Sign Out</span>
+                    </button>
+                </div>
+            </aside>
 
-        const themeToggle = document.getElementById('themeToggle');
-        if (themeToggle) {
-            themeToggle.addEventListener('click', () => {
-                document.body.classList.toggle('dark');
-            });
-        }
+            <!-- Main Content -->
+            <div class="flex-1 flex flex-col min-w-0">
+                <!-- Header -->
+                <header
+                    class="h-16 bg-white dark:bg-[#1d2026] border-b border-gray-200 dark:border-gray-800 flex items-center justify-between px-6 sticky top-0 z-40"
+                >
+                    <div class="flex items-center gap-4">
+                        <button
+                            id="sidebarToggle"
+                            class="lg:hidden p-2 hover:bg-gray-100 dark:hover:bg-gray-800 rounded-lg"
+                        >
+                            <i class="fas fa-bars"></i>
+                        </button>
+                        <div class="text-sm font-medium text-gray-500">
+                            System /
+                            <span id="currentModuleTitle" class="text-gray-900 dark:text-white">Dashboard</span>
+                        </div>
+                    </div>
 
-        // Module Navigation
-        document.querySelectorAll('.nav-item').forEach(item => {
-            item.addEventListener('click', () => {
-                const module = item.getAttribute('data-module');
-                changeModule(module);
-            });
-        });
+                    <div class="flex items-center gap-4">
+                        <button
+                            id="themeToggle"
+                            class="p-2.5 rounded-lg hover:bg-gray-100 dark:hover:bg-gray-800 text-gray-500 transition-all"
+                        >
+                            <i class="fas fa-moon dark:hidden"></i>
+                            <i class="fas fa-sun hidden dark:block"></i>
+                        </button>
+                        <div class="h-8 w-[1px] bg-gray-200 dark:bg-gray-700 mx-2"></div>
+                        <div class="flex items-center gap-3">
+                            <div
+                                class="w-9 h-9 bg-google-blue rounded-full flex items-center justify-center text-white font-bold text-sm"
+                            >
+                                <i class="fas fa-user-shield"></i>
+                            </div>
+                            <span id="adminDisplayName" class="hidden sm:inline font-medium text-sm"
+                                >Administrator</span
+                            >
+                        </div>
+                    </div>
+                </header>
 
-        function changeModule(moduleId) {
-            document.querySelectorAll('.module-section').forEach(s => s.classList.add('hidden'));
-            const target = document.getElementById(`module-${moduleId}`);
-            if (target) target.classList.remove('hidden');
+                <!-- Module Container -->
+                <main class="flex-1 overflow-x-hidden p-6 lg:p-10">
+                    <!-- Dashboard Module -->
+                    <section
+                        id="module-dashboard"
+                        class="module-section space-y-8 animate-in fade-in slide-in-from-bottom-4 duration-500"
+                    >
+                        <div class="flex flex-col md:flex-row md:items-end justify-between gap-4">
+                            <div>
+                                <h2 class="text-3xl font-heading font-bold">System Overview</h2>
+                                <p class="text-gray-500 dark:text-gray-400">
+                                    Live platform performance and vital metrics
+                                </p>
+                            </div>
+                            <div class="flex gap-3">
+                                <span
+                                    class="bg-google-green/10 text-google-green px-4 py-2 rounded-full text-xs font-bold flex items-center gap-2"
+                                >
+                                    <span class="w-2 h-2 bg-google-green rounded-full animate-pulse"></span>
+                                    SERVICES ONLINE
+                                </span>
+                            </div>
+                        </div>
 
-            document.querySelectorAll('.nav-item').forEach(i => i.classList.remove('nav-item-active'));
-            const activeNav = document.querySelector(`.nav-item[data-module="${moduleId}"]`);
-            if (activeNav) activeNav.classList.add('nav-item-active');
+                        <div class="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-6">
+                            <div
+                                class="bg-white dark:bg-[#1d2026] p-6 rounded-2xl border border-gray-100 dark:border-gray-800 shadow-sm transition-all hover:shadow-md"
+                            >
+                                <div class="flex items-start justify-between mb-4">
+                                    <div
+                                        class="w-12 h-12 bg-blue-50 dark:bg-blue-900/20 text-blue-600 rounded-xl flex items-center justify-center text-xl"
+                                    >
+                                        <i class="fas fa-users-gear"></i>
+                                    </div>
+                                    <span class="text-xs font-bold text-google-green cursor-default">+12%</span>
+                                </div>
+                                <h3
+                                    class="text-gray-500 dark:text-gray-400 text-sm font-semibold uppercase tracking-wider mb-1"
+                                >
+                                    Total Developers
+                                </h3>
+                                <div class="text-3xl font-bold" id="stat-tenants">0</div>
+                            </div>
+                            <div
+                                class="bg-white dark:bg-[#1d2026] p-6 rounded-2xl border border-gray-100 dark:border-gray-800 shadow-sm transition-all hover:shadow-md"
+                            >
+                                <div class="flex items-start justify-between mb-4">
+                                    <div
+                                        class="w-12 h-12 bg-purple-50 dark:bg-purple-900/20 text-purple-600 rounded-xl flex items-center justify-center text-xl"
+                                    >
+                                        <i class="fas fa-video"></i>
+                                    </div>
+                                    <span class="text-xs font-bold text-google-green cursor-default">LIVE</span>
+                                </div>
+                                <h3
+                                    class="text-gray-500 dark:text-gray-400 text-sm font-semibold uppercase tracking-wider mb-1"
+                                >
+                                    Active Rooms
+                                </h3>
+                                <div class="text-3xl font-bold" id="stat-rooms">0</div>
+                            </div>
+                            <div
+                                class="bg-white dark:bg-[#1d2026] p-6 rounded-2xl border border-gray-100 dark:border-gray-800 shadow-sm transition-all hover:shadow-md"
+                            >
+                                <div class="flex items-start justify-between mb-4">
+                                    <div
+                                        class="w-12 h-12 bg-amber-50 dark:bg-amber-900/20 text-amber-600 rounded-xl flex items-center justify-center text-xl"
+                                    >
+                                        <i class="fas fa-star"></i>
+                                    </div>
+                                    <span class="text-xs font-bold text-google-blue cursor-default">NEW</span>
+                                </div>
+                                <h3
+                                    class="text-gray-500 dark:text-gray-400 text-sm font-semibold uppercase tracking-wider mb-1"
+                                >
+                                    Total Reviews
+                                </h3>
+                                <div class="text-3xl font-bold" id="stat-feedbacks">0</div>
+                            </div>
+                            <div
+                                class="bg-white dark:bg-[#1d2026] p-6 rounded-2xl border border-gray-100 dark:border-gray-800 shadow-sm transition-all hover:shadow-md"
+                            >
+                                <div class="flex items-start justify-between mb-4">
+                                    <div
+                                        class="w-12 h-12 bg-green-50 dark:bg-green-900/20 text-green-600 rounded-xl flex items-center justify-center text-xl"
+                                    >
+                                        <i class="fas fa-key"></i>
+                                    </div>
+                                    <span class="text-xs font-bold text-gray-400 cursor-default">SECURE</span>
+                                </div>
+                                <h3
+                                    class="text-gray-500 dark:text-gray-400 text-sm font-semibold uppercase tracking-wider mb-1"
+                                >
+                                    Active Keys
+                                </h3>
+                                <div class="text-3xl font-bold" id="stat-keys">0</div>
+                            </div>
+                        </div>
 
-            const titleMap = {
-                dashboard: 'Dashboard', tenants: 'Developers', apikeys: 'API & Keys',
-                rooms: 'Active Rooms', feedbacks: 'Reviews', audit: 'Audit Logs',
-                settings: 'Settings', footer: 'Branding'
-            };
-            document.getElementById('currentModuleTitle').textContent = titleMap[moduleId] || 'System Hub';
+                        <div class="grid grid-cols-1 lg:grid-cols-3 gap-8">
+                            <div
+                                class="lg:col-span-2 bg-white dark:bg-[#1d2026] p-8 rounded-2xl border border-gray-100 dark:border-gray-800 shadow-sm"
+                            >
+                                <div class="flex items-center justify-between mb-8">
+                                    <h3 class="text-xl font-bold">Platform Traffic</h3>
+                                    <div class="flex gap-2">
+                                        <button
+                                            class="px-3 py-1 bg-gray-50 dark:bg-gray-800 rounded-md text-xs font-bold"
+                                        >
+                                            7D
+                                        </button>
+                                        <button
+                                            class="px-3 py-1 bg-google-blue text-white rounded-md text-xs font-bold"
+                                        >
+                                            24H
+                                        </button>
+                                    </div>
+                                </div>
+                                <div class="h-[300px]">
+                                    <canvas id="systemChart"></canvas>
+                                </div>
+                            </div>
 
-            if (moduleId === 'dashboard') loadStats();
-            if (moduleId === 'tenants') loadTenants();
-            if (moduleId === 'apikeys') loadApiKeys();
-            if (moduleId === 'rooms') loadActiveRooms();
-            if (moduleId === 'feedbacks') loadFeedbacks();
-            if (moduleId === 'audit') loadAuditLogs();
-            if (moduleId === 'settings') loadSettings();
-            if (moduleId === 'footer') loadFooterSettings();
+                            <div class="space-y-6">
+                                <div
+                                    class="bg-google-blue p-8 rounded-2xl text-white shadow-xl shadow-blue-500/20 relative overflow-hidden group"
+                                >
+                                    <i
+                                        class="fas fa-bullhorn absolute -right-4 -bottom-4 text-8xl opacity-10 group-hover:scale-110 transition-transform duration-500"
+                                    ></i>
+                                    <h3 class="text-xl font-bold mb-2">Emergency Broadcast</h3>
+                                    <p class="text-blue-100 text-sm mb-6 leading-relaxed">
+                                        Instantly reach all active participants across every meeting room on the
+                                        platform.
+                                    </p>
+                                    <button
+                                        onclick="showBroadcastModal()"
+                                        class="w-full py-3 bg-white text-google-blue rounded-lg font-bold hover:shadow-lg transition-all active:scale-95"
+                                    >
+                                        Start Broadcast
+                                    </button>
+                                </div>
 
-            // Auto-close sidebar on mobile
-            if (window.innerWidth < 1024) sidebar.classList.add('-translate-x-full');
-        }
+                                <div
+                                    class="bg-white dark:bg-[#1d2026] p-8 rounded-2xl border border-gray-100 dark:border-gray-800 shadow-sm"
+                                >
+                                    <h3 class="text-lg font-bold mb-4">Quick Links</h3>
+                                    <div class="space-y-3">
+                                        <button
+                                            onclick="changeModule('tenants')"
+                                            class="w-full flex items-center justify-between p-4 bg-gray-50 dark:bg-gray-800 rounded-xl hover:bg-google-blue hover:text-white transition-all group"
+                                        >
+                                            <span class="font-medium">User Management</span>
+                                            <i
+                                                class="fas fa-chevron-right text-xs opacity-50 group-hover:translate-x-1 transition-transform"
+                                            ></i>
+                                        </button>
+                                        <button
+                                            onclick="changeModule('settings')"
+                                            class="w-full flex items-center justify-between p-4 bg-gray-50 dark:bg-gray-800 rounded-xl hover:bg-google-blue hover:text-white transition-all group"
+                                        >
+                                            <span class="font-medium">System Configuration</span>
+                                            <i
+                                                class="fas fa-chevron-right text-xs opacity-50 group-hover:translate-x-1 transition-transform"
+                                            ></i>
+                                        </button>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                    </section>
 
-        // Logic functions...
-        function showLogin() {
-            document.getElementById('loginSection').classList.remove('hidden');
-            document.getElementById('adminLayout').classList.add('hidden');
-        }
+                    <!-- Developers Module -->
+                    <section
+                        id="module-tenants"
+                        class="module-section hidden space-y-6 animate-in fade-in slide-in-from-bottom-4"
+                    >
+                        <div class="flex items-end justify-between">
+                            <div>
+                                <h2 class="text-3xl font-heading font-bold">Developer Records</h2>
+                                <p class="text-gray-500 dark:text-gray-400">Manage tenant accounts and portal access</p>
+                            </div>
+                        </div>
 
-        async function showDashboard() {
-            document.getElementById('loginSection').classList.add('hidden');
-            document.getElementById('adminLayout').classList.remove('hidden');
-            loadStats();
-        }
+                        <div
+                            class="bg-white dark:bg-[#1d2026] rounded-2xl border border-gray-100 dark:border-gray-800 shadow-sm overflow-hidden"
+                        >
+                            <div class="overflow-x-auto">
+                                <table class="w-full text-left border-collapse">
+                                    <thead>
+                                        <tr class="bg-gray-50/50 dark:bg-gray-800/50">
+                                            <th
+                                                class="px-6 py-4 text-xs font-bold text-gray-500 uppercase tracking-wider"
+                                            >
+                                                Developer
+                                            </th>
+                                            <th
+                                                class="px-6 py-4 text-xs font-bold text-gray-500 uppercase tracking-wider"
+                                            >
+                                                Organization
+                                            </th>
+                                            <th
+                                                class="px-6 py-4 text-xs font-bold text-gray-500 uppercase tracking-wider"
+                                            >
+                                                Auth Method
+                                            </th>
+                                            <th
+                                                class="px-6 py-4 text-xs font-bold text-gray-500 uppercase tracking-wider"
+                                            >
+                                                Status
+                                            </th>
+                                            <th
+                                                class="px-6 py-4 text-xs font-bold text-gray-500 uppercase tracking-wider text-right"
+                                            >
+                                                Actions
+                                            </th>
+                                        </tr>
+                                    </thead>
+                                    <tbody id="tenantsTableBody" class="divide-y divide-gray-100 dark:divide-gray-800">
+                                        <!-- Dynamic -->
+                                    </tbody>
+                                </table>
+                            </div>
+                        </div>
+                    </section>
 
-        // Re-integrating actual backend logic hooks
-        // Author: Sanket - Admin login uses Tenant-based auth endpoint
-        document.getElementById('loginForm').addEventListener('submit', async (e) => {
-            e.preventDefault();
-            const username = document.getElementById('username').value;
-            const password = document.getElementById('password').value;
-            const btn = document.getElementById('loginBtn');
-            const err = document.getElementById('loginError');
+                    <!-- API Keys Module -->
+                    <section
+                        id="module-apikeys"
+                        class="module-section hidden space-y-6 animate-in fade-in slide-in-from-bottom-4"
+                    >
+                        <div class="flex items-end justify-between">
+                            <div>
+                                <h2 class="text-3xl font-heading font-bold">API Management</h2>
+                                <p class="text-gray-500 dark:text-gray-400">Control keys and monitor system quotas</p>
+                            </div>
+                        </div>
 
-            btn.disabled = true;
-            btn.innerHTML = '<i class="fas fa-spinner fa-spin mr-2"></i>Verifying...';
-            err.classList.add('hidden');
+                        <div
+                            class="bg-white dark:bg-[#1d2026] rounded-2xl border border-gray-100 dark:border-gray-800 shadow-sm overflow-hidden"
+                        >
+                            <div class="overflow-x-auto">
+                                <table class="w-full text-left border-collapse">
+                                    <thead>
+                                        <tr class="bg-gray-50/50 dark:bg-gray-800/50">
+                                            <th
+                                                class="px-6 py-4 text-xs font-bold text-gray-500 uppercase tracking-wider"
+                                            >
+                                                Key Prefix
+                                            </th>
+                                            <th
+                                                class="px-6 py-4 text-xs font-bold text-gray-500 uppercase tracking-wider"
+                                            >
+                                                Owner
+                                            </th>
+                                            <th
+                                                class="px-6 py-4 text-xs font-bold text-gray-500 uppercase tracking-wider"
+                                            >
+                                                Quota Usage
+                                            </th>
+                                            <th
+                                                class="px-6 py-4 text-xs font-bold text-gray-500 uppercase tracking-wider"
+                                            >
+                                                Active Status
+                                            </th>
+                                            <th
+                                                class="px-6 py-4 text-xs font-bold text-gray-500 uppercase tracking-wider text-right"
+                                            >
+                                                Actions
+                                            </th>
+                                        </tr>
+                                    </thead>
+                                    <tbody id="apiKeysTableBody" class="divide-y divide-gray-100 dark:divide-gray-800">
+                                        <!-- Dynamic -->
+                                    </tbody>
+                                </table>
+                            </div>
+                        </div>
+                    </section>
 
-            try {
-                const res = await axios.post('/api/v1/admin/login', { email: username, password });
-                if (res.data.token) {
-                    adminToken = res.data.token;
-                    window.sessionStorage.admin_token = adminToken;
+                    <!-- Rooms Module -->
+                    <section
+                        id="module-rooms"
+                        class="module-section hidden space-y-6 animate-in fade-in slide-in-from-bottom-4"
+                    >
+                        <div class="flex items-end justify-between">
+                            <div>
+                                <h2 class="text-3xl font-heading font-bold">Live Meetings</h2>
+                                <p class="text-gray-500 dark:text-gray-400">Real-time room monitoring and moderation</p>
+                            </div>
+                        </div>
+
+                        <div
+                            class="bg-white dark:bg-[#1d2026] rounded-2xl border border-gray-100 dark:border-gray-800 shadow-sm overflow-hidden"
+                        >
+                            <div class="overflow-x-auto">
+                                <table class="w-full text-left border-collapse">
+                                    <thead>
+                                        <tr class="bg-gray-50/50 dark:bg-gray-800/50">
+                                            <th
+                                                class="px-6 py-4 text-xs font-bold text-gray-500 uppercase tracking-wider"
+                                            >
+                                                Room ID
+                                            </th>
+                                            <th
+                                                class="px-6 py-4 text-xs font-bold text-gray-500 uppercase tracking-wider"
+                                            >
+                                                Peers
+                                            </th>
+                                            <th
+                                                class="px-6 py-4 text-xs font-bold text-gray-500 uppercase tracking-wider"
+                                            >
+                                                Privacy
+                                            </th>
+                                            <th
+                                                class="px-6 py-4 text-xs font-bold text-gray-500 uppercase tracking-wider"
+                                            >
+                                                Created
+                                            </th>
+                                            <th
+                                                class="px-6 py-4 text-xs font-bold text-gray-500 uppercase tracking-wider text-right"
+                                            >
+                                                Actions
+                                            </th>
+                                        </tr>
+                                    </thead>
+                                    <tbody id="roomsTableBody" class="divide-y divide-gray-100 dark:divide-gray-800">
+                                        <!-- Dynamic -->
+                                    </tbody>
+                                </table>
+                            </div>
+                        </div>
+                    </section>
+
+                    <!-- Feedback Module -->
+                    <section
+                        id="module-feedbacks"
+                        class="module-section hidden space-y-6 animate-in fade-in slide-in-from-bottom-4"
+                    >
+                        <h2 class="text-3xl font-heading font-bold">User Experience Report</h2>
+                        <div
+                            class="bg-white dark:bg-[#1d2026] rounded-2xl border border-gray-100 dark:border-gray-800 shadow-sm overflow-hidden"
+                        >
+                            <div class="overflow-x-auto">
+                                <table class="w-full text-left border-collapse">
+                                    <thead>
+                                        <tr class="bg-gray-50/50 dark:bg-gray-800/50">
+                                            <th
+                                                class="px-6 py-4 text-xs font-bold text-gray-500 uppercase tracking-wider"
+                                            >
+                                                User
+                                            </th>
+                                            <th
+                                                class="px-6 py-4 text-xs font-bold text-gray-500 uppercase tracking-wider"
+                                            >
+                                                Rating
+                                            </th>
+                                            <th
+                                                class="px-6 py-4 text-xs font-bold text-gray-500 uppercase tracking-wider"
+                                            >
+                                                Message
+                                            </th>
+                                            <th
+                                                class="px-6 py-4 text-xs font-bold text-gray-500 uppercase tracking-wider"
+                                            >
+                                                Date
+                                            </th>
+                                        </tr>
+                                    </thead>
+                                    <tbody id="feedbackTableBody" class="divide-y divide-gray-100 dark:divide-gray-800">
+                                        <!-- Dynamic -->
+                                    </tbody>
+                                </table>
+                            </div>
+                        </div>
+                    </section>
+
+                    <!-- Audit Logs Module -->
+                    <section
+                        id="module-audit"
+                        class="module-section hidden space-y-6 animate-in fade-in slide-in-from-bottom-4"
+                    >
+                        <h2 class="text-3xl font-heading font-bold">System Accountability</h2>
+                        <div
+                            class="bg-white dark:bg-[#1d2026] rounded-2xl border border-gray-100 dark:border-gray-800 shadow-sm overflow-hidden"
+                        >
+                            <div class="overflow-x-auto">
+                                <table class="w-full text-left border-collapse">
+                                    <thead>
+                                        <tr class="bg-gray-50/50 dark:bg-gray-800/50">
+                                            <th
+                                                class="px-6 py-4 text-xs font-bold text-gray-500 uppercase tracking-wider"
+                                            >
+                                                Timestamp
+                                            </th>
+                                            <th
+                                                class="px-6 py-4 text-xs font-bold text-gray-500 uppercase tracking-wider"
+                                            >
+                                                Admin
+                                            </th>
+                                            <th
+                                                class="px-6 py-4 text-xs font-bold text-gray-500 uppercase tracking-wider"
+                                            >
+                                                Action
+                                            </th>
+                                            <th
+                                                class="px-6 py-4 text-xs font-bold text-gray-500 uppercase tracking-wider"
+                                            >
+                                                Target
+                                            </th>
+                                            <th
+                                                class="px-6 py-4 text-xs font-bold text-gray-500 uppercase tracking-wider text-right"
+                                            >
+                                                Details
+                                            </th>
+                                        </tr>
+                                    </thead>
+                                    <tbody
+                                        id="auditTableBody"
+                                        class="divide-y divide-gray-100 dark:divide-gray-800 text-sm"
+                                    >
+                                        <!-- Dynamic -->
+                                    </tbody>
+                                </table>
+                            </div>
+                        </div>
+                    </section>
+
+                    <!-- Settings Module -->
+                    <section
+                        id="module-settings"
+                        class="module-section hidden animate-in fade-in slide-in-from-bottom-4"
+                    >
+                        <form id="settingsForm" class="max-w-4xl space-y-10">
+                            <div>
+                                <h2 class="text-3xl font-heading font-bold mb-8 flex items-center gap-3">
+                                    <i class="fas fa-brain text-google-blue"></i>
+                                    AI Core Configuration
+                                </h2>
+                                <div
+                                    class="grid grid-cols-1 md:grid-cols-2 gap-6 p-8 bg-white dark:bg-[#1d2026] rounded-2xl border border-gray-100 dark:border-gray-800"
+                                >
+                                    <div class="md:col-span-2">
+                                        <label class="block text-sm font-semibold mb-2">Engine Status</label>
+                                        <select
+                                            id="setting_CHATGPT_ENABLED"
+                                            class="w-full p-3 rounded-lg bg-gray-50 dark:bg-gray-800/50 border border-gray-200 dark:border-gray-700 outline-none"
+                                        >
+                                            <option value="true">Active (Generative Mode)</option>
+                                            <option value="false">Disabled (Native Only)</option>
+                                        </select>
+                                    </div>
+                                    <div>
+                                        <label class="block text-sm font-semibold mb-2">Primary Model</label>
+                                        <input
+                                            type="text"
+                                            id="setting_CHATGPT_MODEL"
+                                            placeholder="gpt-4-turbo"
+                                            class="w-full p-3 rounded-lg bg-gray-50 dark:bg-gray-800/50 border border-gray-200 dark:border-gray-700 outline-none"
+                                        />
+                                    </div>
+                                    <div>
+                                        <label class="block text-sm font-semibold mb-2">API Secret Key</label>
+                                        <div class="relative">
+                                            <input
+                                                type="password"
+                                                id="setting_CHATGPT_API_KEY"
+                                                class="w-full p-3 pr-12 rounded-lg bg-gray-50 dark:bg-gray-800/50 border border-gray-200 dark:border-gray-700 outline-none"
+                                            />
+                                            <i
+                                                class="fas fa-eye absolute right-4 top-1/2 -translate-y-1/2 cursor-pointer text-gray-400"
+                                                id="toggleApiKey"
+                                            ></i>
+                                        </div>
+                                    </div>
+                                    <div>
+                                        <label class="block text-sm font-semibold mb-2">Max Tokens</label>
+                                        <input
+                                            type="number"
+                                            id="setting_CHATGPT_MAX_TOKENS"
+                                            class="w-full p-3 rounded-lg bg-gray-50 dark:bg-gray-800/50 border border-gray-200 dark:border-gray-700 outline-none"
+                                        />
+                                    </div>
+                                    <div>
+                                        <label class="block text-sm font-semibold mb-2">Creativity (Temp)</label>
+                                        <input
+                                            type="number"
+                                            step="0.1"
+                                            id="setting_CHATGPT_TEMPERATURE"
+                                            class="w-full p-3 rounded-lg bg-gray-50 dark:bg-gray-800/50 border border-gray-200 dark:border-gray-700 outline-none"
+                                        />
+                                    </div>
+                                </div>
+                            </div>
+
+                            <div>
+                                <h2 class="text-3xl font-heading font-bold mb-8 flex items-center gap-3">
+                                    <i class="fas fa-swatchbook text-google-blue"></i>
+                                    Professional Branding
+                                </h2>
+                                <div
+                                    class="grid grid-cols-1 md:grid-cols-2 gap-6 p-8 bg-white dark:bg-[#1d2026] rounded-2xl border border-gray-100 dark:border-gray-800"
+                                >
+                                    <div class="md:col-span-2">
+                                        <label class="block text-sm font-semibold mb-2">Application Identifier</label>
+                                        <input
+                                            type="text"
+                                            id="setting_app_name"
+                                            class="w-full p-3 rounded-lg bg-gray-50 dark:bg-gray-800/50 border border-gray-200 dark:border-gray-700 outline-none"
+                                        />
+                                    </div>
+                                    <div>
+                                        <label class="block text-sm font-semibold mb-2">Thematic Primary Color</label>
+                                        <div class="flex gap-2">
+                                            <input
+                                                type="color"
+                                                id="setting_brand_color_picker"
+                                                class="h-12 w-12 p-1 bg-white dark:bg-gray-800 rounded-lg border border-gray-200 dark:border-gray-700 cursor-pointer"
+                                            />
+                                            <input
+                                                type="text"
+                                                id="setting_brand_color"
+                                                class="flex-1 p-3 rounded-lg bg-gray-50 dark:bg-gray-800/50 border border-gray-200 dark:border-gray-700 outline-none font-mono"
+                                            />
+                                        </div>
+                                    </div>
+                                    <div>
+                                        <label class="block text-sm font-semibold mb-2">Logo Dimension (Width)</label>
+                                        <div class="flex items-center gap-4 py-2">
+                                            <input
+                                                type="range"
+                                                id="setting_logo_width"
+                                                min="50"
+                                                max="400"
+                                                step="5"
+                                                class="flex-1 h-2 bg-gray-200 rounded-lg appearance-none cursor-pointer"
+                                            />
+                                            <span id="logo_size_value" class="text-sm font-bold w-12">150px</span>
+                                        </div>
+                                    </div>
+                                    <div>
+                                        <label class="block text-sm font-semibold mb-2">SVG Logo Endpoint</label>
+                                        <input
+                                            type="text"
+                                            id="setting_logo_url"
+                                            class="w-full p-3 rounded-lg bg-gray-50 dark:bg-gray-800/50 border border-gray-200 dark:border-gray-700 outline-none font-mono text-xs"
+                                        />
+                                    </div>
+                                    <div>
+                                        <label class="block text-sm font-semibold mb-2">Favicon Location</label>
+                                        <input
+                                            type="text"
+                                            id="setting_favicon_url"
+                                            class="w-full p-3 rounded-lg bg-gray-50 dark:bg-gray-800/50 border border-gray-200 dark:border-gray-700 outline-none font-mono text-xs"
+                                        />
+                                    </div>
+                                </div>
+                            </div>
+
+                            <div class="pt-6 border-t border-gray-100 dark:border-gray-800">
+                                <button
+                                    type="submit"
+                                    class="w-full py-4 bg-google-blue hover:bg-google-blueHover text-white rounded-xl font-bold text-lg shadow-xl shadow-blue-500/20 transition-all active:scale-[0.98]"
+                                >
+                                    <i class="fas fa-save mr-2"></i> Deploy System Changes
+                                </button>
+                            </div>
+                        </form>
+                    </section>
+
+                    <!-- Branding Module -->
+                    <section id="module-footer" class="module-section hidden animate-in fade-in slide-in-from-bottom-4">
+                        <form id="footerForm" class="max-w-4xl space-y-8">
+                            <h2 class="text-3xl font-heading font-bold mb-8">Infrastructure Branding</h2>
+
+                            <div
+                                class="p-8 bg-white dark:bg-[#1d2026] rounded-2xl border border-gray-100 dark:border-gray-800 space-y-6"
+                            >
+                                <div>
+                                    <label class="block text-sm font-semibold mb-2">Legal Copyright Notice</label>
+                                    <input
+                                        type="text"
+                                        id="footer_copyright"
+                                        class="w-full p-3 rounded-lg bg-gray-50 dark:bg-gray-800/50 border border-gray-200 dark:border-gray-700 outline-none"
+                                    />
+                                </div>
+                                <div>
+                                    <label class="block text-sm font-semibold mb-2">Support & Operations Email</label>
+                                    <input
+                                        type="email"
+                                        id="footer_contactEmail"
+                                        class="w-full p-3 rounded-lg bg-gray-50 dark:bg-gray-800/50 border border-gray-200 dark:border-gray-700 outline-none"
+                                    />
+                                </div>
+
+                                <div class="space-y-4">
+                                    <div class="flex items-center justify-between">
+                                        <label class="block text-sm font-semibold text-google-blue"
+                                            >Global Navigation Shortcuts</label
+                                        >
+                                        <button
+                                            type="button"
+                                            onclick="addFooterLinkRow()"
+                                            class="text-xs font-bold bg-google-blue/10 text-google-blue px-3 py-1.5 rounded-lg hover:bg-google-blue hover:text-white transition-all"
+                                        >
+                                            <i class="fas fa-plus mr-1"></i> Add Resource
+                                        </button>
+                                    </div>
+                                    <div id="footer_links_container" class="space-y-3">
+                                        <!-- Dynamic Rows -->
+                                    </div>
+                                </div>
+                            </div>
+
+                            <button
+                                type="submit"
+                                id="saveFooterBtn"
+                                class="w-full py-4 bg-gray-900 dark:bg-white text-white dark:text-gray-950 rounded-xl font-bold text-lg transition-all active:scale-[0.98]"
+                            >
+                                <i class="fas fa-save mr-2"></i> Update Site Perimeter
+                            </button>
+                        </form>
+                    </section>
+                </main>
+            </div>
+        </div>
+
+        <!-- Peek Room Modal -->
+        <div
+            id="peekModal"
+            class="hidden fixed inset-0 z-[100] bg-black/80 backdrop-blur-md flex items-center justify-center p-6"
+        >
+            <div
+                class="bg-white dark:bg-[#15181d] w-full max-w-6xl h-[85vh] rounded-[32px] overflow-hidden flex flex-col items-center"
+            >
+                <div class="w-full p-4 flex items-center justify-between border-b border-gray-100 dark:border-gray-800">
+                    <div class="flex items-center gap-3 ml-4">
+                        <span class="w-3 h-3 bg-red-500 rounded-full animate-pulse"></span>
+                        <span class="font-bold">Silent Observation: </span>
+                        <span id="peekRoomId" class="font-mono text-gray-500"></span>
+                    </div>
+                    <button
+                        onclick="closePeek()"
+                        class="w-10 h-10 flex items-center justify-center hover:bg-red-50 hover:text-red-500 dark:hover:bg-red-900/10 rounded-full transition-all text-xl"
+                    >
+                        <i class="fas fa-times"></i>
+                    </button>
+                </div>
+                <iframe id="peekFrame" class="w-full flex-1 border-none"></iframe>
+            </div>
+        </div>
+
+        <script>
+            // AUTHENTICATION LOGIC PRESERVED
+            const API_BASE = '/api/v1/admin';
+            let adminToken = '';
+
+            // UI Initialization
+            document.addEventListener('DOMContentLoaded', () => {
+                const token = window.sessionStorage.admin_token || localStorage.getItem('token');
+                if (token) {
+                    adminToken = token;
                     showDashboard();
+                } else {
+                    showLogin();
                 }
-            } catch (e) {
-                err.textContent = e.response?.data?.message || 'Access Denied';
-                err.classList.remove('hidden');
-            } finally {
-                btn.disabled = false;
-                btn.innerHTML = 'Sign In to Hub';
+            });
+
+            const sidebar = document.getElementById('sidebar');
+            const sidebarToggle = document.getElementById('sidebarToggle');
+            if (sidebarToggle) {
+                sidebarToggle.addEventListener('click', () => {
+                    sidebar.classList.toggle('-translate-x-full');
+                });
             }
-        });
 
-        // Author: Sanket - Password visibility toggle fix
-        const toggleLoginPassword = document.getElementById('toggleLoginPassword');
-        if (toggleLoginPassword) {
-            toggleLoginPassword.addEventListener('click', () => {
-                const passwordInput = document.getElementById('password');
-                const isVisible = passwordInput.type === 'text';
-                passwordInput.type = isVisible ? 'password' : 'text';
-                toggleLoginPassword.classList.toggle('fa-eye', isVisible);
-                toggleLoginPassword.classList.toggle('fa-eye-slash', !isVisible);
-            });
-        }
-
-        async function loadStats() {
-            try {
-                const res = await axios.get(`${API_BASE}/stats`, {
-                    headers: { 'Authorization': `Bearer ${adminToken}` }
+            const themeToggle = document.getElementById('themeToggle');
+            if (themeToggle) {
+                themeToggle.addEventListener('click', () => {
+                    document.body.classList.toggle('dark');
                 });
-                const s = res.data;
-                document.getElementById('stat-tenants').innerText = s.tenants || 0;
-                document.getElementById('stat-rooms').innerText = s.rooms || 0;
-                document.getElementById('stat-feedbacks').innerText = s.feedbacks || 0;
-                document.getElementById('stat-keys').innerText = s.keys || 0;
-                
-                initChart(s.analytics || [10, 25, 45, 30, 60, 45, 80]);
-            } catch (e) { console.error('Stats error:', e); }
-        }
+            }
 
-        function initChart(data) {
-            const ctx = document.getElementById('systemChart');
-            if (window.myChart) window.myChart.destroy();
-            window.myChart = new Chart(ctx, {
-                type: 'line',
-                data: {
-                    labels: ['00:00', '04:00', '08:00', '12:00', '16:00', '20:00', 'NOW'],
-                    datasets: [{
-                        label: 'Real-Time Load',
-                        data: data,
-                        borderColor: '#1a73e8',
-                        backgroundColor: 'rgba(26, 115, 232, 0.1)',
-                        fill: true,
-                        tension: 0.4,
-                        borderWidth: 3,
-                        pointRadius: 4,
-                        pointBackgroundColor: '#fff',
-                        pointBorderWidth: 2
-                    }]
-                },
-                options: {
-                    responsive: true,
-                    maintainAspectRatio: false,
-                    plugins: { legend: { display: false } },
-                    scales: {
-                        y: { beginAtZero: true, grid: { color: 'rgba(0,0,0,0.05)' } },
-                        x: { grid: { display: false } }
+            // Module Navigation
+            document.querySelectorAll('.nav-item').forEach((item) => {
+                item.addEventListener('click', () => {
+                    const module = item.getAttribute('data-module');
+                    changeModule(module);
+                });
+            });
+
+            function changeModule(moduleId) {
+                document.querySelectorAll('.module-section').forEach((s) => s.classList.add('hidden'));
+                const target = document.getElementById(`module-${moduleId}`);
+                if (target) target.classList.remove('hidden');
+
+                document.querySelectorAll('.nav-item').forEach((i) => i.classList.remove('nav-item-active'));
+                const activeNav = document.querySelector(`.nav-item[data-module="${moduleId}"]`);
+                if (activeNav) activeNav.classList.add('nav-item-active');
+
+                const titleMap = {
+                    dashboard: 'Dashboard',
+                    tenants: 'Developers',
+                    apikeys: 'API & Keys',
+                    rooms: 'Active Rooms',
+                    feedbacks: 'Reviews',
+                    audit: 'Audit Logs',
+                    settings: 'Settings',
+                    footer: 'Branding',
+                };
+                document.getElementById('currentModuleTitle').textContent = titleMap[moduleId] || 'System Hub';
+
+                if (moduleId === 'dashboard') loadStats();
+                if (moduleId === 'tenants') loadTenants();
+                if (moduleId === 'apikeys') loadApiKeys();
+                if (moduleId === 'rooms') loadActiveRooms();
+                if (moduleId === 'feedbacks') loadFeedbacks();
+                if (moduleId === 'audit') loadAuditLogs();
+                if (moduleId === 'settings') loadSettings();
+                if (moduleId === 'footer') loadFooterSettings();
+
+                // Auto-close sidebar on mobile
+                if (window.innerWidth < 1024) sidebar.classList.add('-translate-x-full');
+            }
+
+            // Logic functions...
+            function showLogin() {
+                document.getElementById('loginSection').classList.remove('hidden');
+                document.getElementById('adminLayout').classList.add('hidden');
+            }
+
+            async function showDashboard() {
+                document.getElementById('loginSection').classList.add('hidden');
+                document.getElementById('adminLayout').classList.remove('hidden');
+                loadStats();
+            }
+
+            // Re-integrating actual backend logic hooks
+            // Author: Sanket - Admin login uses Tenant-based auth endpoint
+            document.getElementById('loginForm').addEventListener('submit', async (e) => {
+                e.preventDefault();
+                const username = document.getElementById('username').value;
+                const password = document.getElementById('password').value;
+                const btn = document.getElementById('loginBtn');
+                const err = document.getElementById('loginError');
+
+                btn.disabled = true;
+                btn.innerHTML = '<i class="fas fa-spinner fa-spin mr-2"></i>Verifying...';
+                err.classList.add('hidden');
+
+                try {
+                    const res = await axios.post('/api/v1/admin/login', { email: username, password });
+                    if (res.data.token) {
+                        adminToken = res.data.token;
+                        window.sessionStorage.admin_token = adminToken;
+                        showDashboard();
                     }
+                } catch (e) {
+                    err.textContent = e.response?.data?.message || 'Access Denied';
+                    err.classList.remove('hidden');
+                } finally {
+                    btn.disabled = false;
+                    btn.innerHTML = 'Sign In to Hub';
                 }
             });
-        }
 
-        async function loadTenants() {
-            try {
-                const res = await axios.get(`${API_BASE}/tenants`, {
-                    headers: { 'Authorization': `Bearer ${adminToken}` }
+            // Author: Sanket - Password visibility toggle fix
+            const toggleLoginPassword = document.getElementById('toggleLoginPassword');
+            if (toggleLoginPassword) {
+                toggleLoginPassword.addEventListener('click', () => {
+                    const passwordInput = document.getElementById('password');
+                    const isVisible = passwordInput.type === 'text';
+                    passwordInput.type = isVisible ? 'password' : 'text';
+                    toggleLoginPassword.classList.toggle('fa-eye', isVisible);
+                    toggleLoginPassword.classList.toggle('fa-eye-slash', !isVisible);
                 });
-                const tbody = document.getElementById('tenantsTableBody');
-                tbody.innerHTML = res.data.map(t => `
+            }
+
+            async function loadStats() {
+                try {
+                    const res = await axios.get(`${API_BASE}/stats`, {
+                        headers: { Authorization: `Bearer ${adminToken}` },
+                    });
+                    const s = res.data;
+                    document.getElementById('stat-tenants').innerText = s.tenants || 0;
+                    document.getElementById('stat-rooms').innerText = s.rooms || 0;
+                    document.getElementById('stat-feedbacks').innerText = s.feedbacks || 0;
+                    document.getElementById('stat-keys').innerText = s.keys || 0;
+
+                    initChart(s.analytics || [10, 25, 45, 30, 60, 45, 80]);
+                } catch (e) {
+                    console.error('Stats error:', e);
+                }
+            }
+
+            function initChart(data) {
+                const ctx = document.getElementById('systemChart');
+                if (window.myChart) window.myChart.destroy();
+                window.myChart = new Chart(ctx, {
+                    type: 'line',
+                    data: {
+                        labels: ['00:00', '04:00', '08:00', '12:00', '16:00', '20:00', 'NOW'],
+                        datasets: [
+                            {
+                                label: 'Real-Time Load',
+                                data: data,
+                                borderColor: '#1a73e8',
+                                backgroundColor: 'rgba(26, 115, 232, 0.1)',
+                                fill: true,
+                                tension: 0.4,
+                                borderWidth: 3,
+                                pointRadius: 4,
+                                pointBackgroundColor: '#fff',
+                                pointBorderWidth: 2,
+                            },
+                        ],
+                    },
+                    options: {
+                        responsive: true,
+                        maintainAspectRatio: false,
+                        plugins: { legend: { display: false } },
+                        scales: {
+                            y: { beginAtZero: true, grid: { color: 'rgba(0,0,0,0.05)' } },
+                            x: { grid: { display: false } },
+                        },
+                    },
+                });
+            }
+
+            async function loadTenants() {
+                try {
+                    const res = await axios.get(`${API_BASE}/tenants`, {
+                        headers: { Authorization: `Bearer ${adminToken}` },
+                    });
+                    const tbody = document.getElementById('tenantsTableBody');
+                    tbody.innerHTML = res.data
+                        .map(
+                            (t) => `
                     <tr class="hover:bg-gray-50 dark:hover:bg-gray-800/50 transition-colors">
                         <td class="px-6 py-4 font-bold text-google-blue">${t.username}</td>
                         <td class="px-6 py-4">
@@ -758,16 +1161,25 @@
                              <button class="p-2 hover:text-red-500 transition-colors" onclick="deleteTenant('${t.id}')"><i class="fas fa-trash-alt"></i></button>
                         </td>
                     </tr>
-                `).join('');
-            } catch (e) { console.error('Tenants fetch error:', e); }
-        }
+                `
+                        )
+                        .join('');
+                } catch (e) {
+                    console.error('Tenants fetch error:', e);
+                }
+            }
 
-        // Logic for Peek, Kick, Audit, Settings (Condensed for brevity but keeping hooks)
-        async function loadActiveRooms() {
-            try {
-                const res = await axios.get(`${API_BASE}/active_rooms`, { headers: { 'Authorization': `Bearer ${adminToken}` } });
-                const tbody = document.getElementById('roomsTableBody');
-                tbody.innerHTML = (res.data.length ? res.data.map(r => `
+            // Logic for Peek, Kick, Audit, Settings (Condensed for brevity but keeping hooks)
+            async function loadActiveRooms() {
+                try {
+                    const res = await axios.get(`${API_BASE}/active_rooms`, {
+                        headers: { Authorization: `Bearer ${adminToken}` },
+                    });
+                    const tbody = document.getElementById('roomsTableBody');
+                    tbody.innerHTML = res.data.length
+                        ? res.data
+                              .map(
+                                  (r) => `
                     <tr class="hover:bg-gray-50 dark:hover:bg-gray-800/50 transition-colors">
                         <td class="px-6 py-4 font-mono text-xs">${r.id}</td>
                         <td class="px-6 py-4 font-bold"><i class="fas fa-users mr-2 text-google-blue"></i> ${r.peers}</td>
@@ -778,52 +1190,82 @@
                              <button class="p-2 text-red-500 hover:bg-red-50 rounded-lg" onclick="kickRoom('${r.id}')"><i class="fas fa-door-closed"></i></button>
                         </td>
                     </tr>
-                `).join('') : '<tr><td colspan="5" class="p-10 text-center text-gray-400">No active sessions</td></tr>');
-            } catch (e) { }
-        }
-
-        function peekRoom(roomId) {
-            document.getElementById('peekRoomId').textContent = roomId;
-            document.getElementById('peekFrame').src = `/join/${roomId}?isAdminPeek=true&name=AdminHub`;
-            document.getElementById('peekModal').classList.remove('hidden');
-        }
-
-        function closePeek() {
-             document.getElementById('peekModal').classList.add('hidden');
-             document.getElementById('peekFrame').src = 'about:blank';
-        }
-
-        async function kickRoom(id) {
-            const { isConfirmed } = await Swal.fire({ title: 'Terminate Session?', text: 'All users will be disconnected.', icon: 'warning', showCancelButton: true, confirmButtonColor: '#ea4335' });
-            if (isConfirmed) {
-                try {
-                    await axios.post(`/api/v1/admin/rooms/${id}/kick`, {}, { headers: { 'Authorization': `Bearer ${adminToken}` } });
-                    loadActiveRooms();
-                    Swal.fire({ title: 'Room Closed', icon: 'success', toast: true, position: 'top-end', showConfirmButton: false, timer: 2000 });
-                } catch (e) { }
+                `
+                              )
+                              .join('')
+                        : '<tr><td colspan="5" class="p-10 text-center text-gray-400">No active sessions</td></tr>';
+                } catch (e) {}
             }
-        }
 
-        async function loadFeedbacks() {
-            try {
-                const res = await axios.get(`${API_BASE}/feedbacks_data`, { headers: { 'Authorization': `Bearer ${adminToken}` } });
-                const tbody = document.getElementById('feedbackTableBody');
-                tbody.innerHTML = res.data.map(f => `
+            function peekRoom(roomId) {
+                document.getElementById('peekRoomId').textContent = roomId;
+                document.getElementById('peekFrame').src = `/join/${roomId}?isAdminPeek=true&name=AdminHub`;
+                document.getElementById('peekModal').classList.remove('hidden');
+            }
+
+            function closePeek() {
+                document.getElementById('peekModal').classList.add('hidden');
+                document.getElementById('peekFrame').src = 'about:blank';
+            }
+
+            async function kickRoom(id) {
+                const { isConfirmed } = await Swal.fire({
+                    title: 'Terminate Session?',
+                    text: 'All users will be disconnected.',
+                    icon: 'warning',
+                    showCancelButton: true,
+                    confirmButtonColor: '#ea4335',
+                });
+                if (isConfirmed) {
+                    try {
+                        await axios.post(
+                            `/api/v1/admin/rooms/${id}/kick`,
+                            {},
+                            { headers: { Authorization: `Bearer ${adminToken}` } }
+                        );
+                        loadActiveRooms();
+                        Swal.fire({
+                            title: 'Room Closed',
+                            icon: 'success',
+                            toast: true,
+                            position: 'top-end',
+                            showConfirmButton: false,
+                            timer: 2000,
+                        });
+                    } catch (e) {}
+                }
+            }
+
+            async function loadFeedbacks() {
+                try {
+                    const res = await axios.get(`${API_BASE}/feedbacks_data`, {
+                        headers: { Authorization: `Bearer ${adminToken}` },
+                    });
+                    const tbody = document.getElementById('feedbackTableBody');
+                    tbody.innerHTML = res.data
+                        .map(
+                            (f) => `
                     <tr>
                         <td class="px-6 py-4"><strong>${f.peer_name}</strong></td>
-                        <td class="px-6 py-4 text-[#f1c40f]">${'★'.repeat(f.rating)}${'☆'.repeat(5-f.rating)}</td>
+                        <td class="px-6 py-4 text-[#f1c40f]">${'★'.repeat(f.rating)}${'☆'.repeat(5 - f.rating)}</td>
                         <td class="px-6 py-4 text-sm">${f.message || '—'}</td>
                         <td class="px-6 py-4 text-xs text-gray-400">${new Date(f.timestamp).toLocaleDateString()}</td>
                     </tr>
-                `).join('');
-            } catch (e) { }
-        }
+                `
+                        )
+                        .join('');
+                } catch (e) {}
+            }
 
-        async function loadAuditLogs() {
-            try {
-                const res = await axios.get('/api/v1/admin/audit-logs', { headers: { 'Authorization': `Bearer ${adminToken}` } });
-                const tbody = document.getElementById('auditTableBody');
-                tbody.innerHTML = res.data.map(l => `
+            async function loadAuditLogs() {
+                try {
+                    const res = await axios.get('/api/v1/admin/audit-logs', {
+                        headers: { Authorization: `Bearer ${adminToken}` },
+                    });
+                    const tbody = document.getElementById('auditTableBody');
+                    tbody.innerHTML = res.data
+                        .map(
+                            (l) => `
                     <tr class="border-b last:border-0 border-gray-100 dark:border-gray-800">
                         <td class="px-6 py-4 whitespace-nowrap opacity-60">${new Date(l.createdAt).toLocaleTimeString()}</td>
                         <td class="px-6 py-4 font-bold text-gray-500">${l.admin_id}</td>
@@ -831,17 +1273,22 @@
                         <td class="px-6 py-4">${l.target || '—'}</td>
                         <td class="px-6 py-4 text-right text-xs opacity-50">${l.ip_address}</td>
                     </tr>
-                `).join('');
-            } catch (e) { }
-        }
+                `
+                        )
+                        .join('');
+                } catch (e) {}
+            }
 
-        async function loadApiKeys() {
-            try {
-                const res = await axios.get('/api/v1/admin/api-keys', { headers: { 'Authorization': `Bearer ${adminToken}` } });
-                const tbody = document.getElementById('apiKeysTableBody');
-                tbody.innerHTML = res.data.map(k => {
-                    const usage = (k.current_usage / k.quota * 100);
-                    return `
+            async function loadApiKeys() {
+                try {
+                    const res = await axios.get('/api/v1/admin/api-keys', {
+                        headers: { Authorization: `Bearer ${adminToken}` },
+                    });
+                    const tbody = document.getElementById('apiKeysTableBody');
+                    tbody.innerHTML = res.data
+                        .map((k) => {
+                            const usage = (k.current_usage / k.quota) * 100;
+                            return `
                         <tr>
                             <td class="px-6 py-4 font-mono">${k.prefix}...</td>
                             <td class="px-6 py-4"><strong>${k.Tenant?.name || 'Unknown'}</strong></td>
@@ -861,65 +1308,68 @@
                             </td>
                         </tr>
                     `;
-                }).join('');
-            } catch (e) { }
-        }
-
-        async function loadSettings() {
-            try {
-                const res = await axios.get(`${API_BASE}/settings`, { headers: { 'Authorization': `Bearer ${adminToken}` } });
-                const s = res.data;
-                for (let [k, v] of Object.entries(s)) {
-                    const el = document.getElementById(`setting_${k}`);
-                    if (el) el.value = v;
-                    if (k === 'brand_color') {
-                        document.getElementById('setting_brand_color_picker').value = v || '#1a73e8';
-                        document.getElementById('setting_brand_color').value = v || '#1a73e8';
-                    }
-                }
-                if (s.LOGO_CONFIG) {
-                     const width = parseInt(s.LOGO_CONFIG.width) || 150;
-                     document.getElementById('setting_logo_width').value = width;
-                     document.getElementById('logo_size_value').innerText = width + 'px';
-                }
-                applyBranding(s);
-            } catch (e) { }
-        }
-
-        function applyBranding(s) {
-            if (s.app_name) {
-                document.title = `${s.app_name} | Admin Hub`;
-                document.querySelectorAll('.sidebar-brand').forEach(el => el.textContent = `${s.app_name} Hub`);
+                        })
+                        .join('');
+                } catch (e) {}
             }
-            if (s.brand_color) document.documentElement.style.setProperty('--google-blue', s.brand_color);
-            if (s.logo_url) document.querySelectorAll('.sidebar-logo').forEach(img => img.src = s.logo_url);
-        }
 
-        // Settings Form & Footer Form handlers preserved similarly
-        // ... (preserving the rest of the submit handlers previously analyzed)
+            async function loadSettings() {
+                try {
+                    const res = await axios.get(`${API_BASE}/settings`, {
+                        headers: { Authorization: `Bearer ${adminToken}` },
+                    });
+                    const s = res.data;
+                    for (let [k, v] of Object.entries(s)) {
+                        const el = document.getElementById(`setting_${k}`);
+                        if (el) el.value = v;
+                        if (k === 'brand_color') {
+                            document.getElementById('setting_brand_color_picker').value = v || '#1a73e8';
+                            document.getElementById('setting_brand_color').value = v || '#1a73e8';
+                        }
+                    }
+                    if (s.LOGO_CONFIG) {
+                        const width = parseInt(s.LOGO_CONFIG.width) || 150;
+                        document.getElementById('setting_logo_width').value = width;
+                        document.getElementById('logo_size_value').innerText = width + 'px';
+                    }
+                    applyBranding(s);
+                } catch (e) {}
+            }
 
-        function logout() {
-            delete window.sessionStorage.admin_token;
-            localStorage.removeItem('token');
-            showLogin();
-        }
+            function applyBranding(s) {
+                if (s.app_name) {
+                    document.title = `${s.app_name} | Admin Hub`;
+                    document.querySelectorAll('.sidebar-brand').forEach((el) => (el.textContent = `${s.app_name} Hub`));
+                }
+                if (s.brand_color) document.documentElement.style.setProperty('--google-blue', s.brand_color);
+                if (s.logo_url) document.querySelectorAll('.sidebar-logo').forEach((img) => (img.src = s.logo_url));
+            }
 
-        // Color sync
-        const colorPicker = document.getElementById('setting_brand_color_picker');
-        const colorInput = document.getElementById('setting_brand_color');
-        if (colorPicker && colorInput) {
-            colorPicker.addEventListener('input', (e) => colorInput.value = e.target.value);
-            colorInput.addEventListener('input', (e) => {
-                if (/^#[0-9A-F]{6}$/i.test(e.target.value)) colorPicker.value = e.target.value;
-            });
-        }
+            // Settings Form & Footer Form handlers preserved similarly
+            // ... (preserving the rest of the submit handlers previously analyzed)
 
-        const logoSlider = document.getElementById('setting_logo_width');
-        if (logoSlider) {
-            logoSlider.addEventListener('input', (e) => {
-                document.getElementById('logo_size_value').innerText = e.target.value + 'px';
-            });
-        }
-    </script>
-</body>
+            function logout() {
+                delete window.sessionStorage.admin_token;
+                localStorage.removeItem('token');
+                showLogin();
+            }
+
+            // Color sync
+            const colorPicker = document.getElementById('setting_brand_color_picker');
+            const colorInput = document.getElementById('setting_brand_color');
+            if (colorPicker && colorInput) {
+                colorPicker.addEventListener('input', (e) => (colorInput.value = e.target.value));
+                colorInput.addEventListener('input', (e) => {
+                    if (/^#[0-9A-F]{6}$/i.test(e.target.value)) colorPicker.value = e.target.value;
+                });
+            }
+
+            const logoSlider = document.getElementById('setting_logo_width');
+            if (logoSlider) {
+                logoSlider.addEventListener('input', (e) => {
+                    document.getElementById('logo_size_value').innerText = e.target.value + 'px';
+                });
+            }
+        </script>
+    </body>
 </html>

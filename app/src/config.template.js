@@ -1010,9 +1010,7 @@ module.exports = {
             app: {
                 language: process.env.UI_LANGUAGE || 'en',
                 name: process.env.APP_NAME || 'Kidokool SFU',
-                title:
-                    process.env.APP_TITLE ||
-                    'Free browser based Real-time video calls.<br />Simple, Secure, Fast.',
+                title: process.env.APP_TITLE || 'Free browser based Real-time video calls.<br />Simple, Secure, Fast.',
                 description:
                     process.env.APP_DESCRIPTION ||
                     'Start your next video call with a single click. No download, plug-in, or login is required.',

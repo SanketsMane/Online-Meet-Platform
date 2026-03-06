@@ -13,13 +13,13 @@ async function logAdminAction(req, action, target, details = '') {
         const ip = req.headers['x-forwarded-for'] || req.socket.remoteAddress;
         let adminId = 'Admin';
         if (req.admin && req.admin.username) adminId = req.admin.username;
-        
+
         await AuditLog.create({
             admin_id: adminId,
             action: action,
             target: target,
             details: details,
-            ip_address: ip
+            ip_address: ip,
         });
     } catch (e) {
         log.error('Failed to log admin action:', e.message);
@@ -39,7 +39,7 @@ class AdminController {
             const tenantCount = await Tenant.count();
             const keyCount = await ApiKey.count();
             const feedbackCount = await Feedback.count();
-            
+
             res.json({
                 tenants: tenantCount,
                 apiKeys: keyCount,
@@ -88,7 +88,7 @@ class AdminController {
         try {
             const { id } = req.params;
             const { status } = req.body;
-            
+
             const tenant = await Tenant.findByPk(id);
             if (!tenant) return res.status(404).json({ message: 'Tenant not found' });
 
@@ -101,8 +101,8 @@ class AdminController {
             EmailService.sendIncidentAlert({
                 event: 'TENANT_STATUS_CHANGE',
                 details: `Tenant ${id} status changed to ${status} by admin`,
-                severity: 'Medium'
-            }).catch(err => log.error('Incident alert failed:', err));
+                severity: 'Medium',
+            }).catch((err) => log.error('Incident alert failed:', err));
 
             res.json({ message: `Tenant status updated to ${status}` });
         } catch (err) {
@@ -139,8 +139,8 @@ class AdminController {
             EmailService.sendIncidentAlert({
                 event: 'SYSTEM_SETTINGS_UPDATE',
                 details: `Global system settings were updated by admin`,
-                severity: 'Low'
-            }).catch(err => log.error('Incident alert failed:', err));
+                severity: 'Low',
+            }).catch((err) => log.error('Incident alert failed:', err));
         } catch (err) {
             log.error('Error updating settings:', err.message);
             res.status(500).json({ message: 'Error updating settings' });
@@ -168,15 +168,15 @@ class AdminController {
     static async getActiveRooms(req, res, roomList) {
         try {
             if (!roomList) return res.json([]);
-            
-            const rooms = Array.from(roomList.values()).map(room => ({
+
+            const rooms = Array.from(roomList.values()).map((room) => ({
                 id: room.id,
                 peers: room.peers.size,
                 locked: room.locked,
                 broadcasting: room.broadcasting,
                 createdAt: room.createdAt || new Date(),
             }));
-            
+
             res.json(rooms);
         } catch (err) {
             log.error('Error fetching active rooms:', err.message);
@@ -191,7 +191,7 @@ class AdminController {
         try {
             const logs = await AuditLog.findAll({
                 limit: 100,
-                order: [['createdAt', 'DESC']]
+                order: [['createdAt', 'DESC']],
             });
             res.json(logs);
         } catch (err) {
@@ -207,7 +207,7 @@ class AdminController {
         try {
             const keys = await ApiKey.findAll({
                 include: [{ model: Tenant, attributes: ['name', 'email'] }],
-                order: [['createdAt', 'DESC']]
+                order: [['createdAt', 'DESC']],
             });
             res.json(keys);
         } catch (err) {
@@ -224,18 +224,18 @@ class AdminController {
             const { id } = req.params;
             const apiKey = await ApiKey.findByPk(id);
             if (!apiKey) return res.status(404).json({ message: 'API Key not found' });
-            
+
             apiKey.is_active = false;
             await apiKey.save();
-            
+
             await logAdminAction(req, 'REVOKE_API_KEY', apiKey.prefix, `Key ID: ${id}`);
 
             // Author: Sanket - Trigger Incidence Alert
             EmailService.sendIncidentAlert({
                 event: 'API_KEY_REVOKED',
                 details: `API Key ${apiKey.prefix} was revoked by admin`,
-                severity: 'High'
-            }).catch(err => log.error('Incident alert failed:', err));
+                severity: 'High',
+            }).catch((err) => log.error('Incident alert failed:', err));
 
             res.json({ success: true });
         } catch (err) {
@@ -251,7 +251,7 @@ class AdminController {
         try {
             const logs = await WebhookLog.findAll({
                 limit: 100,
-                order: [['timestamp', 'DESC']]
+                order: [['timestamp', 'DESC']],
             });
             res.json(logs);
         } catch (err) {
@@ -274,8 +274,8 @@ class AdminController {
                 EmailService.sendIncidentAlert({
                     event: 'ROOM_FORCE_CLOSED',
                     details: `Room ${id} was forcefully closed by admin`,
-                    severity: 'Medium'
-                }).catch(err => log.error('Incident alert failed:', err));
+                    severity: 'Medium',
+                }).catch((err) => log.error('Incident alert failed:', err));
 
                 res.json({ success: true });
             } else {

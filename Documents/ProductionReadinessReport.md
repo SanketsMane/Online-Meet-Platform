@@ -7,37 +7,37 @@ This project is in a **deployable state** and follows many best practices for a 
 ### ✅ Strengths (Production Ready Aspects)
 
 1.  **Configuration Management**:
-    *   Excellent use of `config.js` and `.env` for separating code from configuration.
-    *   Comprehensive configuration options for every aspect of the system.
+    - Excellent use of `config.js` and `.env` for separating code from configuration.
+    - Comprehensive configuration options for every aspect of the system.
 2.  **Containerization**:
-    *   Optimized `Dockerfile` using `node:22-slim`.
-    *   `docker-compose.yml` provided for easy deployment.
-    *   CI/CD pipeline (`ci.yml`) automatically builds and publishes Docker images.
+    - Optimized `Dockerfile` using `node:22-slim`.
+    - `docker-compose.yml` provided for easy deployment.
+    - CI/CD pipeline (`ci.yml`) automatically builds and publishes Docker images.
 3.  **Security**:
-    *   Uses `helmet` for HTTP headers.
-    *   Implements Rate Limiting (`express-rate-limit`) for login endpoints.
-    *   Supports HTTPS/SSL configuration.
-    *   Input sanitization (`checkXSS`, `sanitize-filename`).
+    - Uses `helmet` for HTTP headers.
+    - Implements Rate Limiting (`express-rate-limit`) for login endpoints.
+    - Supports HTTPS/SSL configuration.
+    - Input sanitization (`checkXSS`, `sanitize-filename`).
 4.  **Feature Completeness**:
-    *   Robust WebRTC implementation using Mediasoup.
-    *   Authentication support (Local, OIDC).
-    *   Integrations (Slack, Discord, ChatGPT).
+    - Robust WebRTC implementation using Mediasoup.
+    - Authentication support (Local, OIDC).
+    - Integrations (Slack, Discord, ChatGPT).
 5.  **Documentation**:
-    *   Extensive `README.md` and documentation in `docs/`.
+    - Extensive `README.md` and documentation in `docs/`.
 
 ### ⚠️ Areas for Improvement (Risks)
 
 1.  **Scalability (Horizontal Scaling)**:
-    *   **In-Memory State**: Room information (`roomList`) is stored in a JavaScript `Map` within `Server.js`. If you deploy this across multiple servers (horizontal scaling), users on Server A won't see rooms on Server B.
-    *   **Socket.io Adapter**: There is no configuring of a Redis adapter for Socket.io in the default config, limiting signaling to a single process/instance.
-    *   **Recommendation**: For high-scale deployments, integrate **Redis** for session/room state and Socket.io generic pub/sub.
+    - **In-Memory State**: Room information (`roomList`) is stored in a JavaScript `Map` within `Server.js`. If you deploy this across multiple servers (horizontal scaling), users on Server A won't see rooms on Server B.
+    - **Socket.io Adapter**: There is no configuring of a Redis adapter for Socket.io in the default config, limiting signaling to a single process/instance.
+    - **Recommendation**: For high-scale deployments, integrate **Redis** for session/room state and Socket.io generic pub/sub.
 2.  **Codebase Structure**:
-    *   **Monolithic Entry Point**: `app/src/Server.js` is extremely large (4000+ lines). This makes maintenance, testing, and debugging difficult.
-    *   **Recommendation**: Refactor `Server.js` into smaller controllers and services (e.g., `RoomController`, `AuthController`).
+    - **Monolithic Entry Point**: `app/src/Server.js` is extremely large (4000+ lines). This makes maintenance, testing, and debugging difficult.
+    - **Recommendation**: Refactor `Server.js` into smaller controllers and services (e.g., `RoomController`, `AuthController`).
 3.  **Testing**:
-    *   Tests exist (`tests/`) but appear limited to unit tests for specific modules. There are no visible End-to-End (E2E) tests ensuring the critical "Join Room -> Stream Video" flow works.
+    - Tests exist (`tests/`) but appear limited to unit tests for specific modules. There are no visible End-to-End (E2E) tests ensuring the critical "Join Room -> Stream Video" flow works.
 4.  **Database**:
-    *   The project relies heavily on runtime configuration and in-memory storage. While `HOST_USERS_FROM_DB` is a flag, there isn't a dedicated database migration or schema setup visible in the core bundle, relying mostly on external APIs or static config.
+    - The project relies heavily on runtime configuration and in-memory storage. While `HOST_USERS_FROM_DB` is a flag, there isn't a dedicated database migration or schema setup visible in the core bundle, relying mostly on external APIs or static config.
 
 ## Conclusion
 

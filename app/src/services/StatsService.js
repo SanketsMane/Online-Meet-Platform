@@ -9,7 +9,7 @@ class StatsService {
         this.history = {
             cpu: [],
             memory: [],
-            timestamps: []
+            timestamps: [],
         };
         this.maxHistory = 60; // Keep 60 seconds of data
     }
@@ -23,15 +23,15 @@ class StatsService {
                         total: os.totalmem(),
                         free: os.freemem(),
                         used: os.totalmem() - os.freemem(),
-                        usagePercent: ((1 - os.freememPercentage()) * 100).toFixed(2)
+                        usagePercent: ((1 - os.freememPercentage()) * 100).toFixed(2),
                     },
                     uptime: os.sysUptime(),
-                    timestamp: Date.now()
+                    timestamp: Date.now(),
                 };
-                
+
                 // Update history
                 this.updateHistory(stats);
-                
+
                 resolve(stats);
             });
         });

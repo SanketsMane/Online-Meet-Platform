@@ -45,14 +45,14 @@
     --dd-color: #ffffff;
 
     --videoBar-active: 1px solid rgba(102, 190, 255, 0.32);
-    
+
     /* Theme Variables - Default Dark */
     --bg-color: #1d2026;
     --text-color: #8a94a7; /* 600 */
     --text-color-light: #fff;
     --heading-color: #fff;
     --divider-color: #242830;
-    --secondary-bg: #242830; 
+    --secondary-bg: #242830;
     --card-bg: #181b21;
     --link-color: #8a94a7;
     --link-hover-color: #fff;
@@ -64,7 +64,7 @@
 }
 
 [data-theme='light'] {
-    --body-bg: radial-gradient(#ffffff, #e6e6e6); 
+    --body-bg: radial-gradient(#ffffff, #e6e6e6);
     --msger-bg: radial-gradient(#ffffff, #e6e6e6);
     --wb-bg: radial-gradient(#ffffff, #e6e6e6);
     --settings-bg: radial-gradient(#ffffff, #e6e6e6);

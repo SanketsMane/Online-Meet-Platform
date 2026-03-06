@@ -163,18 +163,22 @@ const Feedback = sequelize.define('Feedback', {
     },
 });
 
-const GlobalSetting = sequelize.define('GlobalSetting', {
-    key: {
-        type: DataTypes.STRING,
-        primaryKey: true,
+const GlobalSetting = sequelize.define(
+    'GlobalSetting',
+    {
+        key: {
+            type: DataTypes.STRING,
+            primaryKey: true,
+        },
+        value: {
+            type: DataTypes.TEXT,
+            allowNull: false,
+        },
     },
-    value: {
-        type: DataTypes.TEXT,
-        allowNull: false,
-    },
-}, {
-    timestamps: true,
-});
+    {
+        timestamps: true,
+    }
+);
 
 const User = sequelize.define('User', {
     id: {

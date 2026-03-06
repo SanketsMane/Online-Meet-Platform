@@ -31,25 +31,27 @@ if ((EMAIL_ALERT || EMAIL_NOTIFY) && EMAIL_USERNAME && EMAIL_PASSWORD) {
         user: EMAIL_USERNAME,
         from: EMAIL_FROM,
         alerts_enabled: EMAIL_ALERT,
-        notifications_enabled: EMAIL_NOTIFY
+        notifications_enabled: EMAIL_NOTIFY,
     });
 }
 
-const transportOptions = EMAIL_SERVICE ? {
-    service: EMAIL_SERVICE,
-    auth: {
-        user: EMAIL_USERNAME,
-        pass: EMAIL_PASSWORD,
-    },
-} : {
-    host: EMAIL_HOST,
-    port: EMAIL_PORT,
-    secure: EMAIL_PORT === 465,
-    auth: {
-        user: EMAIL_USERNAME,
-        pass: EMAIL_PASSWORD,
-    },
-};
+const transportOptions = EMAIL_SERVICE
+    ? {
+          service: EMAIL_SERVICE,
+          auth: {
+              user: EMAIL_USERNAME,
+              pass: EMAIL_PASSWORD,
+          },
+      }
+    : {
+          host: EMAIL_HOST,
+          port: EMAIL_PORT,
+          secure: EMAIL_PORT === 465,
+          auth: {
+              user: EMAIL_USERNAME,
+              pass: EMAIL_PASSWORD,
+          },
+      };
 
 const transport = nodemailer.createTransport(transportOptions);
 

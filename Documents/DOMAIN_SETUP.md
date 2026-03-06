@@ -3,6 +3,7 @@
 This guide explains how to connect your GoDaddy domain (`tawktoo.com`) to your EC2 instance.
 
 ## Prerequisites
+
 1.  Access to your **GoDaddy Domain Control Center**.
 2.  The **Public IPv4 Address** of your AWS EC2 instance (e.g., `54.x.x.x`).
 
@@ -12,9 +13,9 @@ This guide explains how to connect your GoDaddy domain (`tawktoo.com`) to your E
 2.  Find `tawktoo.com` and click **DNS** (or "Manage DNS").
 3.  Add (or edit) the following **A Records**:
 
-| Type | Name | Value | TTL |
-| :--- | :--- | :--- | :--- |
-| **A** | `@` | `YOUR_EC2_PUBLIC_IP` | 600 seconds |
+| Type  | Name  | Value                | TTL         |
+| :---- | :---- | :------------------- | :---------- |
+| **A** | `@`   | `YOUR_EC2_PUBLIC_IP` | 600 seconds |
 | **A** | `sfu` | `YOUR_EC2_PUBLIC_IP` | 600 seconds |
 | **A** | `www` | `YOUR_EC2_PUBLIC_IP` | 600 seconds |
 
@@ -26,13 +27,16 @@ Once the DNS records have propagated (check using [whatsmydns.net](https://whats
 
 1.  **SSH into your EC2 instance**.
 2.  **Update `.env`**:
+
     ```bash
     nano .env
     ```
+
     Ensure `HOST_URL` and `OG_URL` point to `https://tawktoo.com` or `https://sfu.tawktoo.com`.
 
 3.  **Generate SSL Certificates (Certbot)**:
     If you haven't already, run Certbot to get SSL certificates for the new domain:
+
     ```bash
     sudo certbot certonly --standalone -d tawktoo.com -d sfu.tawktoo.com
     ```

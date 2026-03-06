@@ -10,7 +10,7 @@
     --link-color: #0270d7;
     --screen-reader-bg: #f1f1f1;
     --screen-reader-text: #f1f1f1;
-    
+
     /* Button Secondary Text Color */
     --btn-secondary-color: rgba(255, 255, 255, 0.88);
 }
@@ -25,7 +25,7 @@
     --secondary-bg: #f1f1f1;
     --blockquote-color: #666;
     --link-color: #0270d7;
-    
+
     /* Button Secondary Text Color in Light Mode */
     --btn-secondary-color: #333333;
 }
@@ -59,7 +59,7 @@ html {
 
 [data-theme='light'] .button-secondary {
     background: #e9ecef;
-    box-shadow: 0 4px 6px rgba(0,0,0,0.1);
+    box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1);
     border: 1px solid #ced4da;
 }
 

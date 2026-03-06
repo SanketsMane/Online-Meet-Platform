@@ -9,10 +9,10 @@ tawktoo is a powerful, real-time video conferencing platform built with **Node.j
 - **🌐 High-Performance Media**: Powered by **Mediasoup (SFU)** for high-capacity, low-latency video and audio rooms.
 - **🛡️ Secure Communications**: End-to-end encryption using SRTP and DTLS.
 - **💻 Full-Featured Meetings**:
-  - Real-time Chat & Polling
-  - High-resolution Screen Sharing
-  - Interactive Whiteboard
-  - File Sharing & Recording
+    - Real-time Chat & Polling
+    - High-resolution Screen Sharing
+    - Interactive Whiteboard
+    - File Sharing & Recording
 - **🛠️ Developer Portal**: A dedicated portal for developers to manage API Keys, access integration guides, and build atop the tawktoo infrastructure.
 - **📊 Admin Dashboard**: Comprehensive system oversight for managing rooms, monitoring server health, and user administration.
 - **🎨 Modern UI**: A premium "Glassmorphism" aesthetic with full dark/light theme support.
@@ -39,30 +39,34 @@ tawktoo is a powerful, real-time video conferencing platform built with **Node.j
 ### Installation
 
 1. **Clone the repository**:
-   ```bash
-   git clone https://github.com/SanketsMane/Online-Meet-Platform.git
-   cd Online-Meet-Platform
-   ```
+
+    ```bash
+    git clone https://github.com/SanketsMane/Online-Meet-Platform.git
+    cd Online-Meet-Platform
+    ```
 
 2. **Install dependencies**:
-   ```bash
-   npm install
-   ```
+
+    ```bash
+    npm install
+    ```
 
 3. **Configure Environment Variables**:
    Copy the template and update your settings:
-   ```bash
-   cp .env.template .env
-   ```
+
+    ```bash
+    cp .env.template .env
+    ```
 
 4. **Run the server**:
-   ```bash
-   # Production mode
-   npm start
 
-   # Development mode (with nodemon)
-   npm run start-dev
-   ```
+    ```bash
+    # Production mode
+    npm start
+
+    # Development mode (with nodemon)
+    npm run start-dev
+    ```
 
 The application will be available at `http://localhost:3010`.
 
@@ -78,6 +82,7 @@ For production deployment on AWS, please refer to our detailed guide:
 ## 👨‍💻 Developed By
 
 **Sanket Mane**
+
 - **Role**: Full Stack Developer
 - **Phone**: 7310013030
 - **Email**: sanketmane7170@gmail.com

@@ -1,9 +1,9 @@
-<!DOCTYPE html>
+<!doctype html>
 <html lang="en" class="no-js">
     <head>
         <title id="title">tawktoo - About</title>
         <link id="icon" rel="shortcut icon" href="../images/logo.svg" />
-        
+
         <meta charset="utf-8" />
         <meta http-equiv="X-UA-Compatible" content="IE=edge" />
         <meta name="viewport" content="width=device-width, initial-scale=1.0" />
@@ -18,15 +18,15 @@
                             gray: {
                                 900: '#15181d',
                                 800: '#1d2026',
-                            }
-                        }
-                    }
-                }
-            }
+                            },
+                        },
+                    },
+                },
+            };
         </script>
         <script src="https://kit.fontawesome.com/7433d3320f.js" crossorigin="anonymous"></script>
         <link rel="stylesheet" href="https://fonts.googleapis.com/css?family=IBM+Plex+Sans:400,600" />
-        
+
         <style>
             body {
                 font-family: 'IBM Plex Sans', sans-serif;
@@ -54,21 +54,35 @@
     </head>
     <body class="bg-white dark:bg-gray-900 text-gray-800 dark:text-white antialiased transition-colors duration-300">
         <!-- Header -->
-        <header class="bg-white dark:bg-gray-900/95 sticky top-0 z-50 transition-all duration-300 border-b border-gray-100 dark:border-gray-800">
+        <header
+            class="bg-white dark:bg-gray-900/95 sticky top-0 z-50 transition-all duration-300 border-b border-gray-100 dark:border-gray-800"
+        >
             <div class="w-full h-16 flex px-4 md:px-6 flex-row items-center justify-between">
                 <a href="/" class="flex items-center gap-2 group mr-8">
-                    <img src="../images/logo.svg" alt="logo" class="h-7 w-auto mb-1">
+                    <img src="../images/logo.svg" alt="logo" class="h-7 w-auto mb-1" />
                 </a>
                 <nav class="hidden md:flex items-center gap-6 mr-auto">
-                    <a href="/login" class="text-base font-normal text-gray-500 hover:text-blue-600 transition-colors">Host Login</a>
-                    <a href="/developer" class="text-base font-normal text-gray-500 hover:text-blue-600 transition-colors">Developer</a>
+                    <a href="/login" class="text-base font-normal text-gray-500 hover:text-blue-600 transition-colors"
+                        >Host Login</a
+                    >
+                    <a
+                        href="/developer"
+                        class="text-base font-normal text-gray-500 hover:text-blue-600 transition-colors"
+                        >Developer</a
+                    >
                 </nav>
                 <div class="flex items-center gap-2">
-                    <button id="themeToggle" class="p-2.5 rounded-full text-gray-500 hover:bg-gray-100 dark:hover:bg-gray-800 transition-colors focus:outline-none">
+                    <button
+                        id="themeToggle"
+                        class="p-2.5 rounded-full text-gray-500 hover:bg-gray-100 dark:hover:bg-gray-800 transition-colors focus:outline-none"
+                    >
                         <i class="fas fa-moon dark:hidden text-lg"></i>
                         <i class="fas fa-sun hidden dark:block text-lg"></i>
                     </button>
-                    <a href="/newroom" class="hidden sm:flex items-center justify-center bg-blue-600 hover:bg-blue-700 text-white font-medium px-5 py-2 rounded-lg transition-all shadow-sm hover:shadow-md active:scale-[0.98]">
+                    <a
+                        href="/newroom"
+                        class="hidden sm:flex items-center justify-center bg-blue-600 hover:bg-blue-700 text-white font-medium px-5 py-2 rounded-lg transition-all shadow-sm hover:shadow-md active:scale-[0.98]"
+                    >
                         Join
                     </a>
                 </div>
@@ -83,7 +97,8 @@
                         Meet with everyone
                     </h1>
                     <p class="text-xl text-gray-500 dark:text-gray-400 max-w-2xl mx-auto leading-relaxed">
-                        tawktoo is a high-performance, real-time communication platform designed to bring people together through crystal-clear video and audio.
+                        tawktoo is a high-performance, real-time communication platform designed to bring people
+                        together through crystal-clear video and audio.
                     </p>
                 </div>
 
@@ -91,41 +106,62 @@
                 <div class="content-section">
                     <h2>Our Mission</h2>
                     <p>
-                        We believe that great ideas happen when people can connect effortlessly. Our mission is to provide a powerful, open-source communication infrastructure that is accessible to everyone—from individual users to enterprise developers.
+                        We believe that great ideas happen when people can connect effortlessly. Our mission is to
+                        provide a powerful, open-source communication infrastructure that is accessible to everyone—from
+                        individual users to enterprise developers.
                     </p>
                     <p>
-                        Built on advanced WebRTC technologies and the Mediasoup Selective Forwarding Unit (SFU), tawktoo ensures that your meetings are not just fast and reliable, but also incredibly secure and private.
+                        Built on advanced WebRTC technologies and the Mediasoup Selective Forwarding Unit (SFU), tawktoo
+                        ensures that your meetings are not just fast and reliable, but also incredibly secure and
+                        private.
                     </p>
 
                     <h2>Technical Excellence</h2>
                     <p>
-                        Our architecture is designed for the modern web. By leveraging SFU topology, we enable multi-participant video conferences with minimal latency and high efficiency. This means more stable connections, even on limited bandwidth, and a smoother experience for everyone involved.
+                        Our architecture is designed for the modern web. By leveraging SFU topology, we enable
+                        multi-participant video conferences with minimal latency and high efficiency. This means more
+                        stable connections, even on limited bandwidth, and a smoother experience for everyone involved.
                     </p>
 
                     <h2>Privacy by Design</h2>
                     <p>
-                        Your privacy is not an afterthought; it's our core principle. We do not store your media streams on our servers. Recordings are handled locally in your browser, ensuring that sensitive conversations remain between you and your participants.
+                        Your privacy is not an afterthought; it's our core principle. We do not store your media streams
+                        on our servers. Recordings are handled locally in your browser, ensuring that sensitive
+                        conversations remain between you and your participants.
                     </p>
                 </div>
 
                 <!-- Developer Section -->
                 <div class="mt-24 pt-20 border-t border-gray-100 dark:border-gray-800">
-                    <div class="bg-gray-50 dark:bg-gray-800/50 rounded-3xl p-8 md:p-12 flex flex-col md:flex-row items-center gap-8 md:gap-12 transition-colors duration-300">
-                        <div class="w-32 h-32 md:w-40 md:h-40 rounded-full bg-blue-600 flex items-center justify-center text-white text-5xl md:text-6xl shadow-xl shadow-blue-500/20">
+                    <div
+                        class="bg-gray-50 dark:bg-gray-800/50 rounded-3xl p-8 md:p-12 flex flex-col md:flex-row items-center gap-8 md:gap-12 transition-colors duration-300"
+                    >
+                        <div
+                            class="w-32 h-32 md:w-40 md:h-40 rounded-full bg-blue-600 flex items-center justify-center text-white text-5xl md:text-6xl shadow-xl shadow-blue-500/20"
+                        >
                             <i class="fas fa-user-code"></i>
                         </div>
                         <div class="flex-1 text-center md:text-left">
-                            <span class="text-blue-600 font-bold tracking-widest text-sm uppercase mb-3 block">Lead Developer</span>
+                            <span class="text-blue-600 font-bold tracking-widest text-sm uppercase mb-3 block"
+                                >Lead Developer</span
+                            >
                             <h3 class="text-3xl font-bold text-gray-900 dark:text-white mb-4">Sanket Mane</h3>
                             <p class="text-gray-600 dark:text-gray-400 mb-6 text-lg">
-                                Passionate Full Stack Developer focused on building high-performance real-time applications and seamless user experiences.
+                                Passionate Full Stack Developer focused on building high-performance real-time
+                                applications and seamless user experiences.
                             </p>
                             <div class="flex flex-wrap justify-center md:justify-start gap-4">
-                                <a href="mailto:sanketmane7170@gmail.com" class="inline-flex items-center gap-2 px-5 py-2.5 bg-white dark:bg-gray-900 border border-gray-200 dark:border-gray-700 rounded-xl hover:border-blue-600 dark:hover:border-blue-500 transition-colors font-medium">
+                                <a
+                                    href="mailto:sanketmane7170@gmail.com"
+                                    class="inline-flex items-center gap-2 px-5 py-2.5 bg-white dark:bg-gray-900 border border-gray-200 dark:border-gray-700 rounded-xl hover:border-blue-600 dark:hover:border-blue-500 transition-colors font-medium"
+                                >
                                     <i class="fas fa-envelope text-blue-600"></i>
                                     Email
                                 </a>
-                                <a href="tel:7310013030" class="inline-flex items-center gap-2 px-5 py-2.5 bg-white dark:bg-gray-900 border border-gray-200 dark:border-gray-700 rounded-xl hover:border-blue-600 dark:hover:border-blue-500 transition-colors font-medium">
+                                <a
+                                    href="tel:7310013030"
+                                    class="inline-flex items-center gap-2 px-5 py-2.5 bg-white dark:bg-gray-900 border border-gray-200 dark:border-gray-700 rounded-xl hover:border-blue-600 dark:hover:border-blue-500 transition-colors font-medium"
+                                >
                                     <i class="fas fa-phone text-blue-600"></i>
                                     Call
                                 </a>

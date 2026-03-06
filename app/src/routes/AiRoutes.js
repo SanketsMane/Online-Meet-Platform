@@ -14,7 +14,10 @@ const log = new Logger('AiRoutes');
 async function getOpenAI() {
     const enabled = await settingsService.get('CHATGPT_ENABLED');
     const apiKey = await settingsService.get('CHATGPT_API_KEY');
-    const basePath = await settingsService.get('CHATGPT_BASE_PATH') || config.integrations?.chatGPT?.basePath || 'https://api.openai.com/v1/';
+    const basePath =
+        (await settingsService.get('CHATGPT_BASE_PATH')) ||
+        config.integrations?.chatGPT?.basePath ||
+        'https://api.openai.com/v1/';
 
     if (!enabled || !apiKey) return null;
 
@@ -48,9 +51,7 @@ router.post('/summarize', async (req, res) => {
         }
 
         // Prepare the transcript text
-        const transcriptText = transcripts
-            .map((t) => `[${t.time}] ${t.name}: ${t.caption}`)
-            .join('\n');
+        const transcriptText = transcripts.map((t) => `[${t.time}] ${t.name}: ${t.caption}`).join('\n');
 
         log.debug(`Summarizing meeting for room: ${roomId}`, { transcriptLength: transcriptText.length });
 
@@ -65,9 +66,9 @@ router.post('/summarize', async (req, res) => {
             ${transcriptText}
         `;
 
-        const model = await settingsService.get('CHATGPT_MODEL') || 'gpt-3.5-turbo';
-        const max_tokens = await settingsService.get('CHATGPT_MAX_TOKENS') || 1024;
-        const temperature = await settingsService.get('CHATGPT_TEMPERATURE') || 0.7;
+        const model = (await settingsService.get('CHATGPT_MODEL')) || 'gpt-3.5-turbo';
+        const max_tokens = (await settingsService.get('CHATGPT_MAX_TOKENS')) || 1024;
+        const temperature = (await settingsService.get('CHATGPT_TEMPERATURE')) || 0.7;
 
         const completion = await openai.chat.completions.create({
             model: model,

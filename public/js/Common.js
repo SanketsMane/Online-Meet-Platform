@@ -214,11 +214,11 @@ if (genRoomButton && meetingDropdown) {
 function createMeetingForLater() {
     const room = getUUID4();
     const url = window.location.origin + '/join/?room=' + room;
-    
+
     meetingDropdown.classList.remove('show');
-    
+
     Swal.fire({
-        title: 'Here\'s the link to your meeting',
+        title: "Here's the link to your meeting",
         html: `
             <div class="swal-content-p">
                 <p style="font-size: 14px; color: #5f6368; line-height: 20px; margin-bottom: 12px; font-family: inherit;">Copy this link and send it to people you want to meet with. Be sure to save it so you can use it later too.</p>
@@ -233,8 +233,8 @@ function createMeetingForLater() {
         showConfirmButton: false,
         showCloseButton: true,
         customClass: {
-            container: 'swal2-link-generator'
-        }
+            container: 'swal2-link-generator',
+        },
     });
 }
 
@@ -259,7 +259,7 @@ function scheduleInCalendar() {
     const title = encodeURIComponent('Video Meeting');
     const description = encodeURIComponent(`Join my video meeting: ${url}`);
     const calendarUrl = `https://www.google.com/calendar/render?action=TEMPLATE&text=${title}&details=${description}`;
-    
+
     window.open(calendarUrl, '_blank');
 }
 
@@ -340,7 +340,7 @@ async function initDynamicFooter() {
     try {
         const response = await fetch('/api/v1/footer');
         const config = await response.json();
-        
+
         if (!config) return;
 
         const { copyright, contactEmail, links } = config;
@@ -348,11 +348,15 @@ async function initDynamicFooter() {
         // Create footer HTML with premium aesthetics (synchronized with theme)
         let linksHtml = '';
         if (links && Array.isArray(links)) {
-            linksHtml = links.map(link => `
+            linksHtml = links
+                .map(
+                    (link) => `
                 <a href="${link.url}" class="text-sm text-gray-500 hover:text-blue-600 dark:text-gray-400 dark:hover:text-blue-400 transition-colors mx-3">
                     ${link.label}
                 </a>
-            `).join('');
+            `
+                )
+                .join('');
         }
 
         footerContainer.innerHTML = `
@@ -371,10 +375,10 @@ async function initDynamicFooter() {
                 </div>
             </div>
         `;
-        
+
         // Apply classes to container if not already present
-        footerContainer.className = "text-gray-600 dark:text-gray-400 body-font py-12 bg-white dark:bg-gray-900 border-t border-gray-100 dark:border-gray-800 transition-colors duration-300";
-        
+        footerContainer.className =
+            'text-gray-600 dark:text-gray-400 body-font py-12 bg-white dark:bg-gray-900 border-t border-gray-100 dark:border-gray-800 transition-colors duration-300';
     } catch (err) {
         console.error('Failed to initialize dynamic footer:', err);
     }

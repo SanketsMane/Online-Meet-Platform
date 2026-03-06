@@ -7,7 +7,7 @@ const DEV_USER = { name: 'TestDeveloper', email: `testdev_${Date.now()}@example.
 // Axios instance with relaxed status validation
 const client = axios.create({
     baseURL: BASE_URL,
-    validateStatus: () => true // Allow handling 4xx/5xx responses manually
+    validateStatus: () => true, // Allow handling 4xx/5xx responses manually
 });
 
 async function runVerification() {
@@ -35,7 +35,7 @@ async function runVerification() {
         console.log('✅ Developer registered.');
     } else {
         console.error('❌ Registration failed:', register.data);
-         // If already exists, might continue, but email is unique by timestamp
+        // If already exists, might continue, but email is unique by timestamp
         process.exit(1);
     }
 
@@ -52,9 +52,13 @@ async function runVerification() {
 
     // 4. Generate API Key
     console.log('\n4️⃣  Generating API Key...');
-    const keyGen = await client.post('/api/v1/keys', { name: 'VerificationKey' }, {
-        headers: { Authorization: `Bearer ${devToken}` }
-    });
+    const keyGen = await client.post(
+        '/api/v1/keys',
+        { name: 'VerificationKey' },
+        {
+            headers: { Authorization: `Bearer ${devToken}` },
+        }
+    );
     if (keyGen.status === 200 && keyGen.data.apiKey) {
         apiKey = keyGen.data.apiKey;
         console.log('✅ API Key generated:', apiKey);
@@ -66,13 +70,17 @@ async function runVerification() {
     // 5. Create Meetings (Usage)
     console.log('\n5️⃣  Creating 3 Meetings via API Key...');
     for (let i = 0; i < 3; i++) {
-        const meeting = await client.post('/api/v1/meeting', {}, {
-            headers: { 'x-api-key': apiKey }
-        });
+        const meeting = await client.post(
+            '/api/v1/meeting',
+            {},
+            {
+                headers: { 'x-api-key': apiKey },
+            }
+        );
         if (meeting.status === 200) {
             process.stdout.write('.');
         } else {
-            console.error(`\n❌ Meeting creation failed (${i+1}):`, meeting.data);
+            console.error(`\n❌ Meeting creation failed (${i + 1}):`, meeting.data);
         }
     }
     console.log('\n✅ 3 Meetings created.');
@@ -80,13 +88,13 @@ async function runVerification() {
     // 6. Verify Usage Stats
     console.log('\n6️⃣  Verifying Usage Stats...');
     const stats = await client.get('/api/v1/stats/usage', {
-        headers: { Authorization: `Bearer ${devToken}` }
+        headers: { Authorization: `Bearer ${devToken}` },
     });
-    
+
     // Check if we have data for today
     const today = new Date().toISOString().split('T')[0];
-    const todayStat = stats.data.find(d => d.date === today);
-    
+    const todayStat = stats.data.find((d) => d.date === today);
+
     if (todayStat && todayStat.count >= 3) {
         console.log(`✅ Usage stats verified. Count for ${today}: ${todayStat.count}`);
     } else {
@@ -97,10 +105,10 @@ async function runVerification() {
     // 7. Get Tenant ID (Admin)
     console.log('\n7️⃣  Fetching Tenant ID (Admin)...');
     const tenants = await client.get('/api/v1/admin/tenants', {
-        headers: { Authorization: `Bearer ${adminToken}` }
+        headers: { Authorization: `Bearer ${adminToken}` },
     });
-    
-    const tenant = tenants.data.find(t => t.email === DEV_USER.email);
+
+    const tenant = tenants.data.find((t) => t.email === DEV_USER.email);
     if (tenant) {
         tenantId = tenant.id;
         console.log('✅ Tenant ID found:', tenantId);
@@ -111,9 +119,13 @@ async function runVerification() {
 
     // 8. Ban User
     console.log('\n8️⃣  Banning User...');
-    const ban = await client.put(`/api/v1/admin/tenants/${tenantId}/status`, { status: 'banned' }, {
-        headers: { Authorization: `Bearer ${adminToken}` }
-    });
+    const ban = await client.put(
+        `/api/v1/admin/tenants/${tenantId}/status`,
+        { status: 'banned' },
+        {
+            headers: { Authorization: `Bearer ${adminToken}` },
+        }
+    );
     if (ban.status === 200) {
         console.log('✅ User banned.');
     } else {
@@ -122,17 +134,23 @@ async function runVerification() {
 
     // 9. Verify Ban (Login attempt)
     console.log('\n9️⃣  Verifying Login Block...');
-    const blockedLogin = await client.post('/api/v1/auth/login', { email: DEV_USER.email, password: DEV_USER.password });
+    const blockedLogin = await client.post('/api/v1/auth/login', {
+        email: DEV_USER.email,
+        password: DEV_USER.password,
+    });
     if (blockedLogin.status === 403) {
         console.log('✅ SUCCESS: Login blocked with 403.');
     } else {
-        console.error(`❌ FAILURE: User could still login or got wrong status: ${blockedLogin.status}`, blockedLogin.data);
+        console.error(
+            `❌ FAILURE: User could still login or got wrong status: ${blockedLogin.status}`,
+            blockedLogin.data
+        );
     }
 
     // 10. Admin Stats
     console.log('\n🔟 Verifying Admin Stats Endpoint...');
     const adminStats = await client.get('/api/v1/admin/stats', {
-        headers: { Authorization: `Bearer ${adminToken}` }
+        headers: { Authorization: `Bearer ${adminToken}` },
     });
     if (adminStats.status === 200 && adminStats.data.hasOwnProperty('activeRooms')) {
         console.log('✅ Admin Stats verified:', adminStats.data);

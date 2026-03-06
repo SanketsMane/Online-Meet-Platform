@@ -13,8 +13,8 @@ const BG_COLOR = '#f8fafc';
 class EmailService {
     /**
      * Get Base HTML Template
-     * @param {string} title 
-     * @param {string} content 
+     * @param {string} title
+     * @param {string} content
      * @returns {string}
      */
     static getHTMLTemplate(title, content) {
@@ -55,7 +55,7 @@ class EmailService {
 
     /**
      * Send Welcome Email to Developer
-     * @param {object} user 
+     * @param {object} user
      */
     static async sendWelcome(user) {
         const title = 'Welcome to the Developer Portal';
@@ -70,14 +70,14 @@ class EmailService {
             </ul>
             <a href="${config.server.hostUrl}/developer" class="button">Go to Dashboard</a>
         `;
-        
+
         await this.sendBrandedEmail(user.email, title, content);
     }
- 
+
     /**
      * Send OTP for Login or Password Reset
-     * @param {object} user 
-     * @param {string} otp 
+     * @param {object} user
+     * @param {string} otp
      */
     static async sendOTP(user, otp) {
         const title = 'One-Time Password (OTP) Verification';
@@ -89,15 +89,15 @@ class EmailService {
             </div>
             <p style="font-size: 14px; color: #64748b;">If you did not request this code, please ignore this email or contact support if you have concerns about your account security.</p>
         `;
-        
+
         await this.sendBrandedEmail(user.email, title, content);
     }
 
     /**
      * Send Security Alert (Key Revocation/Deletion)
-     * @param {object} user 
-     * @param {string} action 
-     * @param {string} keyName 
+     * @param {object} user
+     * @param {string} action
+     * @param {string} keyName
      */
     static async sendSecurityAlert(user, action, keyName) {
         const title = 'Security Alert: API Key Managed';
@@ -110,13 +110,13 @@ class EmailService {
             </div>
             <p>If you did not authorize this action, please log in and change your password immediately.</p>
         `;
-        
+
         await this.sendBrandedEmail(user.email, title, content);
     }
 
     /**
      * Send Incident Alert to Admin
-     * @param {object} data 
+     * @param {object} data
      */
     static async sendIncidentAlert(data) {
         const title = '🚨 System Incidence Alert';
@@ -129,7 +129,7 @@ class EmailService {
                 <p><strong>Timestamp:</strong> ${new Date().toISOString()}</p>
             </div>
         `;
-        
+
         // Send to global alert recipient defined in config
         const adminEmail = config.integrations?.email?.sendTo;
         if (adminEmail) {
@@ -139,20 +139,20 @@ class EmailService {
 
     /**
      * Send Branded Email Helper
-     * @param {string} to 
-     * @param {string} title 
-     * @param {string} content 
+     * @param {string} to
+     * @param {string} title
+     * @param {string} content
      */
     static async sendBrandedEmail(to, title, content) {
         try {
             const html = this.getHTMLTemplate(title, content);
             const subject = `${APP_NAME} - ${title}`;
-            
+
             // Use the base nodemailer library's send function
             // We need to export it or use it indirectly
             const { sendEmail } = require('../lib/nodemailer');
             sendEmail(subject, html, to);
-            
+
             log.info('Branded email sent', { to, title });
         } catch (error) {
             log.error('Failed to send branded email', error);

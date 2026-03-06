@@ -7,7 +7,7 @@ const { connectDB } = require('../app/src/db/database');
 async function verify() {
     console.log('Testing database connection...');
     console.log('Configured Dialect:', process.env.DB_DIALECT || 'sqlite (default)');
-    
+
     try {
         await connectDB();
         console.log('SUCCESS: Database verification completed.');
