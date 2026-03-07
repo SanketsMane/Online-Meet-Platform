@@ -870,10 +870,15 @@
                                         />
                                     </div>
                                     <div class="md:col-span-2 pt-4 border-t border-gray-100 dark:border-gray-800">
-                                        <h4 class="text-lg font-bold mb-4 flex items-center gap-2">
-                                            <i class="fas fa-address-book text-google-blue"></i>
-                                            Contact Information
-                                        </h4>
+                                        <div class="flex items-center justify-between mb-4">
+                                            <h4 class="text-lg font-bold flex items-center gap-2">
+                                                <i class="fas fa-address-book text-google-blue"></i>
+                                                Contact Information
+                                            </h4>
+                                            <button type="button" onclick="changeModule('cms')" class="text-xs font-bold text-google-blue hover:underline">
+                                                <i class="fas fa-edit mr-1"></i> Manage Contact Page Content
+                                            </button>
+                                        </div>
                                         <div class="grid grid-cols-1 md:grid-cols-2 gap-4">
                                             <div>
                                                 <label class="block text-sm font-semibold mb-2">Public Phone Number</label>
@@ -1114,6 +1119,7 @@
                     audit: 'Audit Logs',
                     settings: 'Settings',
                     footer: 'Branding',
+                    cms: 'CMS Pages',
                 };
                 document.getElementById('currentModuleTitle').textContent = titleMap[moduleId] || 'System Hub';
 
