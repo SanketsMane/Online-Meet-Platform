@@ -18,7 +18,7 @@ const Tenant = sequelize.define('Tenant', {
     email: {
         type: DataTypes.STRING,
         allowNull: false,
-        unique: true,
+        unique: false,
         validate: {
             isEmail: true,
         },
@@ -194,7 +194,7 @@ const User = sequelize.define('User', {
     email: {
         type: DataTypes.STRING,
         allowNull: true,
-        unique: true,
+        unique: false,
         validate: {
             isEmail: true,
         },
