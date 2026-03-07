@@ -1140,7 +1140,7 @@
             // --- CMS MANAGEMENT ---
             async function loadPages() {
                 try {
-                    const res = await axios.get(`${API_BASE}/pages`, { headers: { Authorization: adminToken } });
+                    const res = await axios.get(`${API_BASE}/pages`, { headers: { Authorization: `Bearer ${adminToken}` } });
                     const pages = res.data;
                     const container = document.getElementById('cms-pages-list');
                     
@@ -1205,7 +1205,7 @@
 
             async function editPage(id) {
                 try {
-                    const res = await axios.get(`${API_BASE}/pages/${id}`, { headers: { Authorization: adminToken } });
+                    const res = await axios.get(`${API_BASE}/pages/${id}`, { headers: { Authorization: `Bearer ${adminToken}` } });
                     const page = res.data;
                     document.getElementById('pageModalTitle').innerText = 'Edit CMS Page';
                     document.getElementById('pageId').value = page.id;
@@ -1230,9 +1230,9 @@
 
                 try {
                     if (id) {
-                        await axios.put(`${API_BASE}/pages/${id}`, data, { headers: { Authorization: adminToken } });
+                        await axios.put(`${API_BASE}/pages/${id}`, data, { headers: { Authorization: `Bearer ${adminToken}` } });
                     } else {
-                        await axios.post(`${API_BASE}/pages`, data, { headers: { Authorization: adminToken } });
+                        await axios.post(`${API_BASE}/pages`, data, { headers: { Authorization: `Bearer ${adminToken}` } });
                     }
                     closePageModal();
                     loadPages();
@@ -1254,7 +1254,7 @@
 
                 if (result.isConfirmed) {
                     try {
-                        await axios.delete(`${API_BASE}/pages/${id}`, { headers: { Authorization: adminToken } });
+                        await axios.delete(`${API_BASE}/pages/${id}`, { headers: { Authorization: `Bearer ${adminToken}` } });
                         loadPages();
                         Swal.fire('Deleted!', 'Page has been removed.', 'success');
                     } catch (err) {
