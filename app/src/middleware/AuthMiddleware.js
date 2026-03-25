@@ -3,7 +3,7 @@
 const { ApiKey, Tenant } = require('../db/models');
 const crypto = require('crypto');
 const jwt = require('jsonwebtoken');
-const bcrypt = require('bcrypt');
+const bcrypt = require('bcryptjs');
 const CryptoJS = require('crypto-js');
 const config = require('../config');
 const Logger = require('../Logger');

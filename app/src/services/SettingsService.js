@@ -112,6 +112,7 @@ class SettingsService {
                 return config.integrations?.deepSeek?.apiKey;
             case 'FOOTER_CONFIG':
                 return {
+                    brandName: 'tawktoo',
                     copyright: '© 2026 tawktoo',
                     contactEmail: 'sanketmane7170@gmail.com',
                     links: [

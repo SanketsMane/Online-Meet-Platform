@@ -1,4 +1,4 @@
-'use strict'; // Trigger restart 1
+'use strict'; // Trigger restart 2
 
 /*
 ████████╗ █████╗ ██╗    ██╗██╗  ██╗████████╗ ██████╗  ██████╗ 
@@ -640,14 +640,20 @@ function startServer() {
                     branding.site.title = settings.app_name + ' - Free Video Calls, Messaging and Screen Sharing';
                 }
             }
-            if (settings.logo_url && branding.site) {
-                branding.site.icon = settings.logo_url;
-                branding.site.appleTouchIcon = settings.logo_url;
+            if (settings.logo_url) {
+                branding.logo_url = settings.logo_url;
+                if (branding.site) {
+                    branding.site.icon = settings.logo_url;
+                    branding.site.appleTouchIcon = settings.logo_url;
+                }
                 if (branding.about) branding.about.imageUrl = settings.logo_url;
             }
             // Author: Sanket - Merge specific db settings into brand config
             if (settings.brand_color) branding.brand_color = settings.brand_color;
-            if (settings.favicon_url && branding.site) branding.site.icon = settings.favicon_url;
+            if (settings.favicon_url) {
+                branding.favicon_url = settings.favicon_url;
+                if (branding.site) branding.site.icon = settings.favicon_url;
+            }
             if (settings.LOGO_CONFIG) branding.logo_config = settings.LOGO_CONFIG;
             if (settings.FOOTER_CONFIG) branding.footer_config = settings.FOOTER_CONFIG;
             if (settings.LOGO_REDIRECT_URL) branding.logo_redirect_url = settings.LOGO_REDIRECT_URL;

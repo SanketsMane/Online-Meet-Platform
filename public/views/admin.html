@@ -62,6 +62,7 @@
         <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
         <script defer src="../js/Brand.js"></script>
         <script defer src="../js/Theme.js"></script>
+        <script defer src="../js/components.js"></script>
         <script src="https://cdn.jsdelivr.net/npm/axios/dist/axios.min.js"></script>
         <script defer src="https://cdn.jsdelivr.net/npm/sweetalert2@11.4.8"></script>
 
@@ -275,43 +276,7 @@
             <!-- Main Content -->
             <div class="flex-1 flex flex-col min-w-0">
                 <!-- Header -->
-                <header
-                    class="h-16 bg-white dark:bg-[#1d2026] border-b border-gray-200 dark:border-gray-800 flex items-center justify-between px-6 sticky top-0 z-40"
-                >
-                    <div class="flex items-center gap-4">
-                        <button
-                            id="sidebarToggle"
-                            class="lg:hidden p-2 hover:bg-gray-100 dark:hover:bg-gray-800 rounded-lg"
-                        >
-                            <i class="fas fa-bars"></i>
-                        </button>
-                        <div class="text-sm font-medium text-gray-500">
-                            System /
-                            <span id="currentModuleTitle" class="text-gray-900 dark:text-white">Dashboard</span>
-                        </div>
-                    </div>
-
-                    <div class="flex items-center gap-4">
-                        <button
-                            id="themeToggle"
-                            class="p-2.5 rounded-lg hover:bg-gray-100 dark:hover:bg-gray-800 text-gray-500 transition-all"
-                        >
-                            <i class="fas fa-moon dark:hidden"></i>
-                            <i class="fas fa-sun hidden dark:block"></i>
-                        </button>
-                        <div class="h-8 w-[1px] bg-gray-200 dark:bg-gray-700 mx-2"></div>
-                        <div class="flex items-center gap-3">
-                            <div
-                                class="w-9 h-9 bg-google-blue rounded-full flex items-center justify-center text-white font-bold text-sm"
-                            >
-                                <i class="fas fa-user-shield"></i>
-                            </div>
-                            <span id="adminDisplayName" class="hidden sm:inline font-medium text-sm"
-                                >Administrator</span
-                            >
-                        </div>
-                    </div>
-                </header>
+                <header class="site-header-shared" data-type="dashboard"></header>
 
                 <!-- Module Container -->
                 <main class="flex-1 overflow-x-hidden p-6 lg:p-10">
@@ -839,36 +804,7 @@
                                             />
                                         </div>
                                     </div>
-                                    <div>
-                                        <label class="block text-sm font-semibold mb-2">Logo Dimension (Width)</label>
-                                        <div class="flex items-center gap-4 py-2">
-                                            <input
-                                                type="range"
-                                                id="setting_logo_width"
-                                                min="50"
-                                                max="400"
-                                                step="5"
-                                                class="flex-1 h-2 bg-gray-200 rounded-lg appearance-none cursor-pointer"
-                                            />
-                                            <span id="logo_size_value" class="text-sm font-bold w-12">150px</span>
-                                        </div>
-                                    </div>
-                                    <div>
-                                        <label class="block text-sm font-semibold mb-2">SVG Logo Endpoint</label>
-                                        <input
-                                            type="text"
-                                            id="setting_logo_url"
-                                            class="w-full p-3 rounded-lg bg-gray-50 dark:bg-gray-800/50 border border-gray-200 dark:border-gray-700 outline-none font-mono text-xs"
-                                        />
-                                    </div>
-                                    <div>
-                                        <label class="block text-sm font-semibold mb-2">Favicon Location</label>
-                                        <input
-                                            type="text"
-                                            id="setting_favicon_url"
-                                            class="w-full p-3 rounded-lg bg-gray-50 dark:bg-gray-800/50 border border-gray-200 dark:border-gray-700 outline-none font-mono text-xs"
-                                        />
-                                    </div>
+                                    <!-- Branding managed in Branding Module -->
                                     <div class="md:col-span-2 pt-4 border-t border-gray-100 dark:border-gray-800">
                                         <div class="flex items-center justify-between mb-4">
                                             <h4 class="text-lg font-bold flex items-center gap-2">
@@ -940,57 +876,172 @@
                     <!-- Branding Module -->
                     <section id="module-footer" class="module-section hidden animate-in fade-in slide-in-from-bottom-4">
                         <form id="footerForm" class="max-w-4xl space-y-8">
-                            <h2 class="text-3xl font-heading font-bold mb-8">Infrastructure Branding</h2>
-
-                            <div
-                                class="p-8 bg-white dark:bg-[#1d2026] rounded-2xl border border-gray-100 dark:border-gray-800 space-y-6"
-                            >
+                            <div class="flex items-center justify-between mb-2">
                                 <div>
-                                    <label class="block text-sm font-semibold mb-2">Legal Copyright Notice</label>
-                                    <input
-                                        type="text"
-                                        id="footer_copyright"
-                                        class="w-full p-3 rounded-lg bg-gray-50 dark:bg-gray-800/50 border border-gray-200 dark:border-gray-700 outline-none"
-                                    />
+                                    <h2 class="text-3xl font-heading font-bold">Site Branding & Footer</h2>
+                                    <p class="text-sm text-gray-500 mt-1">Manage logo, favicon, footer links, and all site-wide identity settings.</p>
                                 </div>
-                                <div>
-                                    <label class="block text-sm font-semibold mb-2">Support & Operations Email</label>
-                                    <input
-                                        type="email"
-                                        id="footer_contactEmail"
-                                        class="w-full p-3 rounded-lg bg-gray-50 dark:bg-gray-800/50 border border-gray-200 dark:border-gray-700 outline-none"
-                                    />
-                                </div>
+                                <button type="submit" id="saveFooterBtn" class="px-6 py-3 bg-gray-900 dark:bg-white text-white dark:text-gray-950 rounded-xl font-bold text-sm transition-all active:scale-[0.98] flex items-center gap-2">
+                                    <i class="fas fa-save"></i> Save All Changes
+                                </button>
+                            </div>
 
-                                <div class="space-y-4">
-                                    <div class="flex items-center justify-between">
-                                        <label class="block text-sm font-semibold text-google-blue"
-                                            >Global Navigation Shortcuts</label
-                                        >
-                                        <button
-                                            type="button"
-                                            onclick="addFooterLinkRow()"
-                                            class="text-xs font-bold bg-google-blue/10 text-google-blue px-3 py-1.5 rounded-lg hover:bg-google-blue hover:text-white transition-all"
-                                        >
-                                            <i class="fas fa-plus mr-1"></i> Add Resource
-                                        </button>
+                            <!-- ── Logo & Icons ── -->
+                            <div class="p-8 bg-white dark:bg-[#1d2026] rounded-2xl border border-gray-100 dark:border-gray-800 space-y-6">
+                                <div class="flex items-center gap-3 mb-2">
+                                    <div class="w-10 h-10 rounded-xl bg-blue-500/10 text-blue-500 flex items-center justify-center"><i class="fas fa-image"></i></div>
+                                    <div>
+                                        <h3 class="text-lg font-bold">Logo & Icons</h3>
+                                        <p class="text-xs text-gray-500 font-medium">Visual brand identity — logo, favicon, sizes</p>
                                     </div>
-                                    <div id="footer_links_container" class="space-y-3">
-                                        <!-- Dynamic Rows -->
+                                </div>
+                                <div class="grid grid-cols-1 md:grid-cols-2 gap-6">
+                                    <div>
+                                        <label class="block text-[10px] font-bold text-gray-400 uppercase mb-2 tracking-widest">Website Logo URL</label>
+                                        <div class="flex items-center gap-2">
+                                            <input type="text" id="setting_logo_url" placeholder="https://example.com/logo.svg" class="w-full p-3 rounded-xl bg-gray-50 dark:bg-gray-800 border border-gray-200 dark:border-gray-700 outline-none focus:ring-2 focus:ring-blue-500 transition-all font-mono text-sm" />
+                                            <img id="logo_preview" src="" alt="preview" class="h-9 w-9 rounded-lg border border-gray-200 dark:border-gray-700 object-contain hidden" />
+                                        </div>
+                                    </div>
+                                    <div>
+                                        <label class="block text-[10px] font-bold text-gray-400 uppercase mb-2 tracking-widest">Favicon URL</label>
+                                        <div class="flex items-center gap-2">
+                                            <input type="text" id="setting_favicon_url" placeholder="https://example.com/favicon.ico" class="w-full p-3 rounded-xl bg-gray-50 dark:bg-gray-800 border border-gray-200 dark:border-gray-700 outline-none focus:ring-2 focus:ring-blue-500 transition-all font-mono text-sm" />
+                                            <img id="favicon_preview" src="" alt="favicon" class="h-9 w-9 rounded-lg border border-gray-200 dark:border-gray-700 object-contain hidden" />
+                                        </div>
+                                    </div>
+                                </div>
+                                <div class="grid grid-cols-1 md:grid-cols-2 gap-6 pt-2">
+                                    <div>
+                                        <label class="block text-[10px] font-bold text-gray-400 uppercase mb-2 tracking-widest">Logo Display Width</label>
+                                        <input type="text" id="setting_logo_width" placeholder="150px" class="w-full p-3 rounded-xl bg-gray-50 dark:bg-gray-800 border border-gray-200 dark:border-gray-700 outline-none focus:ring-2 focus:ring-blue-500 transition-all font-mono text-sm" />
+                                    </div>
+                                    <div>
+                                        <label class="block text-[10px] font-bold text-gray-400 uppercase mb-2 tracking-widest">Logo Click Redirect URL</label>
+                                        <input type="text" id="setting_logo_redirect_url" placeholder="/" class="w-full p-3 rounded-xl bg-gray-50 dark:bg-gray-800 border border-gray-200 dark:border-gray-700 outline-none focus:ring-2 focus:ring-blue-500 transition-all font-mono text-sm" />
                                     </div>
                                 </div>
                             </div>
 
-                            <button
-                                type="submit"
-                                id="saveFooterBtn"
-                                class="w-full py-4 bg-gray-900 dark:bg-white text-white dark:text-gray-950 rounded-xl font-bold text-lg transition-all active:scale-[0.98]"
-                            >
-                                <i class="fas fa-save mr-2"></i> Update Site Perimeter
+                            <!-- ── Footer Identity ── -->
+                            <div class="p-8 bg-white dark:bg-[#1d2026] rounded-2xl border border-gray-100 dark:border-gray-800 space-y-6">
+                                <div class="flex items-center gap-3 mb-2">
+                                    <div class="w-10 h-10 rounded-xl bg-purple-500/10 text-purple-500 flex items-center justify-center"><i class="fas fa-flag"></i></div>
+                                    <div>
+                                        <h3 class="text-lg font-bold">Footer Identity</h3>
+                                        <p class="text-xs text-gray-500 font-medium">Brand name, copyright notice, and contact email shown in the site footer</p>
+                                    </div>
+                                </div>
+                                <div class="grid grid-cols-1 md:grid-cols-2 gap-6">
+                                    <div>
+                                        <label class="block text-[10px] font-bold text-gray-400 uppercase mb-2 tracking-widest">Brand Name</label>
+                                        <input type="text" id="footer_brandName" placeholder="e.g. tawktoo" class="w-full p-3 rounded-xl bg-gray-50 dark:bg-gray-800 border border-gray-200 dark:border-gray-700 outline-none focus:ring-2 focus:ring-purple-500 transition-all text-sm" />
+                                    </div>
+                                    <div>
+                                        <label class="block text-[10px] font-bold text-gray-400 uppercase mb-2 tracking-widest">Copyright Notice</label>
+                                        <input type="text" id="footer_copyright" placeholder="© 2026 tawktoo. All rights reserved." class="w-full p-3 rounded-xl bg-gray-50 dark:bg-gray-800 border border-gray-200 dark:border-gray-700 outline-none focus:ring-2 focus:ring-purple-500 transition-all text-sm" />
+                                    </div>
+                                </div>
+                                <div class="grid grid-cols-1 md:grid-cols-2 gap-6">
+                                    <div>
+                                        <label class="block text-[10px] font-bold text-gray-400 uppercase mb-2 tracking-widest">Contact / Support Email</label>
+                                        <input type="email" id="footer_contactEmail" placeholder="support@example.com" class="w-full p-3 rounded-xl bg-gray-50 dark:bg-gray-800 border border-gray-200 dark:border-gray-700 outline-none focus:ring-2 focus:ring-purple-500 transition-all text-sm" />
+                                    </div>
+                                    <div>
+                                        <label class="block text-[10px] font-bold text-gray-400 uppercase mb-2 tracking-widest">Footer Tagline / Description</label>
+                                        <input type="text" id="footer_tagline" placeholder="Simple. Secure. Fast video calls." class="w-full p-3 rounded-xl bg-gray-50 dark:bg-gray-800 border border-gray-200 dark:border-gray-700 outline-none focus:ring-2 focus:ring-purple-500 transition-all text-sm" />
+                                    </div>
+                                </div>
+                            </div>
+
+                            <!-- ── Social Links ── -->
+                            <div class="p-8 bg-white dark:bg-[#1d2026] rounded-2xl border border-gray-100 dark:border-gray-800 space-y-6">
+                                <div class="flex items-center gap-3 mb-2">
+                                    <div class="w-10 h-10 rounded-xl bg-sky-500/10 text-sky-500 flex items-center justify-center"><i class="fas fa-share-alt"></i></div>
+                                    <div>
+                                        <h3 class="text-lg font-bold">Social Links</h3>
+                                        <p class="text-xs text-gray-500 font-medium">Social media links displayed as icons in the footer</p>
+                                    </div>
+                                </div>
+                                <div class="grid grid-cols-1 md:grid-cols-2 gap-4">
+                                    <div>
+                                        <label class="block text-[10px] font-bold text-gray-400 uppercase mb-2 tracking-widest"><i class="fab fa-twitter mr-1"></i> Twitter / X</label>
+                                        <input type="url" id="social_twitter" placeholder="https://twitter.com/yourhandle" class="w-full p-3 rounded-xl bg-gray-50 dark:bg-gray-800 border border-gray-200 dark:border-gray-700 outline-none focus:ring-2 focus:ring-sky-400 transition-all font-mono text-sm" />
+                                    </div>
+                                    <div>
+                                        <label class="block text-[10px] font-bold text-gray-400 uppercase mb-2 tracking-widest"><i class="fab fa-linkedin mr-1"></i> LinkedIn</label>
+                                        <input type="url" id="social_linkedin" placeholder="https://linkedin.com/company/yourco" class="w-full p-3 rounded-xl bg-gray-50 dark:bg-gray-800 border border-gray-200 dark:border-gray-700 outline-none focus:ring-2 focus:ring-sky-400 transition-all font-mono text-sm" />
+                                    </div>
+                                    <div>
+                                        <label class="block text-[10px] font-bold text-gray-400 uppercase mb-2 tracking-widest"><i class="fab fa-github mr-1"></i> GitHub</label>
+                                        <input type="url" id="social_github" placeholder="https://github.com/yourorg" class="w-full p-3 rounded-xl bg-gray-50 dark:bg-gray-800 border border-gray-200 dark:border-gray-700 outline-none focus:ring-2 focus:ring-sky-400 transition-all font-mono text-sm" />
+                                    </div>
+                                    <div>
+                                        <label class="block text-[10px] font-bold text-gray-400 uppercase mb-2 tracking-widest"><i class="fab fa-instagram mr-1"></i> Instagram</label>
+                                        <input type="url" id="social_instagram" placeholder="https://instagram.com/yourhandle" class="w-full p-3 rounded-xl bg-gray-50 dark:bg-gray-800 border border-gray-200 dark:border-gray-700 outline-none focus:ring-2 focus:ring-sky-400 transition-all font-mono text-sm" />
+                                    </div>
+                                </div>
+                            </div>
+
+                            <!-- ── Footer Navigation Links ── -->
+                            <div class="p-8 bg-white dark:bg-[#1d2026] rounded-2xl border border-gray-100 dark:border-gray-800 space-y-6">
+                                <div class="flex items-center justify-between mb-2">
+                                    <div class="flex items-center gap-3">
+                                        <div class="w-10 h-10 rounded-xl bg-green-500/10 text-green-500 flex items-center justify-center"><i class="fas fa-link"></i></div>
+                                        <div>
+                                            <h3 class="text-lg font-bold">Footer Navigation Links</h3>
+                                            <p class="text-xs text-gray-500 font-medium">Add links to internal pages, CMS pages, or external URLs</p>
+                                        </div>
+                                    </div>
+                                    <button type="button" onclick="addFooterLinkRow()" class="flex items-center gap-2 text-xs font-bold bg-green-500/10 text-green-600 dark:text-green-400 px-4 py-2 rounded-xl hover:bg-green-500 hover:text-white transition-all">
+                                        <i class="fas fa-plus"></i> Add Link
+                                    </button>
+                                </div>
+
+                                <!-- Link Column Headers -->
+                                <div class="hidden md:grid grid-cols-12 gap-2 px-2 text-[10px] font-bold text-gray-400 uppercase tracking-widest">
+                                    <div class="col-span-2">Type</div>
+                                    <div class="col-span-3">Label</div>
+                                    <div class="col-span-3">Group / Section</div>
+                                    <div class="col-span-3">URL / CMS Page</div>
+                                    <div class="col-span-1 text-right">Del</div>
+                                </div>
+
+                                <div id="footer_links_container" class="space-y-3">
+                                    <!-- Dynamic rows inserted here -->
+                                </div>
+
+                                <div id="footer_links_empty" class="text-center py-8 text-gray-400 text-sm hidden">
+                                    <i class="fas fa-link text-2xl mb-2 block opacity-30"></i>
+                                    No links yet. Click <strong>"Add Link"</strong> to add one.
+                                </div>
+                            </div>
+
+                            <!-- ── Footer Preview ── -->
+                            <div class="p-8 bg-white dark:bg-[#1d2026] rounded-2xl border border-gray-100 dark:border-gray-800">
+                                <div class="flex items-center gap-3 mb-4">
+                                    <div class="w-10 h-10 rounded-xl bg-orange-500/10 text-orange-500 flex items-center justify-center"><i class="fas fa-eye"></i></div>
+                                    <div>
+                                        <h3 class="text-lg font-bold">Live Preview</h3>
+                                        <p class="text-xs text-gray-500 font-medium">This is how your footer will appear on the site</p>
+                                    </div>
+                                </div>
+                                <div id="footer_preview" class="rounded-xl border border-dashed border-gray-200 dark:border-gray-700 overflow-hidden">
+                                    <!-- Preview rendered by JS -->
+                                </div>
+                            </div>
+
+                            <!-- Save Button (bottom) -->
+                            <button type="submit" id="saveFooterBtnBottom" class="w-full py-4 bg-gray-900 dark:bg-white text-white dark:text-gray-950 rounded-xl font-bold text-lg transition-all active:scale-[0.98]">
+                                <i class="fas fa-save mr-2"></i> Save All Branding & Footer Changes
                             </button>
                         </form>
                     </section>
+
+
+                    </section>
                 </main>
+                <footer class="site-footer-shared"></footer>
             </div>
         </div>
 
@@ -1551,68 +1602,225 @@
                 });
             }
 
-            // --- FOOTER & CONTACT MANAGEMENT ---
-            function addFooterLinkRow(label = '', url = '') {
+            // --- FOOTER & BRANDING MANAGEMENT ---
+            let availableCMSPages = [];
+
+            // Live logo/favicon preview on input
+            ['setting_logo_url', 'setting_favicon_url'].forEach(id => {
+                const input = document.getElementById(id);
+                const previewId = id === 'setting_logo_url' ? 'logo_preview' : 'favicon_preview';
+                if (input) {
+                    input.addEventListener('input', () => {
+                        const preview = document.getElementById(previewId);
+                        if (preview && input.value.startsWith('http')) {
+                            preview.src = input.value;
+                            preview.classList.remove('hidden');
+                            preview.onerror = () => preview.classList.add('hidden');
+                        } else if (preview) {
+                            preview.classList.add('hidden');
+                        }
+                        renderFooterPreview();
+                    });
+                }
+            });
+
+            // Trigger preview re-render on any footer field change
+            ['footer_brandName', 'footer_copyright', 'footer_contactEmail', 'footer_tagline'].forEach(id => {
+                const el = document.getElementById(id);
+                if (el) el.addEventListener('input', renderFooterPreview);
+            });
+
+            function renderFooterPreview() {
+                const preview = document.getElementById('footer_preview');
+                if (!preview) return;
+                const brandName = document.getElementById('footer_brandName')?.value || 'Brand';
+                const copyright = document.getElementById('footer_copyright')?.value || `© ${new Date().getFullYear()} ${brandName}`;
+                const tagline = document.getElementById('footer_tagline')?.value || '';
+                const logoUrl = document.getElementById('setting_logo_url')?.value || '';
+                const logoWidth = document.getElementById('setting_logo_width')?.value || 'auto';
+
+                const links = [];
+                document.querySelectorAll('.footer-link-row').forEach(row => {
+                    const label = row.querySelector('.link-label')?.value;
+                    const type = row.querySelector('.link-type')?.value;
+                    const url = type === 'cms' ? '/p/' + (row.querySelector('.link-cms')?.value || '') : row.querySelector('.link-url')?.value;
+                    const group = row.querySelector('.link-group')?.value || 'Links';
+                    if (label) links.push({ label, url: url || '#', group });
+                });
+
+                // Group links by section
+                const groups = {};
+                links.forEach(l => {
+                    if (!groups[l.group]) groups[l.group] = [];
+                    groups[l.group].push(l);
+                });
+
+                const groupHtml = Object.entries(groups).map(([g, items]) => `
+                    <div>
+                        <p class="text-xs font-bold text-gray-400 uppercase tracking-widest mb-3">${g}</p>
+                        <ul class="space-y-2">
+                            ${items.map(item => `<li><a href="${item.url}" class="text-sm text-slate-500 hover:text-blue-600 transition-colors">${item.label}</a></li>`).join('')}
+                        </ul>
+                    </div>
+                `).join('');
+
+                const socialHtml = ['twitter', 'linkedin', 'github', 'instagram'].map(s => {
+                    const val = document.getElementById('social_' + s)?.value;
+                    if (!val) return '';
+                    const icons = { twitter: 'fa-twitter', linkedin: 'fa-linkedin', github: 'fa-github', instagram: 'fa-instagram' };
+                    return `<a href="${val}" class="w-8 h-8 rounded-full bg-slate-100 text-slate-500 flex items-center justify-center hover:bg-blue-500 hover:text-white transition-all text-sm"><i class="fab ${icons[s]}"></i></a>`;
+                }).join('');
+
+                preview.innerHTML = `
+                    <div style="background:#f8fafc;padding:2rem;font-family:sans-serif;border-radius:12px;">
+                        <div style="max-width:900px;margin:0 auto;display:flex;flex-wrap:wrap;gap:2rem;justify-content:space-between;align-items:flex-start;">
+                            <div style="min-width:200px">
+                                ${logoUrl ? `<img src="${logoUrl}" style="width:${logoWidth};max-width:160px;height:auto;margin-bottom:0.75rem;" />` : ''}
+                                <div style="font-weight:800;font-size:1rem;color:#1e293b;">${brandName}</div>
+                                ${tagline ? `<div style="font-size:0.75rem;color:#64748b;margin-top:0.25rem;">${tagline}</div>` : ''}
+                                ${socialHtml ? `<div style="display:flex;gap:0.5rem;margin-top:0.75rem;">${socialHtml}</div>` : ''}
+                            </div>
+                            <div style="display:flex;gap:3rem;flex-wrap:wrap;">
+                                ${groupHtml || '<div style="color:#9ca3af;font-size:0.8rem;">No links added yet</div>'}
+                            </div>
+                        </div>
+                        <div style="margin-top:1.5rem;padding-top:1rem;border-top:1px solid #e2e8f0;font-size:0.75rem;color:#94a3b8;text-align:center;">${copyright}</div>
+                    </div>
+                `;
+            }
+
+            function addFooterLinkRow(label = '', url = '', type = 'url', group = 'Company') {
                 const container = document.getElementById('footer_links_container');
+                const empty = document.getElementById('footer_links_empty');
+                if (empty) empty.classList.add('hidden');
+
+                const rowId = 'row_' + Math.random().toString(36).substr(2, 9);
                 const row = document.createElement('div');
-                row.className = 'footer-link-row flex gap-3 animate-in slide-in-from-left-2 duration-300';
+                row.id = rowId;
+                row.className = 'footer-link-row grid grid-cols-12 gap-2 p-3 bg-gray-50 dark:bg-gray-800/40 rounded-xl border border-gray-100 dark:border-gray-700 animate-in slide-in-from-top-2 duration-200';
+
+                const cmsOptions = availableCMSPages.map(p =>
+                    `<option value="${p.slug}" ${url === '/p/' + p.slug || url === p.slug ? 'selected' : ''}>${p.title}</option>`
+                ).join('');
+
                 row.innerHTML = `
-                    <input type="text" placeholder="Label (e.g. Terms)" value="${label}" class="flex-1 p-2.5 text-sm rounded-lg bg-gray-50 dark:bg-gray-800 border border-gray-200 dark:border-gray-700 outline-none" />
-                    <input type="text" placeholder="URL (e.g. /terms)" value="${url}" class="flex-[1.5] p-2.5 text-sm rounded-lg bg-gray-50 dark:bg-gray-800 border border-gray-200 dark:border-gray-700 outline-none font-mono" />
-                    <button type="button" onclick="this.parentElement.remove()" class="p-2.5 text-red-500 hover:bg-red-50 dark:hover:bg-red-900/10 rounded-lg transition-colors">
-                        <i class="fas fa-trash-alt"></i>
-                    </button>
+                    <div class="col-span-12 md:col-span-2">
+                        <select onchange="toggleLinkType('${rowId}'); renderFooterPreview();" class="link-type w-full p-2 text-xs rounded-lg bg-white dark:bg-gray-700 border border-gray-200 dark:border-gray-600 outline-none">
+                            <option value="url" ${type === 'url' ? 'selected' : ''}>Custom URL</option>
+                            <option value="cms" ${type === 'cms' ? 'selected' : ''}>CMS Page</option>
+                            <option value="email">Email</option>
+                        </select>
+                    </div>
+                    <div class="col-span-12 md:col-span-3">
+                        <input type="text" placeholder="Label (e.g. About)" value="${label}" oninput="renderFooterPreview()" class="link-label w-full p-2 text-xs rounded-lg bg-white dark:bg-gray-700 border border-gray-200 dark:border-gray-600 outline-none" />
+                    </div>
+                    <div class="col-span-12 md:col-span-3">
+                        <input type="text" placeholder="Group (e.g. Company)" value="${group}" oninput="renderFooterPreview()" class="link-group w-full p-2 text-xs rounded-lg bg-white dark:bg-gray-700 border border-gray-200 dark:border-gray-600 outline-none" />
+                    </div>
+                    <div class="col-span-12 md:col-span-3 url-input-container ${type === 'cms' ? 'hidden' : ''}">
+                        <input type="text" placeholder="/about or https://..." value="${type === 'url' ? url : ''}" oninput="renderFooterPreview()" class="link-url w-full p-2 text-xs font-mono rounded-lg bg-white dark:bg-gray-700 border border-gray-200 dark:border-gray-600 outline-none" />
+                    </div>
+                    <div class="col-span-12 md:col-span-3 cms-input-container ${type !== 'cms' ? 'hidden' : ''}">
+                        <select class="link-cms w-full p-2 text-xs rounded-lg bg-white dark:bg-gray-700 border border-gray-200 dark:border-gray-600 outline-none" onchange="renderFooterPreview()">
+                            <option value="">-- Choose CMS Page --</option>
+                            ${cmsOptions}
+                        </select>
+                    </div>
+                    <div class="col-span-12 md:col-span-1 flex items-center justify-end">
+                        <button type="button" onclick="this.closest('.footer-link-row').remove(); renderFooterPreview(); updateLinksEmptyState();" class="p-2 text-red-400 hover:bg-red-50 dark:hover:bg-red-900/20 rounded-lg transition-colors">
+                            <i class="fas fa-trash text-sm"></i>
+                        </button>
+                    </div>
                 `;
                 container.appendChild(row);
+                renderFooterPreview();
+            }
+
+            function updateLinksEmptyState() {
+                const empty = document.getElementById('footer_links_empty');
+                const rows = document.querySelectorAll('.footer-link-row');
+                if (empty) empty.classList.toggle('hidden', rows.length > 0);
+            }
+
+            function toggleLinkType(rowId) {
+                const row = document.getElementById(rowId);
+                const type = row.querySelector('.link-type').value;
+                row.querySelector('.url-input-container').classList.toggle('hidden', type === 'cms');
+                row.querySelector('.cms-input-container').classList.toggle('hidden', type !== 'cms');
             }
 
             const footerForm = document.getElementById('footerForm');
             if (footerForm) {
                 footerForm.addEventListener('submit', async (e) => {
                     e.preventDefault();
-                    const btn = document.getElementById('saveFooterBtn');
-                    const originalText = btn.innerHTML;
-                    btn.disabled = true;
-                    btn.innerHTML = '<i class="fas fa-spinner fa-spin mr-2"></i> Deploying...';
+                    const btns = ['saveFooterBtn', 'saveFooterBtnBottom'].map(id => document.getElementById(id)).filter(Boolean);
+                    const originalTexts = btns.map(b => b.innerHTML);
+                    btns.forEach(b => { b.disabled = true; b.innerHTML = '<i class="fas fa-spinner fa-spin mr-2"></i> Saving...'; });
 
                     const links = [];
                     document.querySelectorAll('.footer-link-row').forEach(row => {
-                        const inputs = row.querySelectorAll('input');
-                        if (inputs[0].value && inputs[1].value) {
-                            links.push({ label: inputs[0].value, url: inputs[1].value });
+                        const type = row.querySelector('.link-type').value;
+                        const label = row.querySelector('.link-label').value.trim();
+                        const group = row.querySelector('.link-group')?.value.trim() || 'Links';
+                        let url = '';
+                        if (type === 'cms') {
+                            const slug = row.querySelector('.link-cms').value;
+                            url = slug ? '/p/' + slug : '';
+                        } else {
+                            url = row.querySelector('.link-url').value.trim();
                         }
+                        if (label && url) links.push({ type, label, url, group });
+                    });
+
+                    const socialLinks = {};
+                    ['twitter', 'linkedin', 'github', 'instagram'].forEach(s => {
+                        const v = document.getElementById('social_' + s)?.value.trim();
+                        if (v) socialLinks[s] = v;
                     });
 
                     const payload = {
+                        logo_url: document.getElementById('setting_logo_url').value.trim(),
+                        favicon_url: document.getElementById('setting_favicon_url').value.trim(),
+                        LOGO_CONFIG: { width: document.getElementById('setting_logo_width').value.trim() || '150px' },
+                        LOGO_REDIRECT_URL: document.getElementById('setting_logo_redirect_url').value.trim() || '/',
                         FOOTER_CONFIG: {
-                            copyright: document.getElementById('footer_copyright').value,
-                            contactEmail: document.getElementById('footer_contactEmail').value,
-                            links: links
+                            brandName: document.getElementById('footer_brandName').value.trim(),
+                            copyright: document.getElementById('footer_copyright').value.trim(),
+                            contactEmail: document.getElementById('footer_contactEmail').value.trim(),
+                            tagline: document.getElementById('footer_tagline').value.trim(),
+                            socialLinks,
+                            links,
                         },
-                        CONTACT_INFO: {
-                            phone: document.getElementById('setting_contact_phone').value,
-                            address: document.getElementById('setting_contact_address').value
-                        }
                     };
 
                     try {
                         await axios.post('/api/v1/admin/settings', payload, {
                             headers: { Authorization: `Bearer ${adminToken}` }
                         });
-                        Swal.fire({ title: 'Footer Deployed', icon: 'success', toast: true, position: 'top-end', showConfirmButton: false, timer: 3000 });
+                        Swal.fire({ title: 'Branding & Footer Saved!', icon: 'success', toast: true, position: 'top-end', showConfirmButton: false, timer: 3000 });
                         loadSettings();
                     } catch (err) {
-                        Swal.fire({ title: 'Deployment Failed', text: err.response?.data?.message || 'Error', icon: 'error', toast: true, position: 'top-end', showConfirmButton: false, timer: 3000 });
+                        Swal.fire({ title: 'Save Failed', text: err.response?.data?.message || 'Unknown error', icon: 'error', toast: true, position: 'top-end', showConfirmButton: false, timer: 3000 });
                     } finally {
-                        btn.innerHTML = originalText;
-                        btn.disabled = false;
+                        btns.forEach((b, i) => { b.innerHTML = originalTexts[i]; b.disabled = false; });
                     }
                 });
             }
 
+
             // Author: Sanket - Enhanced loadSettings to handle complex objects
             async function loadSettings() {
                 try {
+                    // CMS Pages must be loaded first to populate link rows correctly
+                    try {
+                        const cmsRes = await axios.get(`${API_BASE}/pages`, {
+                            headers: { Authorization: `Bearer ${adminToken}` }
+                        });
+                        availableCMSPages = cmsRes.data || [];
+                    } catch (e) {
+                        console.error('Failed to load CMS pages for footer settings:', e);
+                    }
+
                     const res = await axios.get(`${API_BASE}/settings`, {
                         headers: { Authorization: `Bearer ${adminToken}` },
                     });
@@ -1638,23 +1846,51 @@
                             document.getElementById('setting_brand_color').value = v || '#1a73e8';
                         }
                         if (k === 'FOOTER_CONFIG' && v) {
-                            document.getElementById('footer_copyright').value = v.copyright || '';
-                            document.getElementById('footer_contactEmail').value = v.contactEmail || '';
+                            if (document.getElementById('footer_brandName'))
+                                document.getElementById('footer_brandName').value = v.brandName || '';
+                            if (document.getElementById('footer_copyright'))
+                                document.getElementById('footer_copyright').value = v.copyright || '';
+                            if (document.getElementById('footer_contactEmail'))
+                                document.getElementById('footer_contactEmail').value = v.contactEmail || '';
+                            if (document.getElementById('footer_tagline'))
+                                document.getElementById('footer_tagline').value = v.tagline || '';
+                            // Social links
+                            if (v.socialLinks) {
+                                ['twitter', 'linkedin', 'github', 'instagram'].forEach(s => {
+                                    const el = document.getElementById('social_' + s);
+                                    if (el && v.socialLinks[s]) el.value = v.socialLinks[s];
+                                });
+                            }
+                            // Nav links
                             if (v.links && Array.isArray(v.links)) {
-                                v.links.forEach(l => addFooterLinkRow(l.label, l.url));
+                                v.links.forEach(l => addFooterLinkRow(l.label, l.url, l.type || 'url', l.group || 'Company'));
                             }
                         }
                         if (k === 'CONTACT_INFO' && v) {
-                            document.getElementById('setting_contact_phone').value = v.phone || '';
-                            document.getElementById('setting_contact_address').value = v.address || '';
+                            const phone = document.getElementById('setting_contact_phone');
+                            const addr = document.getElementById('setting_contact_address');
+                            if (phone) phone.value = v.phone || '';
+                            if (addr) addr.value = v.address || '';
                         }
                     }
-                    if (s.LOGO_CONFIG) {
-                        const width = parseInt(s.LOGO_CONFIG.width) || 150;
-                        document.getElementById('setting_logo_width').value = width;
-                        document.getElementById('logo_size_value').innerText = width + 'px';
+                    if (s.logo_url) {
+                        document.getElementById('setting_logo_url').value = s.logo_url;
+                        const prev = document.getElementById('logo_preview');
+                        if (prev) { prev.src = s.logo_url; prev.classList.remove('hidden'); }
                     }
+                    if (s.favicon_url) {
+                        document.getElementById('setting_favicon_url').value = s.favicon_url;
+                        const prev = document.getElementById('favicon_preview');
+                        if (prev) { prev.src = s.favicon_url; prev.classList.remove('hidden'); }
+                    }
+                    if (s.LOGO_CONFIG) {
+                        document.getElementById('setting_logo_width').value = s.LOGO_CONFIG.width || '150px';
+                    }
+                    if (s.LOGO_REDIRECT_URL) document.getElementById('setting_logo_redirect_url').value = s.LOGO_REDIRECT_URL;
+                    
+                    renderFooterPreview();
                     applyBranding(s);
+
                 } catch (e) {}
             }
             const settingsForm = document.getElementById('settingsForm');
@@ -1673,9 +1909,6 @@
                         CHATGPT_TEMPERATURE: document.getElementById('setting_CHATGPT_TEMPERATURE').value,
                         app_name: document.getElementById('setting_app_name').value,
                         brand_color: document.getElementById('setting_brand_color').value,
-                        logo_url: document.getElementById('setting_logo_url').value,
-                        favicon_url: document.getElementById('setting_favicon_url').value,
-                        LOGO_CONFIG: { width: document.getElementById('setting_logo_width').value + 'px' },
                         CONTACT_INFO: {
                             phone: document.getElementById('setting_contact_phone').value,
                             address: document.getElementById('setting_contact_address').value

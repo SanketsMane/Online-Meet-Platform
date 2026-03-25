@@ -167,6 +167,11 @@ async function initialize() {
     customizeFooter();
 
     checkBrand();
+    
+    // Author: Sanket - Synchronization with Shared Components
+    if (window.tawktooUI) {
+        window.tawktooUI.render();
+    }
 }
 
 async function getBrand() {
@@ -347,46 +352,46 @@ function customizeLogo() {
 function customizeFooter() {
     const footerEl = document.getElementById('site-footer');
     if (footerEl && BRAND.footer_config) {
-        const { copyright, links, contactEmail } = BRAND.footer_config;
+        const { brandName, copyright, links, contactEmail } = BRAND.footer_config;
         const contactInfo = BRAND.contact_info || {};
 
         let linksHtml = '';
         if (links && Array.isArray(links)) {
             linksHtml = links
-                .map(
-                    (l) =>
-                        `<a href="${l.url}" class="text-sm text-gray-500 hover:text-blue-600 transition-colors">${l.label}</a>`
-                )
+                .map((l) => {
+                    const url = l.type === 'cms' ? `/p/${l.url}` : l.url;
+                    return `<a href="${url}" class="text-sm text-gray-400 hover:text-blue-500 transition-colors">${l.label}</a>`;
+                })
                 .join('');
         }
 
         let contactHtml = '';
         if (contactEmail) {
-            contactHtml += `<a href="mailto:${contactEmail}" class="text-sm text-gray-500 hover:text-blue-600 transition-colors"><i class="fas fa-envelope mr-1"></i> ${contactEmail}</a>`;
+            contactHtml += `<a href="mailto:${contactEmail}" class="hover:text-blue-500 transition-colors"><i class="fas fa-envelope mr-1"></i> ${contactEmail}</a>`;
         }
         if (contactInfo.phone) {
-            contactHtml += `<span class="text-sm text-gray-500"><i class="fas fa-phone mr-1"></i> ${contactInfo.phone}</span>`;
+            contactHtml += `<span><i class="fas fa-phone mr-1"></i> ${contactInfo.phone}</span>`;
         }
         if (contactInfo.address) {
-            contactHtml += `<span class="text-sm text-gray-500"><i class="fas fa-map-marker-alt mr-1"></i> ${contactInfo.address}</span>`;
+            contactHtml += `<span><i class="fas fa-map-marker-alt mr-1"></i> ${contactInfo.address}</span>`;
         }
 
         footerEl.innerHTML = `
-            <div class="container mx-auto px-5 md:px-10 flex flex-col items-center justify-between py-10 border-t border-gray-100 dark:border-gray-800 mt-10 space-y-6 md:space-y-0 md:flex-row">
-                <div class="flex flex-col items-center md:items-start space-y-2">
-                    <div class="text-sm font-bold text-gray-900 dark:text-white uppercase tracking-widest mb-1">
-                        ${BRAND.app?.name || 'tawktoo'}
+            <div class="max-w-7xl mx-auto flex flex-col md:flex-row justify-between items-center gap-8">
+                <div class="flex flex-col items-center md:items-start gap-4">
+                    <div class="flex items-center gap-3">
+                        <img src="../images/logo.svg" alt="${brandName || 'tawktoo'}" class="h-8 opacity-50 grayscale hover:grayscale-0 transition-all">
+                        <span class="text-lg font-bold tracking-tight text-gray-400">${brandName || 'tawktoo'}</span>
                     </div>
-                    <div class="text-xs text-gray-500 max-w-xs text-center md:text-left">
-                        ${copyright || '&copy; 2026 tawktoo SFU'}
+                    <div class="text-sm font-medium text-gray-500">
+                        ${copyright || `&copy; ${new Date().getFullYear()} tawktoo SFU. All rights reserved.`}
                     </div>
                 </div>
-                
-                <div class="flex flex-col items-center md:items-end space-y-4">
-                    <div class="flex flex-wrap justify-center md:justify-end items-center gap-6">
+                <div class="flex flex-col items-center md:items-end gap-4">
+                    <div class="flex flex-wrap justify-center md:justify-end gap-x-8 gap-y-4 text-sm font-bold">
                         ${linksHtml}
                     </div>
-                    <div class="flex flex-wrap justify-center md:justify-end items-center gap-4 text-xs">
+                    <div class="flex flex-wrap justify-center md:justify-end gap-6 text-xs font-medium text-gray-500">
                         ${contactHtml}
                     </div>
                 </div>

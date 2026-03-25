@@ -3,7 +3,7 @@
 const express = require('express');
 const router = express.Router();
 const { User } = require('../db/models');
-const bcrypt = require('bcrypt');
+const bcrypt = require('bcryptjs');
 const config = require('../config');
 
 // Register Host
