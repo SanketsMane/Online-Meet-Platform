@@ -325,24 +325,36 @@ function customizeWhoAreYou() {
 function customizeLogo() {
     //Sanket v2.0 - Swap logo src on all img elements: explicit IDs first, then broad selector fallback
     if (BRAND.logo_url) {
-        const logoImgs = document.querySelectorAll(
-            '#site-nav-logo, #site-footer-logo, img[src*="logo"], .sidebar-logo, img[alt*="logo" i], .navbar-brand img, .header-logo-image, .footer-brand img'
-        );
-        logoImgs.forEach((img) => {
-            img.src = BRAND.logo_url;
-        });
-
-        //Sanket v2.0 - components.js injects the header on DOMContentLoaded which may fire after
-        // customizeLogo() runs on cached-brand path. Use a short observer to catch late-injected logos.
-        if (!document.getElementById('site-nav-logo')) {
-            const observer = new MutationObserver(() => {
-                const navLogo = document.getElementById('site-nav-logo');
-                const footerLogo = document.getElementById('site-footer-logo');
-                if (navLogo) { navLogo.src = BRAND.logo_url; }
-                if (footerLogo) { footerLogo.src = BRAND.logo_url; }
-                if (navLogo || footerLogo) observer.disconnect();
+        const applyLogoSrc = () => {
+            const logoImgs = document.querySelectorAll(
+                '#site-nav-logo, #site-footer-logo, img[src*="logo"], .sidebar-logo, img[alt*="logo" i], .navbar-brand img, .header-logo-image, .footer-brand img'
+            );
+            logoImgs.forEach((img) => {
+                img.src = BRAND.logo_url;
             });
+        };
+
+        // Apply immediately to any already-rendered logo images
+        applyLogoSrc();
+
+        //Sanket v2.0 - Always register a MutationObserver to catch logos injected AFTER this runs.
+        // components.js renders the shared header on DOMContentLoaded which may fire AFTER Brand.js
+        // completes on the cached-brand path — the observer ensures the nav/footer logos are
+        // always updated regardless of script execution order.
+        const observer = new MutationObserver(() => {
+            const navLogo = document.getElementById('site-nav-logo');
+            const footerLogo = document.getElementById('site-footer-logo');
+            if (navLogo) { navLogo.src = BRAND.logo_url; }
+            if (footerLogo) { footerLogo.src = BRAND.logo_url; }
+            // Keep observing until both logos are found and updated
+            if (navLogo && footerLogo) observer.disconnect();
+        });
+        if (document.body) {
             observer.observe(document.body, { childList: true, subtree: true });
+        } else {
+            document.addEventListener('DOMContentLoaded', () => {
+                observer.observe(document.body, { childList: true, subtree: true });
+            });
         }
     }
 
