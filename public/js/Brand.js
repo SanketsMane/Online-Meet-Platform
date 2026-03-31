@@ -323,15 +323,39 @@ function customizeWhoAreYou() {
 }
 
 function customizeLogo() {
+    //Sanket v2.0 - Swap logo src on all img elements: explicit IDs first, then broad selector fallback
+    if (BRAND.logo_url) {
+        const logoImgs = document.querySelectorAll(
+            '#site-nav-logo, #site-footer-logo, img[src*="logo"], .sidebar-logo, img[alt*="logo" i], .navbar-brand img, .header-logo-image, .footer-brand img'
+        );
+        logoImgs.forEach((img) => {
+            img.src = BRAND.logo_url;
+        });
+
+        //Sanket v2.0 - components.js injects the header on DOMContentLoaded which may fire after
+        // customizeLogo() runs on cached-brand path. Use a short observer to catch late-injected logos.
+        if (!document.getElementById('site-nav-logo')) {
+            const observer = new MutationObserver(() => {
+                const navLogo = document.getElementById('site-nav-logo');
+                const footerLogo = document.getElementById('site-footer-logo');
+                if (navLogo) { navLogo.src = BRAND.logo_url; }
+                if (footerLogo) { footerLogo.src = BRAND.logo_url; }
+                if (navLogo || footerLogo) observer.disconnect();
+            });
+            observer.observe(document.body, { childList: true, subtree: true });
+        }
+    }
+
     if (BRAND.logo_config?.width) {
         const width = BRAND.logo_config.width;
-        // Target all logo images that match common patterns
+        //Sanket v2.0 - Apply both width and height (height defaults to 'auto') to all logo images including named IDs
+        const logoH = BRAND.logo_config.height || 'auto';
         const images = document.querySelectorAll(
-            'header img[src*="logo"], .sidebar-logo, img[alt*="logo" i], .navbar-brand img'
+            '#site-nav-logo, #site-footer-logo, header img[src*="logo"], .sidebar-logo, img[alt*="logo" i], .navbar-brand img'
         );
         images.forEach((img) => {
             img.style.width = width;
-            img.style.height = 'auto';
+            img.style.height = logoH;
 
             // Author: Sanket - If there's a redirect URL, wrap the image in a link or update existing link
             if (BRAND.logo_redirect_url) {
@@ -345,8 +369,45 @@ function customizeLogo() {
 }
 
 function customizeFooter() {
+    //Sanket v2.0 - Target both #site-footer (full render) and #site-footer-links (components.js partial)
+    const footerLinksEl = document.getElementById('site-footer-links');
+    const footerLogoEl = document.getElementById('site-footer-logo');
+
+    //Sanket v2.0 - Race condition fix: on the sessionStorage-cached path Brand.js runs customizeFooter()
+    //BEFORE components.js DOMContentLoaded fires and renders the footer. If elements don't exist yet,
+    //listen for the 'siteFooterRendered' event that components.js dispatches after render, then retry.
+    if (!footerLinksEl && !footerLogoEl) {
+        document.addEventListener('siteFooterRendered', () => customizeFooter(), { once: true });
+        return;
+    }
+
+    if (BRAND.footer_config) {
+        const { copyright, links, contactEmail } = BRAND.footer_config;
+
+        // Update footer links container rendered by components.js
+        if (footerLinksEl && links && Array.isArray(links) && links.length > 0) {
+            footerLinksEl.innerHTML = links
+                .map(l => `<a href="${l.url}" style="color:#94a3b8; text-decoration:none; font-size:14px; font-weight:600; transition:color 0.2s;" onmouseover="this.style.color='#355de0'" onmouseout="this.style.color='#94a3b8'">${l.label}</a>`)
+                .join('');
+        }
+
+        // Update copyright span rendered by components.js
+        const copyrightEl = document.querySelector('#site-footer span');
+        if (copyrightEl && copyright) copyrightEl.innerHTML = copyright;
+    }
+
+    // Update footer logo if components.js already injected it
+    if (footerLogoEl && BRAND.logo_url) {
+        footerLogoEl.src = BRAND.logo_url;
+        if (BRAND.logo_config?.width) {
+            footerLogoEl.style.width = BRAND.logo_config.width;
+            footerLogoEl.style.height = BRAND.logo_config.height || 'auto';
+        }
+    }
+
+    // Legacy: full footer re-render for pages that have #site-footer but not via components.js
     const footerEl = document.getElementById('site-footer');
-    if (footerEl && BRAND.footer_config) {
+    if (footerEl && !footerLinksEl && BRAND.footer_config) {
         const { copyright, links, contactEmail } = BRAND.footer_config;
         const contactInfo = BRAND.contact_info || {};
 

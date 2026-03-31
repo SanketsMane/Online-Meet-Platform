@@ -1,7 +1,32 @@
 const express = require('express');
 const router = express.Router();
+const path = require('path');
+const multer = require('multer');
 const AdminController = require('../controllers/AdminController');
 const { isAdminTenant, adminLogin } = require('../middleware/AuthMiddleware');
+
+//Sanket v2.0 - multer storage config: saves logo/favicon to public/uploads/branding with fixed filenames
+const brandingStorage = multer.diskStorage({
+    destination: (req, file, cb) => {
+        cb(null, path.join(__dirname, '../../../public/uploads/branding'));
+    },
+    filename: (req, file, cb) => {
+        const ext = path.extname(file.originalname).toLowerCase();
+        const base = req.params.type === 'favicon' ? 'favicon' : 'logo';
+        cb(null, base + ext);
+    },
+});
+
+const brandingUpload = multer({
+    storage: brandingStorage,
+    limits: { fileSize: 10 * 1024 * 1024 }, //Sanket v2.0 - 10MB max for logo/favicon uploads
+    fileFilter: (req, file, cb) => {
+        const allowed = ['.png', '.jpg', '.jpeg', '.svg', '.gif', '.webp', '.ico'];
+        const ext = path.extname(file.originalname).toLowerCase();
+        if (allowed.includes(ext)) return cb(null, true);
+        cb(new Error('Only image files are allowed'));
+    },
+});
 
 // Author: Sanket - Public admin login endpoint (no auth middleware)
 router.post('/login', async (req, res) => {
@@ -54,6 +79,8 @@ module.exports = function (roomList) {
     // System Settings
     router.get('/settings', (req, res) => AdminController.getSettings(req, res));
     router.put('/settings', (req, res) => AdminController.updateSettings(req, res));
+    //Sanket v2.0 - also accept POST for settings (frontend uses POST)
+    router.post('/settings', (req, res) => AdminController.updateSettings(req, res));
 
     // Page Management (CMS)
     router.get('/pages', (req, res) => AdminController.getPages(req, res));
@@ -61,6 +88,20 @@ module.exports = function (roomList) {
     router.post('/pages', (req, res) => AdminController.createPage(req, res));
     router.put('/pages/:id', (req, res) => AdminController.updatePage(req, res));
     router.delete('/pages/:id', (req, res) => AdminController.deletePage(req, res));
+
+    //Sanket v2.0 - Branding upload routes: logo and favicon file uploads
+    router.post('/branding/upload/:type', (req, res, next) => {
+        brandingUpload.single('file')(req, res, (err) => {
+            if (err) {
+                //Sanket v2.0 - map multer error codes to user-friendly messages
+                if (err.code === 'LIMIT_FILE_SIZE') {
+                    return res.status(400).json({ message: 'File too large. Maximum allowed size is 10MB.' });
+                }
+                return res.status(400).json({ message: err.message });
+            }
+            next();
+        });
+    }, (req, res) => AdminController.uploadBrandingAsset(req, res));
 
     return router;
 };

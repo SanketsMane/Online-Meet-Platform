@@ -387,6 +387,32 @@ class AdminController {
             res.status(500).json({ message: 'Error deleting page' });
         }
     }
+
+    //Sanket v2.0 - Handle logo and favicon file uploads, persist URL to GlobalSetting
+    static async uploadBrandingAsset(req, res) {
+        try {
+            if (!req.file) {
+                return res.status(400).json({ message: 'No file uploaded' });
+            }
+
+            const type = req.params.type; // 'logo' or 'favicon'
+            if (!['logo', 'favicon'].includes(type)) {
+                return res.status(400).json({ message: 'Invalid asset type' });
+            }
+
+            const settingKey = type === 'logo' ? 'logo_url' : 'favicon_url';
+            const publicUrl = '/uploads/branding/' + req.file.filename;
+
+            await settingsService.set(settingKey, publicUrl);
+            await logAdminAction(req, 'UPLOAD_BRANDING', type, `Uploaded: ${req.file.filename}`);
+
+            log.info(`Branding ${type} uploaded: ${publicUrl}`);
+            res.json({ success: true, url: publicUrl });
+        } catch (err) {
+            log.error('Error uploading branding asset:', err.message);
+            res.status(500).json({ message: 'Error uploading file' });
+        }
+    }
 }
 
 module.exports = AdminController;

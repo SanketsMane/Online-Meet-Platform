@@ -22,3 +22,7 @@ rtmp
 
 # virtual background
 custom
+
+# branding uploads (user-uploaded logos/favicons)
+public/uploads/branding/logo.*
+public/uploads/branding/favicon.*

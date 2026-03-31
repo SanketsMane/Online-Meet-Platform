@@ -20,42 +20,8 @@
         <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.2/css/all.min.css" />
 
         <!-- Tailwind and Shared Styles -->
-        <script src="https://cdn.tailwindcss.com"></script>
-        <script>
-            tailwind.config = {
-                darkMode: 'class',
-                theme: {
-                    extend: {
-                        fontFamily: {
-                            sans: ['Inter', 'sans-serif'],
-                            heading: ['Outfit', 'sans-serif'],
-                        },
-                        colors: {
-                            brand: {
-                                50: '#f5f7ff',
-                                100: '#ebf0fe',
-                                200: '#ced9fd',
-                                300: '#b1c2fc',
-                                400: '#7695fa',
-                                500: '#3b68f8',
-                                600: '#355de0',
-                                700: '#2c4ebb',
-                                800: '#233e95',
-                                900: '#1d337a',
-                            },
-                            slate: { 900: '#0f172a', 800: '#1e293b', 700: '#334155' },
-                            google: {
-                                blue: '#1a73e8',
-                                blueHover: '#174ea6',
-                                red: '#ea4335',
-                                green: '#34a853',
-                                yellow: '#fbbc04',
-                            },
-                        },
-                    },
-                },
-            };
-        </script>
+        <!-- Sanket v2.0 - Local pre-built Tailwind CSS (no CDN production warning) -->
+        <link rel="stylesheet" href="/css/tailwind.admin.min.css">
         <link rel="stylesheet" href="/css/theme.css" />
 
         <!-- Scripts -->
@@ -192,7 +158,7 @@
             >
                 <div class="h-16 flex items-center px-6 gap-3 border-b border-gray-100 dark:border-gray-800">
                     <img src="../images/logo.svg" alt="tawktoo" class="w-8 h-8 sidebar-logo" />
-                    <span class="font-heading font-bold text-lg sidebar-brand">tawktoo Hub</span>
+                    <span class="font-heading font-bold text-lg sidebar-brand">tawktoo</span>
                 </div>
 
                 <nav class="flex-1 overflow-y-auto p-4 space-y-2">
@@ -839,35 +805,150 @@
                                             />
                                         </div>
                                     </div>
-                                    <div>
-                                        <label class="block text-sm font-semibold mb-2">Logo Dimension (Width)</label>
-                                        <div class="flex items-center gap-4 py-2">
-                                            <input
-                                                type="range"
-                                                id="setting_logo_width"
-                                                min="50"
-                                                max="400"
-                                                step="5"
-                                                class="flex-1 h-2 bg-gray-200 rounded-lg appearance-none cursor-pointer"
-                                            />
-                                            <span id="logo_size_value" class="text-sm font-bold w-12">150px</span>
+                                    <!-- Sanket v2.0 - Logo size controls: width + height sliders with live preview -->
+                                    <div class="md:col-span-2">
+                                        <div class="rounded-2xl border border-gray-200 dark:border-gray-700 bg-white dark:bg-gray-900 shadow-sm overflow-hidden">
+                                            <div class="px-5 pt-4 pb-3 border-b border-gray-100 dark:border-gray-800 flex items-center gap-3">
+                                                <span class="w-8 h-8 rounded-lg bg-green-50 dark:bg-green-900/30 flex items-center justify-center flex-shrink-0">
+                                                    <i class="fas fa-expand-arrows-alt text-green-600 text-sm"></i>
+                                                </span>
+                                                <div>
+                                                    <p class="text-sm font-bold leading-tight">Logo Dimensions</p>
+                                                    <p class="text-xs text-gray-400 dark:text-gray-500 leading-tight">Controls logo size across header, footer &amp; sidebar</p>
+                                                </div>
+                                            </div>
+                                            <div class="p-5 grid grid-cols-1 md:grid-cols-3 gap-6">
+                                                <!-- Width Slider -->
+                                                <div>
+                                                    <div class="flex items-center justify-between mb-2">
+                                                        <label class="text-xs font-semibold text-gray-600 dark:text-gray-300 flex items-center gap-1.5">
+                                                            <i class="fas fa-arrows-alt-h text-google-blue"></i> Width
+                                                        </label>
+                                                        <span id="logo_width_badge" class="text-xs font-bold bg-blue-50 dark:bg-blue-900/30 text-google-blue px-2 py-0.5 rounded-full">150px</span>
+                                                    </div>
+                                                    <input type="range" id="setting_logo_width" min="50" max="500" step="5" value="150"
+                                                        oninput="updateLogoDimensionPreview()"
+                                                        class="w-full h-2 rounded-full appearance-none cursor-pointer bg-gray-200 dark:bg-gray-700" style="accent-color:#3b68f8" />
+                                                    <div class="flex justify-between text-xs text-gray-400 mt-1"><span>50px</span><span>500px</span></div>
+                                                </div>
+                                                <!-- Height Slider -->
+                                                <div>
+                                                    <div class="flex items-center justify-between mb-2">
+                                                        <label class="text-xs font-semibold text-gray-600 dark:text-gray-300 flex items-center gap-1.5">
+                                                            <i class="fas fa-arrows-alt-v text-purple-500"></i> Height
+                                                        </label>
+                                                        <span id="logo_height_badge" class="text-xs font-bold bg-purple-50 dark:bg-purple-900/30 text-purple-600 px-2 py-0.5 rounded-full">auto</span>
+                                                    </div>
+                                                    <input type="range" id="setting_logo_height" min="0" max="200" step="4" value="0"
+                                                        oninput="updateLogoDimensionPreview()"
+                                                        class="w-full h-2 rounded-full appearance-none cursor-pointer bg-gray-200 dark:bg-gray-700" style="accent-color:#a855f7" />
+                                                    <div class="flex justify-between text-xs text-gray-400 mt-1"><span>auto</span><span>200px</span></div>
+                                                </div>
+                                                <!-- Live Preview -->
+                                                <div class="flex flex-col items-center justify-center gap-2 rounded-xl border-2 border-dashed border-gray-200 dark:border-gray-700 bg-gray-50 dark:bg-gray-800/40 px-4 py-4">
+                                                    <p class="text-xs font-semibold text-gray-400 uppercase tracking-widest">Preview</p>
+                                                    <div class="flex items-center justify-center overflow-hidden" style="min-height:32px; max-width:100%">
+                                                        <img id="logo_dim_preview" src="../images/logo.svg" alt="Logo"
+                                                            style="width:150px; height:auto; max-width:100%; object-fit:contain; transition:width 0.15s, height 0.15s;" />
+                                                    </div>
+                                                    <p id="logo_dim_label" class="text-xs text-gray-400 font-mono">150 × auto</p>
+                                                </div>
+                                            </div>
                                         </div>
                                     </div>
-                                    <div>
-                                        <label class="block text-sm font-semibold mb-2">SVG Logo Endpoint</label>
-                                        <input
-                                            type="text"
-                                            id="setting_logo_url"
-                                            class="w-full p-3 rounded-lg bg-gray-50 dark:bg-gray-800/50 border border-gray-200 dark:border-gray-700 outline-none font-mono text-xs"
-                                        />
-                                    </div>
-                                    <div>
-                                        <label class="block text-sm font-semibold mb-2">Favicon Location</label>
-                                        <input
-                                            type="text"
-                                            id="setting_favicon_url"
-                                            class="w-full p-3 rounded-lg bg-gray-50 dark:bg-gray-800/50 border border-gray-200 dark:border-gray-700 outline-none font-mono text-xs"
-                                        />
+                                    <!-- Sanket v2.0 - Professional asset upload cards for Logo & Favicon -->
+                                    <div class="md:col-span-2 grid grid-cols-1 md:grid-cols-2 gap-5">
+                                        <!-- Site Logo Card -->
+                                        <div class="group relative flex flex-col rounded-2xl border border-gray-200 dark:border-gray-700 bg-white dark:bg-gray-900 shadow-sm overflow-hidden transition-shadow hover:shadow-md">
+                                            <div class="px-5 pt-5 pb-3 border-b border-gray-100 dark:border-gray-800 flex items-center gap-3">
+                                                <span class="w-8 h-8 rounded-lg bg-blue-50 dark:bg-blue-900/30 flex items-center justify-center flex-shrink-0">
+                                                    <i class="fas fa-image text-google-blue text-sm"></i>
+                                                </span>
+                                                <div>
+                                                    <p class="text-sm font-bold leading-tight">Site Logo</p>
+                                                    <p class="text-xs text-gray-400 dark:text-gray-500 leading-tight">Shown in header &amp; emails</p>
+                                                </div>
+                                            </div>
+                                            <!-- Drop zone -->
+                                            <div id="logo_drop_zone" onclick="document.getElementById('logo_file_input').click()"
+                                                ondragover="event.preventDefault();this.classList.add('ring-2','ring-blue-400')"
+                                                ondragleave="this.classList.remove('ring-2','ring-blue-400')"
+                                                ondrop="handleBrandingDrop(event,'logo')"
+                                                class="mx-5 mt-4 mb-3 flex flex-col items-center justify-center gap-3 rounded-xl border-2 border-dashed border-gray-200 dark:border-gray-700 bg-gray-50 dark:bg-gray-800/40 hover:border-blue-400 hover:bg-blue-50/30 dark:hover:bg-blue-900/10 cursor-pointer transition-all p-5">
+                                                <div class="relative">
+                                                    <img id="logo_preview" src="../images/logo.svg" alt="Logo Preview"
+                                                        class="w-20 h-20 object-contain rounded-xl border border-gray-200 dark:border-gray-700 bg-white dark:bg-gray-900 p-2 shadow-sm" />
+                                                    <span class="absolute -bottom-1 -right-1 w-6 h-6 rounded-full bg-google-blue flex items-center justify-center shadow">
+                                                        <i class="fas fa-pen text-white" style="font-size:9px"></i>
+                                                    </span>
+                                                </div>
+                                                <div class="text-center">
+                                                    <p class="text-xs font-semibold text-gray-600 dark:text-gray-300">Drop file here or <span class="text-google-blue">browse</span></p>
+                                                    <p class="text-xs text-gray-400 mt-0.5">PNG, SVG, JPG, WEBP · max 10 MB</p>
+                                                </div>
+                                            </div>
+                                            <input type="file" id="logo_file_input" accept="image/*" class="hidden" onchange="previewBrandingFile(this,'logo_preview');updateBrandingFileName('logo',this)" />
+                                            <!-- File name chip -->
+                                            <p id="logo_file_name" class="text-xs text-gray-400 text-center px-5 pb-1 truncate hidden"></p>
+                                            <!-- Upload bar -->
+                                            <div id="logo_progress_wrap" class="px-5 pb-2 hidden">
+                                                <div class="w-full h-1.5 bg-gray-100 dark:bg-gray-700 rounded-full overflow-hidden">
+                                                    <div id="logo_progress_bar" class="h-full bg-google-blue rounded-full transition-all" style="width:0%"></div>
+                                                </div>
+                                            </div>
+                                            <div class="px-5 pb-5">
+                                                <button type="button" onclick="uploadBrandingAsset('logo')"
+                                                    class="w-full py-2.5 bg-google-blue hover:bg-google-blueHover text-white text-sm font-bold rounded-xl transition-all active:scale-95 flex items-center justify-center gap-2 shadow shadow-blue-500/20">
+                                                    <i class="fas fa-cloud-upload-alt"></i> Save Logo
+                                                </button>
+                                            </div>
+                                        </div>
+
+                                        <!-- Site Favicon Card -->
+                                        <div class="group relative flex flex-col rounded-2xl border border-gray-200 dark:border-gray-700 bg-white dark:bg-gray-900 shadow-sm overflow-hidden transition-shadow hover:shadow-md">
+                                            <div class="px-5 pt-5 pb-3 border-b border-gray-100 dark:border-gray-800 flex items-center gap-3">
+                                                <span class="w-8 h-8 rounded-lg bg-purple-50 dark:bg-purple-900/30 flex items-center justify-center flex-shrink-0">
+                                                    <i class="fas fa-star text-purple-500 text-sm"></i>
+                                                </span>
+                                                <div>
+                                                    <p class="text-sm font-bold leading-tight">Site Favicon</p>
+                                                    <p class="text-xs text-gray-400 dark:text-gray-500 leading-tight">Browser tab &amp; bookmarks icon</p>
+                                                </div>
+                                            </div>
+                                            <!-- Drop zone -->
+                                            <div id="favicon_drop_zone" onclick="document.getElementById('favicon_file_input').click()"
+                                                ondragover="event.preventDefault();this.classList.add('ring-2','ring-purple-400')"
+                                                ondragleave="this.classList.remove('ring-2','ring-purple-400')"
+                                                ondrop="handleBrandingDrop(event,'favicon')"
+                                                class="mx-5 mt-4 mb-3 flex flex-col items-center justify-center gap-3 rounded-xl border-2 border-dashed border-gray-200 dark:border-gray-700 bg-gray-50 dark:bg-gray-800/40 hover:border-purple-400 hover:bg-purple-50/30 dark:hover:bg-purple-900/10 cursor-pointer transition-all p-5">
+                                                <div class="relative">
+                                                    <img id="favicon_preview" src="../images/logo.svg" alt="Favicon Preview"
+                                                        class="w-20 h-20 object-contain rounded-xl border border-gray-200 dark:border-gray-700 bg-white dark:bg-gray-900 p-2 shadow-sm" />
+                                                    <span class="absolute -bottom-1 -right-1 w-6 h-6 rounded-full bg-purple-500 flex items-center justify-center shadow">
+                                                        <i class="fas fa-pen text-white" style="font-size:9px"></i>
+                                                    </span>
+                                                </div>
+                                                <div class="text-center">
+                                                    <p class="text-xs font-semibold text-gray-600 dark:text-gray-300">Drop file here or <span class="text-purple-500">browse</span></p>
+                                                    <p class="text-xs text-gray-400 mt-0.5">ICO, PNG, SVG · max 10 MB</p>
+                                                </div>
+                                            </div>
+                                            <input type="file" id="favicon_file_input" accept="image/*,.ico" class="hidden" onchange="previewBrandingFile(this,'favicon_preview');updateBrandingFileName('favicon',this)" />
+                                            <!-- File name chip -->
+                                            <p id="favicon_file_name" class="text-xs text-gray-400 text-center px-5 pb-1 truncate hidden"></p>
+                                            <!-- Upload bar -->
+                                            <div id="favicon_progress_wrap" class="px-5 pb-2 hidden">
+                                                <div class="w-full h-1.5 bg-gray-100 dark:bg-gray-700 rounded-full overflow-hidden">
+                                                    <div id="favicon_progress_bar" class="h-full bg-purple-500 rounded-full transition-all" style="width:0%"></div>
+                                                </div>
+                                            </div>
+                                            <div class="px-5 pb-5">
+                                                <button type="button" onclick="uploadBrandingAsset('favicon')"
+                                                    class="w-full py-2.5 bg-purple-500 hover:bg-purple-600 text-white text-sm font-bold rounded-xl transition-all active:scale-95 flex items-center justify-center gap-2 shadow shadow-purple-500/20">
+                                                    <i class="fas fa-cloud-upload-alt"></i> Save Favicon
+                                                </button>
+                                            </div>
+                                        </div>
                                     </div>
                                     <div class="md:col-span-2 pt-4 border-t border-gray-100 dark:border-gray-800">
                                         <div class="flex items-center justify-between mb-4">
@@ -1140,7 +1221,7 @@
             // --- CMS MANAGEMENT ---
             async function loadPages() {
                 try {
-                    const res = await axios.get(`${API_BASE}/pages`, { headers: { Authorization: adminToken } });
+                    const res = await axios.get(`${API_BASE}/pages`, { headers: { Authorization: `Bearer ${adminToken}` } });
                     const pages = res.data;
                     const container = document.getElementById('cms-pages-list');
                     
@@ -1205,7 +1286,7 @@
 
             async function editPage(id) {
                 try {
-                    const res = await axios.get(`${API_BASE}/pages/${id}`, { headers: { Authorization: adminToken } });
+                    const res = await axios.get(`${API_BASE}/pages/${id}`, { headers: { Authorization: `Bearer ${adminToken}` } });
                     const page = res.data;
                     document.getElementById('pageModalTitle').innerText = 'Edit CMS Page';
                     document.getElementById('pageId').value = page.id;
@@ -1230,9 +1311,9 @@
 
                 try {
                     if (id) {
-                        await axios.put(`${API_BASE}/pages/${id}`, data, { headers: { Authorization: adminToken } });
+                        await axios.put(`${API_BASE}/pages/${id}`, data, { headers: { Authorization: `Bearer ${adminToken}` } });
                     } else {
-                        await axios.post(`${API_BASE}/pages`, data, { headers: { Authorization: adminToken } });
+                        await axios.post(`${API_BASE}/pages`, data, { headers: { Authorization: `Bearer ${adminToken}` } });
                     }
                     closePageModal();
                     loadPages();
@@ -1254,7 +1335,7 @@
 
                 if (result.isConfirmed) {
                     try {
-                        await axios.delete(`${API_BASE}/pages/${id}`, { headers: { Authorization: adminToken } });
+                        await axios.delete(`${API_BASE}/pages/${id}`, { headers: { Authorization: `Bearer ${adminToken}` } });
                         loadPages();
                         Swal.fire('Deleted!', 'Page has been removed.', 'success');
                     } catch (err) {
@@ -1272,6 +1353,8 @@
                 document.getElementById('loginSection').classList.add('hidden');
                 document.getElementById('adminLayout').classList.remove('hidden');
                 loadStats();
+                //Sanket v2.0 - Load settings immediately so sidebar logo/brand update on dashboard open
+                loadSettings();
             }
 
             // Re-integrating actual backend logic hooks
@@ -1544,11 +1627,19 @@
                 } catch (e) {}
             }
 
-            const logoSlider = document.getElementById('setting_logo_width');
-            if (logoSlider) {
-                logoSlider.addEventListener('input', (e) => {
-                    document.getElementById('logo_size_value').innerText = e.target.value + 'px';
-                });
+            //Sanket v2.0 - Live-update the preview image and badges when either size slider moves
+            function updateLogoDimensionPreview() {
+                const wVal = parseInt(document.getElementById('setting_logo_width')?.value || 150);
+                const hVal = parseInt(document.getElementById('setting_logo_height')?.value || 0);
+                const hStr = hVal > 0 ? hVal + 'px' : 'auto';
+                const badge_w = document.getElementById('logo_width_badge');
+                const badge_h = document.getElementById('logo_height_badge');
+                const label  = document.getElementById('logo_dim_label');
+                const preview = document.getElementById('logo_dim_preview');
+                if (badge_w)  badge_w.textContent  = wVal + 'px';
+                if (badge_h)  badge_h.textContent  = hStr;
+                if (label)    label.textContent    = wVal + ' × ' + hStr;
+                if (preview)  { preview.style.width = wVal + 'px'; preview.style.height = hStr; }
             }
 
             // --- FOOTER & CONTACT MANAGEMENT ---
@@ -1648,11 +1739,25 @@
                             document.getElementById('setting_contact_phone').value = v.phone || '';
                             document.getElementById('setting_contact_address').value = v.address || '';
                         }
+                        //Sanket v2.0 - Populate logo/favicon upload previews from saved DB URLs
+                        if (k === 'logo_url' && v) {
+                            const lp = document.getElementById('logo_preview');
+                            if (lp) lp.src = v;
+                        }
+                        if (k === 'favicon_url' && v) {
+                            const fp = document.getElementById('favicon_preview');
+                            if (fp) fp.src = v;
+                        }
                     }
                     if (s.LOGO_CONFIG) {
+                        //Sanket v2.0 - Populate both width and height sliders from saved LOGO_CONFIG
                         const width = parseInt(s.LOGO_CONFIG.width) || 150;
-                        document.getElementById('setting_logo_width').value = width;
-                        document.getElementById('logo_size_value').innerText = width + 'px';
+                        const height = parseInt(s.LOGO_CONFIG.height) || 0;
+                        const wSlider = document.getElementById('setting_logo_width');
+                        const hSlider = document.getElementById('setting_logo_height');
+                        if (wSlider) wSlider.value = width;
+                        if (hSlider) hSlider.value = height;
+                        updateLogoDimensionPreview();
                     }
                     applyBranding(s);
                 } catch (e) {}
@@ -1673,9 +1778,13 @@
                         CHATGPT_TEMPERATURE: document.getElementById('setting_CHATGPT_TEMPERATURE').value,
                         app_name: document.getElementById('setting_app_name').value,
                         brand_color: document.getElementById('setting_brand_color').value,
-                        logo_url: document.getElementById('setting_logo_url').value,
-                        favicon_url: document.getElementById('setting_favicon_url').value,
-                        LOGO_CONFIG: { width: document.getElementById('setting_logo_width').value + 'px' },
+                        //Sanket v2.0 - Save both width and height into LOGO_CONFIG
+                        LOGO_CONFIG: {
+                            width: document.getElementById('setting_logo_width').value + 'px',
+                            height: parseInt(document.getElementById('setting_logo_height').value) > 0
+                                ? document.getElementById('setting_logo_height').value + 'px'
+                                : 'auto'
+                        },
                         CONTACT_INFO: {
                             phone: document.getElementById('setting_contact_phone').value,
                             address: document.getElementById('setting_contact_address').value
@@ -1686,6 +1795,8 @@
                         await axios.post('/api/v1/admin/settings', payload, {
                             headers: { Authorization: `Bearer ${adminToken}` }
                         });
+                        //Sanket v2.0 - Bust brand cache so public pages re-fetch fresh footer/logo data on next load
+                        window.sessionStorage.removeItem('brandData_v2');
                         Swal.fire({ title: 'Settings Deployed', icon: 'success', toast: true, position: 'top-end', showConfirmButton: false, timer: 3000 });
                         loadSettings();
                     } catch (err) {
@@ -1699,18 +1810,112 @@
 
             function applyBranding(s) {
                 if (s.app_name) {
-                    document.title = `${s.app_name} | Admin Hub`;
-                    document.querySelectorAll('.sidebar-brand').forEach((el) => (el.textContent = `${s.app_name} Hub`));
+                    document.title = `${s.app_name} | Admin`;
+                    document.querySelectorAll('.sidebar-brand').forEach((el) => (el.textContent = s.app_name));
                 }
                 if (s.brand_color) document.documentElement.style.setProperty('--google-blue', s.brand_color);
                 if (s.logo_url) {
                     document.querySelectorAll('.sidebar-logo').forEach((img) => { img.src = s.logo_url; });
+                    //Sanket v2.0 - Also refresh logo preview in branding panel
+                    const lp = document.getElementById('logo_preview');
+                    if (lp) lp.src = s.logo_url;
+                }
+                if (s.favicon_url) {
+                    //Sanket v2.0 - Refresh favicon preview in branding panel
+                    const fp = document.getElementById('favicon_preview');
+                    if (fp) fp.src = s.favicon_url;
                 }
                 if (s.LOGO_CONFIG && s.LOGO_CONFIG.width) {
-                    document.querySelectorAll('img[alt="tawktoo"], .sidebar-logo, .header-logo').forEach((img) => {
+                    //Sanket v2.0 - Apply both width and height (height defaults to 'auto' if not set)
+                    const logoH = s.LOGO_CONFIG.height || 'auto';
+                    document.querySelectorAll('img[alt="tawktoo"], .sidebar-logo, .header-logo, #site-nav-logo, #site-footer-logo').forEach((img) => {
                         img.style.width = s.LOGO_CONFIG.width;
-                        img.style.height = 'auto';
+                        img.style.height = logoH;
                     });
+                }
+            }
+
+            //Sanket v2.0 - Preview selected file locally before upload
+            function previewBrandingFile(input, previewId) {
+                const file = input.files[0];
+                if (!file) return;
+                const reader = new FileReader();
+                reader.onload = (e) => {
+                    const img = document.getElementById(previewId);
+                    if (img) img.src = e.target.result;
+                };
+                reader.readAsDataURL(file);
+            }
+
+            //Sanket v2.0 - Show selected file name chip under the drop zone
+            function updateBrandingFileName(type, input) {
+                const nameEl = document.getElementById(type + '_file_name');
+                if (!nameEl) return;
+                if (input.files[0]) {
+                    nameEl.textContent = input.files[0].name;
+                    nameEl.classList.remove('hidden');
+                } else {
+                    nameEl.classList.add('hidden');
+                }
+            }
+
+            //Sanket v2.0 - Handle drag-and-drop onto the upload drop zone
+            function handleBrandingDrop(event, type) {
+                event.preventDefault();
+                const dropZone = document.getElementById(type + '_drop_zone');
+                if (dropZone) dropZone.classList.remove('ring-2', 'ring-blue-400', 'ring-purple-400');
+                const files = event.dataTransfer?.files;
+                if (!files || !files[0]) return;
+                const input = document.getElementById(type + '_file_input');
+                // Assign files to the real input via DataTransfer
+                const dt = new DataTransfer();
+                dt.items.add(files[0]);
+                input.files = dt.files;
+                previewBrandingFile(input, type + '_preview');
+                updateBrandingFileName(type, input);
+            }
+
+            //Sanket v2.0 - Upload logo or favicon to server via multipart POST, then persist URL in DB
+            async function uploadBrandingAsset(type) {
+                const inputId = type + '_file_input';
+                const input = document.getElementById(inputId);
+                if (!input || !input.files[0]) {
+                    Swal.fire({ title: 'No file selected', text: `Please choose a ${type} file first.`, icon: 'warning', toast: true, position: 'top-end', showConfirmButton: false, timer: 3000 });
+                    return;
+                }
+
+                //Sanket v2.0 - Show progress bar animation on upload
+                const progressWrap = document.getElementById(type + '_progress_wrap');
+                const progressBar = document.getElementById(type + '_progress_bar');
+                if (progressWrap) progressWrap.classList.remove('hidden');
+                if (progressBar) { progressBar.style.width = '0%'; setTimeout(() => { progressBar.style.width = '60%'; }, 50); }
+
+                const formData = new FormData();
+                formData.append('file', input.files[0]);
+
+                try {
+                    //Sanket v2.0 - Do NOT set Content-Type manually — axios auto-sets multipart/form-data WITH boundary when FormData is passed
+                    const res = await axios.post(`${API_BASE}/branding/upload/${type}`, formData, {
+                        headers: { Authorization: `Bearer ${adminToken}` },
+                    });
+                    if (progressBar) progressBar.style.width = '100%';
+                    setTimeout(() => { if (progressWrap) progressWrap.classList.add('hidden'); }, 600);
+                    //Sanket v2.0 - Bust Brand.js sessionStorage cache so next page load picks up the new logo
+                    window.sessionStorage.removeItem('brandData_v2');
+                    // Update previews immediately
+                    if (res.data.url) {
+                        const preview = document.getElementById(type + '_preview');
+                        if (preview) preview.src = res.data.url;
+                        if (type === 'logo') document.querySelectorAll('.sidebar-logo').forEach(img => img.src = res.data.url);
+                    }
+                    Swal.fire({ title: `${type.charAt(0).toUpperCase() + type.slice(1)} uploaded!`, text: 'Changes are live on the site.', icon: 'success', toast: true, position: 'top-end', showConfirmButton: false, timer: 3000 });
+                    input.value = '';
+                    const nameEl = document.getElementById(type + '_file_name');
+                    if (nameEl) nameEl.classList.add('hidden');
+                } catch (err) {
+                    if (progressBar) progressBar.style.width = '0%';
+                    setTimeout(() => { if (progressWrap) progressWrap.classList.add('hidden'); }, 400);
+                    Swal.fire({ title: 'Upload Failed', text: err.response?.data?.message || 'Error uploading file', icon: 'error', toast: true, position: 'top-end', showConfirmButton: false, timer: 4000 });
                 }
             }
 
