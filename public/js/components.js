@@ -33,6 +33,9 @@ class TawktooComponents {
         const headerContainer = document.querySelector('header.site-header-shared');
         if (!headerContainer) return;
 
+        //Sanket v2.0 - Re-load brand cache to ensure we have any updates from Brand.js fetch
+        this.brand = this._loadBrandCache();
+
         //Sanket v2.0 - Use uploaded logo_url from brand cache if available; root-relative path works at any URL depth
         const logoSrc = (this.brand && this.brand.logo_url) ? this.brand.logo_url : '/images/logo.svg';
         //Sanket v2.0 - Apply saved dimensions from logo_config, fall back to 32px height
@@ -99,11 +102,17 @@ class TawktooComponents {
                 applyTheme();
             });
         }
+
+        //Sanket v2.0 - Signal Brand.js that the header is now in the DOM
+        document.dispatchEvent(new CustomEvent('siteHeaderRendered'));
     }
 
     renderFooter() {
         const footerContainer = document.querySelector('footer.site-footer-shared');
         if (!footerContainer) return;
+
+        //Sanket v2.0 - Re-load brand cache
+        this.brand = this._loadBrandCache();
 
         //Sanket v2.0 - Use uploaded logo_url and DB footer config (links/copyright) if cached, else defaults
         //Sanket v2.0 - Use root-relative /images path so the img src works regardless of page URL depth

@@ -166,6 +166,18 @@ async function initialize() {
     customizeLogo();
     customizeFooter();
 
+    //Sanket v2.0 - Also listen for header/footer rendering events from components.js
+    //to re-apply logo/branding once the shared components are in the DOM.
+    document.addEventListener('siteHeaderRendered', () => {
+        console.log('siteHeaderRendered event received');
+        customizeLogo();
+    });
+    document.addEventListener('siteFooterRendered', () => {
+        console.log('siteFooterRendered event received');
+        customizeFooter();
+        customizeLogo();
+    });
+
     checkBrand();
 }
 
@@ -189,6 +201,8 @@ async function getBrand() {
                 window.sessionStorage.setItem(brandDataKey, JSON.stringify(serverBrand));
             } else {
                 console.warn('FETCH BRAND SETTINGS - DISABLED');
+                // Ensure BRAND is initialized even if server returns false
+                setBrand({});
             }
         } catch (error) {
             console.error('FETCH GET BRAND ERROR', error.message);
@@ -341,17 +355,34 @@ function customizeLogo() {
         // components.js renders the shared header on DOMContentLoaded which may fire AFTER Brand.js
         // completes on the cached-brand path — the observer ensures the nav/footer logos are
         // always updated regardless of script execution order.
-        const observer = new MutationObserver(() => {
+        const observer = new MutationObserver((mutations) => {
             const navLogo = document.getElementById('site-nav-logo');
             const footerLogo = document.getElementById('site-footer-logo');
-            if (navLogo) { navLogo.src = BRAND.logo_url; }
-            if (footerLogo) { footerLogo.src = BRAND.logo_url; }
-            // Keep observing until both logos are found and updated
-            if (navLogo && footerLogo) observer.disconnect();
+            
+            if (navLogo) { 
+                navLogo.src = BRAND.logo_url;
+                if (BRAND.logo_config?.width) {
+                    navLogo.style.width = BRAND.logo_config.width;
+                    navLogo.style.height = BRAND.logo_config.height || 'auto';
+                }
+            }
+            if (footerLogo) { 
+                footerLogo.src = BRAND.logo_url;
+                if (BRAND.logo_config?.width) {
+                    footerLogo.style.width = BRAND.logo_config.width;
+                    footerLogo.style.height = BRAND.logo_config.height || 'auto';
+                }
+            }
+            
+            // If both are found, we can wait a bit or keep observing for dynamic changes
+            // To be safe, we keep observing but throttle/debounce if needed. 
+            // In this case, we just disconnect if we are sure no more logos will be added.
         });
+        
         if (document.body) {
             observer.observe(document.body, { childList: true, subtree: true });
         } else {
+            console.log('document.body not ready, waiting for DOMContentLoaded for observer');
             document.addEventListener('DOMContentLoaded', () => {
                 observer.observe(document.body, { childList: true, subtree: true });
             });
