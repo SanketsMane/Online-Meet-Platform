@@ -1,5 +1,6 @@
 'use strict';
-require('dotenv').config();
+require('dotenv').config({ path: '/root/tawktoo-sfu/app/src/.env' });
+console.log('[DEBUG] Environment Loaded From Absolute Path');
 console.log('[DEBUG] Environment Loaded: EMAIL_USER =', process.env.EMAIL_USER);
 console.log('[DEBUG] Environment Loaded: EMAIL_PASS_LEN =', process.env.EMAIL_PASS?.length || 0);
 
