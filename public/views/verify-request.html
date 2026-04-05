@@ -122,15 +122,21 @@
                 const response = await axios.post('/api/v1/auth/host/otp/login', { username: email, otp });
                 
                 if (response.data && response.data.token) {
-                    localStorage.setItem('token', response.data.token);
+                    const token = response.data.token;
+                    const displayName = response.data.displayname || email;
+                    
+                    localStorage.setItem('token', token);
+                    localStorage.setItem('dev_token', token);
+                    localStorage.setItem('dev_name', displayName);
+
                     await Swal.fire({
                         icon: 'success',
                         title: 'Verified!',
-                        text: 'Welcome to your Host Dashboard',
+                        text: `Welcome back, ${displayName}`,
                         timer: 2000,
                         showConfirmButton: false
                     });
-                    window.location.href = '/';
+                    window.location.href = '/developer';
                 }
             } catch (err) {
                 Swal.fire('Verification Failed', err.response?.data?.message || 'Invalid or expired code', 'error');

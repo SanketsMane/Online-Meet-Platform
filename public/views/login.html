@@ -418,18 +418,24 @@
                         
                         const response = await axios.post(endpoint, payload);
                         if (response.data && response.data.message) {
-                            localStorage.setItem('token', response.data.message);
+                            const token = response.data.message;
+                            const displayName = response.data.displayname || username;
+                            
+                            localStorage.setItem('token', token);
+                            localStorage.setItem('dev_token', token);
+                            localStorage.setItem('dev_name', displayName);
+
                             await Swal.fire({
                                 icon: 'success',
                                 title: 'Access Authorized',
-                                text: `Welcome back, ${response.data.displayname || username}`,
+                                text: `Welcome back, ${displayName}`,
                                 timer: 2000,
                                 showConfirmButton: false,
                                 customClass: {
                                     popup: 'rounded-[32px] dark:bg-slate-900 dark:text-white border border-brand-500/20 text-center',
                                 },
                             });
-                            window.location.href = '/';
+                            window.location.href = '/developer';
                         }
                     } catch (error) {
                         Swal.fire({
