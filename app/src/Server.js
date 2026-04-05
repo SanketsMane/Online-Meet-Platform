@@ -71,7 +71,7 @@ dev dependencies: {
  */
 
 const config = require('./config');
-const EmailService = require('./services/EmailService');
+const EmailService = require('./lib/EmailService');
 const { sequelize, User, AuditLog, WebhookLog, Page, GlobalSetting, Feedback, UsageLog, ApiKey, Tenant } = require('./db/models');
 const { Op } = require('sequelize');
 
