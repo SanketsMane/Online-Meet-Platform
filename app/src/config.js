@@ -680,9 +680,10 @@ module.exports = {
             notify: process.env.EMAIL_NOTIFICATIONS === 'true',
             host: process.env.EMAIL_HOST || 'smtp.gmail.com',
             port: parseInt(process.env.EMAIL_PORT) || 587,
-            username: process.env.EMAIL_USER || 'your_username',
-            password: process.env.EMAIL_PASS || 'your_password',
-            from: process.env.EMAIL_FROM || process.env.EMAIL_USER,
+            service: process.env.EMAIL_SERVICE || '',
+            username: process.env.EMAIL_USER || process.env.EMAIL_USERNAME || '',
+            password: process.env.EMAIL_PASS || process.env.EMAIL_PASSWORD || '',
+            from: process.env.EMAIL_FROM || process.env.EMAIL_USER || process.env.EMAIL_USERNAME,
             sendTo: process.env.EMAIL_SEND_TO || 'sfu.kidokool@gmail.com',
         },
 
