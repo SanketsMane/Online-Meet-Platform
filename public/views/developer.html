@@ -1,7 +1,7 @@
 <!doctype html>
 <html lang="en" class="no-js">
     <head>
-        <title>tawktoo - Developer Portal</title>
+        <title>tawktoo - Host Portal</title>
         <link rel="shortcut icon" href="../images/logo.svg" />
         <meta charset="utf-8" />
         <meta name="viewport" content="width=device-width, initial-scale=1.0" />
@@ -74,7 +74,7 @@
             <div class="w-full max-w-md animate-in fade-in slide-in-from-bottom-4 duration-700">
                 <div class="text-center mb-10">
                     <img src="../images/logo.svg" alt="tawktoo" class="h-10 mx-auto mb-6">
-                    <h1 class="text-3xl font-extrabold text-slate-900 dark:text-white mb-2 tracking-tight">Developer Portal</h1>
+                    <h1 class="text-3xl font-extrabold text-slate-900 dark:text-white mb-2 tracking-tight">Host Portal</h1>
                     <p class="text-slate-500 dark:text-slate-400 font-medium">Empowering your real-time experiences</p>
                 </div>
 
@@ -129,7 +129,7 @@
                             <input type="checkbox" required class="w-5 h-5 rounded-lg border-slate-300 text-brand-600 focus:ring-brand-500">
                             <span class="text-xs text-slate-500 font-medium">I agree to the <a href="#" class="text-brand-600 underline">Terms of Service</a></span>
                         </div>
-                        <button type="submit" id="registerBtn" class="w-full py-4 rounded-2xl bg-brand-600 hover:bg-brand-700 text-white font-bold shadow-lg shadow-brand-500/20 transition-all hover:scale-[1.01] active:scale-95">Create Developer Account</button>
+                        <button type="submit" id="registerBtn" class="w-full py-4 rounded-2xl bg-brand-600 hover:bg-brand-700 text-white font-bold shadow-lg shadow-brand-500/20 transition-all hover:scale-[1.01] active:scale-95">Create Host Account</button>
                     </form>
                 </div>
             </div>
@@ -165,7 +165,7 @@
                 <div class="p-6 border-t border-slate-100 dark:border-slate-800">
                     <div class="p-4 rounded-2xl bg-slate-50 dark:bg-slate-800/50 mb-4">
                         <p class="text-[10px] uppercase font-bold text-slate-400 mb-1">Current Plan</p>
-                        <p class="text-xs font-bold text-brand-600">Developer Cloud <span class="ml-1 px-1 bg-brand-100 text-brand-700 rounded text-[9px]">Trial</span></p>
+                        <p class="text-xs font-bold text-brand-600">Host Cloud <span class="ml-1 px-1 bg-brand-100 text-brand-700 rounded text-[9px]">Trial</span></p>
                     </div>
                     <button onclick="logout()" class="w-full flex items-center gap-3 px-4 py-3 rounded-2xl text-slate-500 hover:text-red-500 hover:bg-red-50 dark:hover:bg-red-900/10 transition-all font-semibold italic">
                         <i class="fas fa-sign-out-alt"></i>
@@ -195,10 +195,10 @@
                         </button>
                         <div class="flex items-center gap-3 pl-6 border-l border-slate-100 dark:border-slate-800">
                             <div class="w-10 h-10 rounded-2xl bg-brand-500 text-white flex items-center justify-center font-bold shadow-lg shadow-brand-500/20">
-                                <span id="userInitial">D</span>
+                                <span id="userInitial">H</span>
                             </div>
                             <div class="hidden sm:block">
-                                <p id="userName" class="text-sm font-bold text-slate-900 dark:text-white leading-none">Developer</p>
+                                <p id="userName" class="text-sm font-bold text-slate-900 dark:text-white leading-none">Host</p>
                                 <p class="text-[10px] font-bold text-slate-400 mt-1 uppercase">Owner</p>
                             </div>
                         </div>
@@ -430,7 +430,7 @@
             function initDashboard() {
                 document.getElementById('authView').classList.add('hidden');
                 document.getElementById('dashboardView').classList.remove('hidden');
-                const name = localStorage.getItem('dev_name') || 'Developer';
+                const name = localStorage.getItem('dev_name') || 'Host';
                 document.getElementById('userName').textContent = name;
                 document.getElementById('userInitial').textContent = name[0].toUpperCase();
                 switchView('dashboard');
@@ -650,7 +650,7 @@
                     switchAuthTab('login');
                     document.getElementById('loginEmail').value = email;
                 } catch (e) { Swal.fire('Error', e.response?.data?.message || 'Registration failed', 'error'); }
-                finally { b.disabled = false; b.textContent = 'Create Developer Account'; }
+                finally { b.disabled = false; b.textContent = 'Create Host Account'; }
             });
 
             // Author: Sanket - Forgot Password & OTP Flow
