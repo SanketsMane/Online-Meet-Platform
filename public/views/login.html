@@ -345,19 +345,8 @@
 
                 try {
                     const res = await axios.post('/api/v1/auth/host/otp/send', { username });
-                    Swal.fire({ icon: 'success', title: 'Code Sent', text: res.data.message });
-                    
-                    // Countdown for resend
-                    let timeLeft = 60;
-                    const timer = setInterval(() => {
-                        timeLeft--;
-                        sendBtn.textContent = `Resend (${timeLeft}s)`;
-                        if (timeLeft <= 0) {
-                            clearInterval(timer);
-                            sendBtn.disabled = false;
-                            sendBtn.textContent = 'Get Code';
-                        }
-                    }, 1000);
+                    await Swal.fire({ icon: 'success', title: 'Code Sent', text: res.data.message });
+                    window.location.href = `/verify-request?email=${username}`;
                 } catch (err) {
                     Swal.fire({ icon: 'error', title: 'Failed', text: err.response?.data?.message || 'Check connection' });
                     sendBtn.disabled = false;
@@ -472,16 +461,15 @@
                         if (response.status === 201) {
                             await Swal.fire({
                                 icon: 'success',
-                                title: 'Account Created',
-                                text: 'Your host account has been successfully established.',
+                                title: 'Verification Required',
+                                text: 'Please check your email for the verification code.',
                                 timer: 2000,
                                 showConfirmButton: false,
                                 customClass: {
                                     popup: 'rounded-[32px] dark:bg-slate-900 dark:text-white border border-emerald-500/20 text-center',
                                 },
                             });
-                            switchTab('login');
-                            usernameInput.value = username;
+                            window.location.href = `/verify-request?email=${username}`;
                         }
                     } catch (error) {
                         Swal.fire({
@@ -499,16 +487,52 @@
                 });
             });
 
-            // Author: Sanket - Recovery info
-            function handleForgotPassword() {
-                Swal.fire({
-                    title: 'Authentication Recovery',
-                    text: 'Automated recovery is restricted. Please contact your system administrator for manual credential reset.',
-                    icon: 'info',
-                    confirmButtonText: 'I Understand',
+            // Author: Sanket - Recovery flow with OTP
+            async function handleForgotPassword() {
+                const { value: username } = await Swal.fire({
+                    title: 'Account Recovery',
+                    input: 'text',
+                    inputLabel: 'Enter your username or email',
+                    inputPlaceholder: 'your_handle',
+                    showCancelButton: true,
                     confirmButtonColor: '#3b68f8',
-                    customClass: { popup: 'rounded-[32px] dark:bg-slate-900 dark:text-white text-center' },
+                    customClass: { popup: 'rounded-[32px] dark:bg-slate-900 dark:text-white' }
                 });
+
+                if (!username) return;
+
+                Swal.showLoading();
+                try {
+                    await axios.post('/api/v1/user/password/reset-request', { username });
+                    
+                    const { value: formValues } = await Swal.fire({
+                        title: 'Verify & Reset',
+                        html:
+                            '<input id="swal-otp" class="swal2-input" placeholder="6-digit OTP">' +
+                            '<input id="swal-password" type="password" class="swal2-input" placeholder="New Password">',
+                        focusConfirm: false,
+                        showCancelButton: true,
+                        confirmButtonText: 'Reset Password',
+                        confirmButtonColor: '#10b981',
+                        customClass: { popup: 'rounded-[32px] dark:bg-slate-900 dark:text-white' },
+                        preConfirm: () => {
+                            return [
+                                document.getElementById('swal-otp').value,
+                                document.getElementById('swal-password').value
+                            ]
+                        }
+                    });
+
+                    if (formValues) {
+                        const [otp, newPassword] = formValues;
+                        if (!otp || !newPassword) throw new Error('All fields required');
+                        
+                        const res = await axios.post('/api/v1/user/password/reset-verify', { username, otp, newPassword });
+                        Swal.fire({ icon: 'success', title: 'Restored', text: res.data.message });
+                    }
+                } catch (err) {
+                    Swal.fire({ icon: 'error', title: 'Failed', text: err.response?.data?.message || err.message });
+                }
             }
         </script>
     </body>

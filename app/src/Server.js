@@ -260,6 +260,11 @@ app.use('/api/v1', developerRoutes);
 // Mount User Routes (Host Registration)
 app.use('/api/v1/user', userRoutes);
 
+// Route for OTP Verification Screen - Author: Sanket
+app.get('/verify-request', (req, res) => {
+    res.sendFile(path.join(__dirname, '../../public/views/verify-request.html'));
+});
+
 // Protect key API endpoints with API Key validation for external developers
 // Note: Internal usage (frontend) might need a different path or bypass if using session cookies
 // For now, we assume /api/v1/meeting and /join endpoints are for external API usage
@@ -1099,8 +1104,8 @@ function startServer() {
                 return res.status(401).json({ message: 'Invalid or expired verification code' });
             }
 
-            // Clear OTP
-            await user.update({ otp_code: null, otp_expiry: null });
+            // Clear OTP and activate user if pending
+            await user.update({ otp_code: null, otp_expiry: null, status: 'active' });
 
             const isPresenter = Boolean(
                 hostCfg?.presenters?.join_first || hostCfg?.presenters?.list?.includes(user.username)
@@ -1109,10 +1114,68 @@ function startServer() {
             const token = encodeToken({ username: user.username, password: 'OTP_LOGIN', presenter: isPresenter });
             const allowedRooms = await getUserAllowedRooms(user.username, 'OTP_LOGIN');
 
-            res.json({ message: token, displayname: user.displayname, allowedRooms });
+            res.json({ message: token, token, displayname: user.displayname, allowedRooms });
         } catch (err) {
             log.error('OTP Login Route Error:', err);
             res.status(500).json({ message: 'Authentication process failed' });
+        }
+    });
+
+    // Author: Sanket - Forgot Password Request
+    app.post('/api/v1/user/password/reset-request', loginLimiter, async (req, res) => {
+        try {
+            const { username } = req.body;
+            if (!username) return res.status(400).json({ message: 'Username is required' });
+
+            const user = await User.findOne({ where: { [Op.or]: [{ username }, { email: username }] } });
+            if (!user) return res.status(404).json({ message: 'Account not found' });
+
+            const otpCode = Math.floor(100000 + Math.random() * 900000).toString();
+            const otpExpiry = new Date(Date.now() + 10 * 60 * 1000); // 10 mins
+
+            await user.update({ otp_code: otpCode, otp_expiry: otpExpiry });
+
+            // Send OTP
+            EmailService.sendOTP({ email: user.email || user.username, name: user.displayname }, otpCode)
+                .catch(err => log.error('Password Reset OTP Send Error:', err));
+
+            res.json({ message: 'Recovery code sent to your registered email.' });
+        } catch (err) {
+            log.error('Reset Request Error:', err);
+            res.status(500).json({ message: 'Failed to process recovery request' });
+        }
+    });
+
+    // Author: Sanket - Forgot Password Verify & Reset
+    app.post('/api/v1/user/password/reset-verify', loginLimiter, async (req, res) => {
+        try {
+            const { username, otp, newPassword } = req.body;
+            if (!username || !otp || !newPassword) return res.status(400).json({ message: 'Missing required fields' });
+
+            const user = await User.findOne({
+                where: {
+                    [Op.or]: [{ username }, { email: username }],
+                    otp_code: otp,
+                    otp_expiry: { [Op.gt]: new Date() }
+                }
+            });
+
+            if (!user) return res.status(401).json({ message: 'Invalid or expired recovery code' });
+
+            const bcrypt = require('bcrypt');
+            const password_hash = await bcrypt.hash(newPassword, 10);
+
+            await user.update({
+                password_hash,
+                otp_code: null,
+                otp_expiry: null,
+                status: 'active'
+            });
+
+            res.json({ message: 'Password reset successfully. You can now log in.' });
+        } catch (err) {
+            log.error('Reset Verify Error:', err);
+            res.status(500).json({ message: 'Failed to reset password' });
         }
     });
 

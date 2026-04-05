@@ -35,12 +35,15 @@ if ((EMAIL_ALERT || EMAIL_NOTIFY) && EMAIL_USERNAME && EMAIL_PASSWORD) {
     });
 }
 
+const EMAIL_PASS = process.env.EMAIL_PASS || EMAIL_PASSWORD;
+const EMAIL_USER_NAME = process.env.EMAIL_USER || EMAIL_USERNAME;
+
 const transportOptions = EMAIL_SERVICE
     ? {
           service: EMAIL_SERVICE,
           auth: {
-              user: EMAIL_USERNAME,
-              pass: EMAIL_PASSWORD,
+              user: EMAIL_USER_NAME,
+              pass: EMAIL_PASS,
           },
       }
     : {
@@ -48,8 +51,8 @@ const transportOptions = EMAIL_SERVICE
           port: EMAIL_PORT,
           secure: EMAIL_PORT === 465,
           auth: {
-              user: EMAIL_USERNAME,
-              pass: EMAIL_PASSWORD,
+              user: EMAIL_USER_NAME,
+              pass: EMAIL_PASS,
           },
       };
 
