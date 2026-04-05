@@ -26,12 +26,28 @@ router.post('/auth/register', async (req, res) => {
         }
 
         const password_hash = await bcrypt.hash(password, 10);
-        const tenant = await Tenant.create({ name, email, password_hash });
+        
+        // Generate 6-digit OTP for verification
+        const otp = Math.floor(100000 + Math.random() * 900000).toString();
+        const otp_expiry = new Date(Date.now() + 10 * 60 * 1000); // 10 minutes
 
-        // Author: Sanket - Send Welcome Email
-        EmailService.sendWelcome(tenant).catch((err) => console.error('Welcome email failed:', err));
+        const tenant = await Tenant.create({ 
+            name, 
+            email, 
+            password_hash,
+            otp_code: otp,
+            otp_expiry
+        });
 
-        res.status(201).json({ message: 'Registered successfully', id: tenant.id });
+        // Author: Sanket - Send Verification OTP instead of just welcome
+        EmailService.sendOTP(tenant, otp).catch((err) => console.error('Verification OTP failed:', err));
+
+        res.status(201).json({ 
+            message: 'Registered successfully. Please verify your email.', 
+            id: tenant.id,
+            email: tenant.email,
+            redirect: '/verify-request'
+        });
     } catch (err) {
         res.status(500).json({ message: 'Error registering user', error: err.message });
     }

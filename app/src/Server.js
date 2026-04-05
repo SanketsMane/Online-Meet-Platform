@@ -134,7 +134,7 @@ const jwt = require('jsonwebtoken');
 const fs = require('fs');
 const statsService = require('./services/StatsService');
 const settingsService = require('./services/SettingsService');
-const EmailService = require('./services/EmailService');
+const EmailService = require('./lib/EmailService');
 const sanitizeFilename = require('sanitize-filename');
 const helmet = require('helmet');
 
